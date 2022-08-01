@@ -1,0 +1,40 @@
+# Information Projet
+site_name: Quadratic-Labs DAO
+site_description: Documentation de la Venture DAO de Quadratic-Labs
+site_author: Quadratic-Chain
+site_url: https://bitbucket.org/zamoj/cairo-contracts
+edit_uri: ""
+
+# Repository
+repo_name: cairo-contracts
+repo_url: https://bitbucket.org:zamoj/cairo-contracts.git
+
+# Copyright
+copyright: Proprietary of Quadratic-Labs. All rights reserved.
+
+# Configuration
+theme:
+    name: material
+    logo: assets/logo.png
+markdown_extensions:
+  - admonition:
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - pymdownx.superfences:
+  - pymdownx.highlight:
+plugins:
+  - search:
+
+# Site
+nav:
+  - Welcome: index.md
+  - Deployment: deploy.md
+  - Governance:
+      - Members: members.md
+      - Voting: voting.md
+      - Proposals: proposals.md
+      - Bank: bank.md
+  - Troubleshooting: troubleshooting.md
+  - Changelog: changelog.md
