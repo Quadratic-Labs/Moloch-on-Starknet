@@ -1,5 +1,8 @@
 # README #
 
+# Requirements
+- Python <= 3.9
+
 This README would normally document whatever steps are necessary to get your application up and running.
 
 ### What is this repository for? ###
