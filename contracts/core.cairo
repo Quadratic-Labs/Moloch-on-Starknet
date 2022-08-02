@@ -18,7 +18,7 @@ const FAILED = 6
 
 # Roles
 # Binary repr of a list of bools: e.g. ADMIN and GOVERN is stored as 3 (1+2)
-const GOVERN = 1 
+const GOVERN = 1
 const ADMIN = 2
 
 
@@ -187,7 +187,7 @@ end
 # VOTING
 # ------
 @external
-func submitVote(id: Proposal, vote: felt) -> (success: felt):
+func submitVote(id: felt, vote: felt) -> (success: felt):
 	return (1)
 end
 
