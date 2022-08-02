@@ -10,18 +10,16 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 const SUBMITTED = 1
 const ACCEPTED = 2
 const REJECTED = 3
-const ABORTED = 4
-const VETOED = 5
+const ABORTED = 4  # Did not go completely through voting
 # ActionStates
-const PROCESSED = 6
-const FAILED = 7
+const EXECUTED = 5
+const FAILED = 6
 
 
 # Roles
-# Binary repr of a list: e.g. ADMIN and MANAGE is stored as 3 (1+2)
+# Binary repr of a list of bools: e.g. ADMIN and GOVERN is stored as 3 (1+2)
 const GOVERN = 1 
-const MANAGE = 2
-const ADMIN = 4
+const ADMIN = 2
 
 
 # TYPES
@@ -78,6 +76,20 @@ func minGraceDuration(proposalType: felt) -> (duration: felt):
 	# Duration should be in hours
 end
 
+
+# PROPOSALS' HISTORY
+# ------------------
+@storage_var
+func proposalsLength() -> (length: felt):
+end
+
+@storage_var
+func proposals(id: felt) -> (proposal: Proposal):
+end
+
+@storage_var
+func proposalsVotes(proposalId: felt, memberAddress: felt) -> (vote: felt):
+end
 
 # MEMBERS MAPPINGS
 # ----------------
@@ -141,55 +153,61 @@ end
 
 # PROPOSALS
 # ---------
-
-# Governor
 @external
 func submitOrder() -> ():
+	# requires governor
 	return ()
 end
 
-# Governor
 @external
-func submitGuildKick() -> ():
+func submitGuildKick(memberAddress: felt) -> ():
+	# requires governor
 	return ()
 end
 
-# Manager
 @external
-func submitOnboard() -> ():
+func submitOnboard(memberAddress: felt, shares: felt, loot: felt) -> ():
+	# Requires Admin
 	return ()
 end
 
-# Manager
 @external
-func submitApproveToken() -> ():
-	return ()
+func submitApproveToken(tokenAddress: felt) -> (success: felt):
+    # Requires Admin
+	return (1)
 end
 
-# Manager
 @external
-func submitRemoveToken() -> ():
-	return ()
+func submitRemoveToken(tokenAddress: felt) -> (success: felt):
+    # Requires Admin
+	return (1)
 end
 
 
 # VOTING
 # ------
 @external
-func submitVote() -> ():
-	return ()
+func submitVote(id: Proposal, vote: felt) -> (success: felt):
+	return (1)
 end
 
 @external
-func submitVoteWithSig() -> ():
-	return ()
+func submitVoteWithSig(id: Proposal, vote: felt, signature: felt) -> (success: felt):
+	return (1)
 end
 
-func votesCounting() -> ():
-	return ()
+func applyAcceptanceRules(id: Proposal) -> (accepted: felt):
+	# Apply voting rules to determine if proposal is accepted or rejected
+	# Requires voting and grace period have ended
+	# Modify Proposal status which is used by the front
+	return (1)
 end
 
-func processProposal() -> ():
+# TODO later
+func executeProposal() -> ():
+	# Requires proposal to be accepted
+	# Executes the proposal's actions if preconditions are satisfied
+	# Modify Proposal status which is used by the front
 	return ()
 end
 

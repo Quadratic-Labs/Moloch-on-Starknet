@@ -8,7 +8,7 @@ Voting follows a procedure in several steps to allow for maximum security. Note 
   1. Grace Period: following the voting period, members are given the grace period to ragequit the DAO if they wish. This is a major safety net for members against majority dictatorship.
   1. Processing: votes are counted and if the proposal is accepted, the related actions needed to fulfill the proposal are processed.
 
-# Proposal States
+## Proposal States
 
   1. submitted: The proposal is submitted and open to voting.
   1. voted: The proposal is in the grace period.
