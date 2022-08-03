@@ -1,10 +1,12 @@
 import os
+from pathlib import Path
 import pytest
 
 from starkware.starknet.testing.starknet import Starknet
 
 # The path to the contract source code.
-CONTRACT_FILE = os.path.join("contracts", "core.cairo")
+CONTRACTS_DIR = Path().parent.joinpath("contracts").absolute()
+CONTRACT_FILE = os.path.join(CONTRACTS_DIR, "main.cairo")
 
 
 @pytest.fixture
@@ -19,4 +21,5 @@ async def contract(starknet):
     # Deploy the contract.
     return await starknet.deploy(
         source=CONTRACT_FILE,
+        cairo_path=[CONTRACTS_DIR],
     )
