@@ -19,6 +19,6 @@ async def starknet():
 async def contract(starknet):
     # Deploy the contract.
     return await starknet.deploy(
-        source=CONTRACT_FILE,
+        source=str(CONTRACT_FILE),
         cairo_path=[CONTRACTS_DIR],
     )

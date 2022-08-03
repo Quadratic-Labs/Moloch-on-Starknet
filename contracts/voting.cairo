@@ -10,7 +10,7 @@ namespace Voting:
             pedersen_ptr : HashBuiltin*,
             range_check_ptr,
     }(proposalId: felt, vote: felt) -> (success: felt):
-        return (1)
+        return (0)
     end
     
     @external
@@ -19,6 +19,6 @@ namespace Voting:
             pedersen_ptr : HashBuiltin*,
             range_check_ptr,
     }(proposalId: felt, vote: felt, signature: felt) -> (success: felt):
-        return (1)
+        return (0)
     end
 end
