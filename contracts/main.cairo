@@ -12,3 +12,9 @@ from ragequit import ragequit
 from roles import Roles
 from rules import Rules
 from voting import Voting
+
+
+@constructor
+func constructor():
+    return ()
+end

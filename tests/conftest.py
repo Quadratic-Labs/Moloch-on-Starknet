@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 import pytest
 
@@ -6,7 +5,7 @@ from starkware.starknet.testing.starknet import Starknet
 
 # The path to the contract source code.
 CONTRACTS_DIR = Path().parent.joinpath("contracts").absolute()
-CONTRACT_FILE = os.path.join(CONTRACTS_DIR, "main.cairo")
+CONTRACT_FILE = CONTRACTS_DIR / "main.cairo"
 
 
 @pytest.fixture
