@@ -2,7 +2,7 @@
 .temp/
 
 # Cairo - Starknet
-artefacts/
+artifacts/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
