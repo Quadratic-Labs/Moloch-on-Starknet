@@ -33,6 +33,7 @@ namespace Proposal:
         member votingDuration: felt
         member graceDuration: felt
     end
+
 end
 
 

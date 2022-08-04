@@ -10,7 +10,7 @@ func submitApproveToken{
         range_check_ptr,
 }(tokenAddress: felt) -> (success: felt):
     # Requires Admin
-    return (1)
+    return (0)
 end
 
 @external
@@ -20,5 +20,5 @@ func submitRemoveToken{
         range_check_ptr,
 }(tokenAddress: felt) -> (success: felt):
     # Requires Admin
-    return (1)
+    return (0)
 end

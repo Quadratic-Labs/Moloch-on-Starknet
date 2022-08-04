@@ -33,8 +33,13 @@ end
 
 # Roles assigned to members
 @storage_var
+func mebmersRolesSize() -> (size: felt):
+end
+
+@storage_var
 func membersRoles(address: felt, role: felt) -> (has_role: felt):
 end
+
 
 namespace Roles:
     func require_role{
