@@ -33,15 +33,40 @@ end
 
 # Roles assigned to members
 @storage_var
-func mebmersRolesSize() -> (size: felt):
-end
-
-@storage_var
-func membersRoles(address: felt, role: felt) -> (has_role: felt):
+func membersRoles(user: felt, role: felt) -> (has_role: felt):
 end
 
 
 namespace Roles:
+    const rolesLength = 2
+
+    func roles(idx: felt) -> (role: felt):
+        tempvar list: felt* = new ('admin', 'govern')
+        let (x) = list[idx]
+        return (x)
+    end
+
+    # Getters and setters
+    func has_role{
+            syscall_ptr : felt*,
+            pedersen_ptr : HashBuiltin*,
+            range_check_ptr
+    }(user: felt, role: felt) -> (has_role: felt):
+        let (authorized: felt) = membersRoles.read(user, role)
+        return (authorized)
+    end
+
+    func modify_role{
+            syscall_ptr : felt*,
+            pedersen_ptr : HashBuiltin*,
+            range_check_ptr
+    }(user: felt, role: felt, perm: felt):
+        let (authorized: felt) = has_role(user, role)
+        if authorized != perm:
+            membersRoles.write(user, role, perm)
+        end
+    end
+
     func require_role{
             syscall_ptr : felt*,
             pedersen_ptr : HashBuiltin*,
@@ -56,15 +81,6 @@ namespace Roles:
         return ()
     end
     
-    func has_role{
-            syscall_ptr : felt*,
-            pedersen_ptr : HashBuiltin*,
-            range_check_ptr
-    }(role: felt, user: felt) -> (has_role: felt):
-        let (authorized: felt) = membersRoles.read(user, role)
-        return (authorized)
-    end
-    
     @external
     func grant_role{
             syscall_ptr : felt*,
@@ -73,7 +89,7 @@ namespace Roles:
     }(role: felt, user: felt):
         let (admin: felt) = adminRoles.read(role)
         require_role(admin)
-        let (user_has_role: felt) = has_role(role, user)
+        let (user_has_role: felt) = has_role(user, role)
         if user_has_role == FALSE:
             let (caller: felt) = get_caller_address()
             membersRoles.write(role, user, TRUE)

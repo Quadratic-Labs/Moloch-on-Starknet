@@ -27,5 +27,7 @@ func constructor{
     proposalParams.write('ApproveToken', params)
     proposalParams.write('RemoveToken', params)
     proposalParams.write('Order', params)
+    # Add deployer as a member
+    # Grant deployer admin privileges
     return ()
 end

@@ -41,14 +41,15 @@ end
 func proposalParams(proposalKind: felt) -> (params: Proposal.Params):
 end
 
+# List of proposals
+@storage_var
+func proposalsLength() -> (length: felt):
+end
 
 @storage_var
 func proposals(id: felt) -> (proposal: Proposal.Info):
 end
-
-@storage_var
-func proposalsLength() -> (length: felt):
-end
+# End list of proposals
 
 @storage_var
 func proposalsVotes(proposalId: felt, memberAddress: felt) -> (vote: felt):
