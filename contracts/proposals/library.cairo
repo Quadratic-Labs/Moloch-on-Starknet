@@ -1,5 +1,7 @@
 %lang starknet
 
+from starkware.cairo.common.cairo_builtins import HashBuiltin
+from starkware.cairo.common.math import assert_nn, assert_lt
 
 namespace Proposal:
     const SUBMITTED = 1
@@ -34,6 +36,82 @@ namespace Proposal:
         member graceDuration: felt
     end
 
+    func get_params{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }(kind: felt) -> (params: Params):
+        let (params: Params) = proposalParams.read(kind)
+        return (params)
+    end
+
+    func set_params{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }(kind: felt, params: Params) -> ():
+        proposalParams.write(kind, params)
+        return ()
+    end
+
+    func assert_within_bounds{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }(id: felt) -> ():
+        let (len: felt) = proposalsLength.read()
+        with_attr error_message("Proposal {id} does not exist"):
+            assert_nn(id)
+            assert_lt(id, len)
+        end
+    end
+
+    func get_info{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }(id: felt) -> (proposal: Info):
+        assert_within_bounds(id)
+        let (proposal: Info) = proposals.read(id)
+        return (proposal)
+    end
+
+    func append_info{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }(info: Info) -> ():
+        let (len: felt) = proposalsLength.read()
+        proposals.write(len, info)
+        proposalsLength.write(len+1)
+        return ()
+    end
+
+    func get_vote{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }(id: felt, address: felt) -> (vote: felt):
+        assert_within_bounds(id)
+        let (vote: felt) = proposalsVotes.read(id, address)
+        return (vote)
+    end
+
+    func set_vote{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }(id: felt, address: felt, vote: felt) -> ():
+        assert_within_bounds(id)
+        if vote == 0:
+            proposalsVotes.write(id, address, 0)
+            return ()
+        else:
+            proposalsVotes.write(id, address, 1)
+            return ()
+        end
+        return ()
+    end
 end
 
 

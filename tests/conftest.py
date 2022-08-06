@@ -56,7 +56,7 @@ async def starknet():
     starknet_devnet.server.set_start_time(args)
     starknet_devnet.server.set_gas_price(args)
     yield await starknet_devnet.state.state.starknet_wrapper._StarknetWrapper__get_starknet()
-    starknet_devnet.state = starknet_devnet.state.State()
+    starknet_devnet.state.state = starknet_devnet.state.State()
 
 
 @pytest.fixture
