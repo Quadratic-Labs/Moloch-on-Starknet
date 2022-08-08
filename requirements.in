@@ -1,3 +1,4 @@
 starknet.py
+starknet-devnet
 pytest
 pytest-asyncio
