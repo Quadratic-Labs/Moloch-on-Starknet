@@ -16,21 +16,38 @@ namespace Member:
         member lastProposalYesVote: felt  # may be needed, we will see
     end
 
+
+    # TODO remove external in the future
+    @external
     func is_member{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr,
-    }(address: felt) -> ():
-        # Modify using recursion so it compiles
-        # for (i in range(membersLength.read()):
-        #     if membersAddresses.read(i) == address:
-        #         return (TRUE)
-        #     end
-        # end
-        if membersAddresses.read(0) == address:
-            return (TRUE)
+    }(address: felt) -> (success : felt):
+        let current_number = 0
+        let (length) = membersLength.read()
+        return contains(address, current_number, length)
+    end
+
+    func contains{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }(value : felt, current_number : felt, length : felt) -> (success : felt):
+        alloc_locals
+        if length == 0:
+            return (FALSE)
         end
-        return (FALSE)
+
+        if length == current_number :
+            return (FALSE)
+        end
+        let  (current_adress) = membersAddresses.read(current_number)
+        if  current_adress == value :
+            return (TRUE)
+        end 
+        let (local res) = contains(value, current_number + 1, length)
+        return (res)
     end
 
     func assert_is_member{
@@ -76,16 +93,19 @@ namespace Member:
         return (user)
     end
 
+    # TODO remove external in the future
+    @external
     func add{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr,
     }(info: Info) -> ():
+        alloc_locals
         let (is_in: felt) = is_member(info.address)
-        with_attr error_message("Cannot add {address}: already in DAO"):
+        with_attr error_message("Cannot add {info.address}: already in DAO"):
             assert is_in = FALSE
         end
-        let (len: felt) = membersLength.read()
+        let (local len: felt) = membersLength.read()
         membersInfo.write(info.address, info)
         membersAddresses.write(len, info.address)
         membersLength.write(len+1)
@@ -118,6 +138,16 @@ namespace Member:
     end
 
     # Implementer les getter, setter, contains, blah blah de members
+
+    # @view
+    # func get_membersLength() -> (length: felt):
+    #     let length = membersLength.read()
+    #     return (length)
+    # end
+
+    # fun set_membersLength(length: felt)
+
+
 end
 
 
