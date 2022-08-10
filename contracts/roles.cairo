@@ -130,6 +130,15 @@ namespace Roles:
         end
         return ()
     end
+    
+    func add_role{
+            syscall_ptr : felt*,
+            pedersen_ptr : HashBuiltin*,
+            range_check_ptr
+    }(user: felt, role: felt):
+        membersRoles.write(user, role, TRUE)
+        return ()
+    end
 
     @external
     func delegate_admin_role{
