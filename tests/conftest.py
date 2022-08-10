@@ -1,11 +1,15 @@
+import os
 from pathlib import Path
 import pytest
 import sys
 import typing
+import shutil
 
 # from starkware.starknet.testing.starknet import Starknet
 import starknet_devnet.state
 import starknet_devnet.server
+
+from .externalize_cairo import externalize_dir
 
 
 # L'init fait l'équivalent de run la commande
@@ -39,8 +43,19 @@ import starknet_devnet.server
 #
 
 # The path to the contract source code.
-CONTRACTS_DIR = Path().parent.joinpath("contracts").absolute()
-CONTRACT_FILE = CONTRACTS_DIR / "main.cairo"
+
+
+@pytest.fixture(scope="session")
+def test_contracts():
+    test_contract_dir = Path(__file__).parent.joinpath("contracts").absolute()
+    test_contract_file = test_contract_dir / "main.cairo"
+
+    source_contracts_dir = Path(__file__).parent.parent.joinpath("contracts").absolute()
+
+    # Decorate internal functions with @external to be able to test them
+    externalize_dir(str(source_contracts_dir), str(test_contract_dir))
+    yield test_contract_dir, test_contract_file
+    shutil.rmtree(test_contract_dir, ignore_errors=True)
 
 
 @pytest.fixture
@@ -62,10 +77,11 @@ async def starknet():
 
 
 @pytest.fixture
-async def contract(starknet):
+async def contract(starknet, test_contracts):
     # Deploy the contract.
+    test_contract_dir, test_contract_file = test_contracts
     return await starknet.deploy(
-        source=str(CONTRACT_FILE),
-        cairo_path=[CONTRACTS_DIR],
+        source=str(test_contract_file),
+        cairo_path=[test_contract_dir],
         constructor_calldata=[50, 60, 10, 10],
     )
