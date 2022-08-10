@@ -2,9 +2,6 @@
 This module contains functions to do that for lines of code, files and directories
 It could also be called as a script
 """
-
-from mailbox import ExternalClashError
-from multiprocessing.sharedctypes import Value
 import os
 from pathlib import Path
 import sys
