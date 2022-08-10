@@ -12,7 +12,7 @@ namespace Rules:
             pedersen_ptr : HashBuiltin*,
             range_check_ptr,
     }(proposalId: felt) -> (accepted: felt):
-        let (accepted: felt) = FALSE
+        let accepted: felt = FALSE
         return (accepted)
     end
 

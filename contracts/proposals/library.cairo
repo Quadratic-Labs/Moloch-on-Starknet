@@ -64,6 +64,7 @@ namespace Proposal:
             assert_nn(id)
             assert_lt(id, len)
         end
+        return ()
     end
 
     func get_info{
@@ -81,7 +82,8 @@ namespace Proposal:
         pedersen_ptr : HashBuiltin*,
         range_check_ptr,
     }(info: Info) -> ():
-        let (len: felt) = proposalsLength.read()
+        alloc_locals
+        let (local len: felt) = proposalsLength.read()
         proposals.write(len, info)
         proposalsLength.write(len+1)
         return ()
@@ -105,10 +107,8 @@ namespace Proposal:
         assert_within_bounds(id)
         if vote == 0:
             proposalsVotes.write(id, address, 0)
-            return ()
         else:
             proposalsVotes.write(id, address, 1)
-            return ()
         end
         return ()
     end

@@ -6,8 +6,8 @@ from starkware.cairo.common.math import assert_nn, assert_lt
 
 
 namespace Member:
-    # No pointers in Info please
-    struct Info:
+    # No pointers in InfoMember please
+    struct InfoMember:
         member address: felt
         member accountKey: felt  # aka deleguatedKey
         member shares: felt
@@ -45,7 +45,7 @@ namespace Member:
         let  (current_adress) = membersAddresses.read(current_number)
         if  current_adress == value :
             return (TRUE)
-        end 
+        end
         let (local res) = contains(value, current_number + 1, length)
         return (res)
     end
@@ -56,12 +56,13 @@ namespace Member:
         range_check_ptr,
     }(address: felt) -> ():
         with_attr error_message("Address {address} is not a member"):
-            assert is_member(address) = TRUE
+            let (res) = is_member(address)
+            assert res = TRUE
         end
         return ()
     end
 
-    func assert_within_bounds{
+    func assert_within_bounds_members{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr,
@@ -71,6 +72,8 @@ namespace Member:
             assert_nn(id)
             assert_lt(id, len)
         end
+
+        return ()
     end
 
     func get_address{
@@ -78,18 +81,18 @@ namespace Member:
         pedersen_ptr : HashBuiltin*,
         range_check_ptr,
     }(id: felt) -> (address: felt):
-        assert_within_bounds(id)
+        assert_within_bounds_members(id)
         let (address: felt) = membersAddresses.read(id)
         return (address)
     end
 
-    func get_info{
+    func get_info_members{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr,
-    }(address: felt) -> (member_: Info):
+    }(address: felt) -> (member_: InfoMember):
         assert_is_member(address)
-        let (user: Info) = membersInfo.read(address)
+        let (user: InfoMember) = membersInfo.read(address)
         return (user)
     end
 
@@ -99,7 +102,7 @@ namespace Member:
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr,
-    }(info: Info) -> ():
+    }(info: InfoMember) -> ():
         alloc_locals
         let (is_in: felt) = is_member(info.address)
         with_attr error_message("Cannot add {info.address}: already in DAO"):
@@ -117,6 +120,7 @@ namespace Member:
         pedersen_ptr : HashBuiltin*,
         range_check_ptr,
     }(address: felt) -> (res: felt):
+        return (0)
     end
 
     func assert_not_jailed{
@@ -125,7 +129,8 @@ namespace Member:
         range_check_ptr,
     }(address: felt) -> ():
         with_attr error_message("Member {address} has been jailed"):
-            assert is_jailed = FALSE
+            let (res) = is_jailed(address)
+            assert res = FALSE
         end
         return ()
     end
@@ -135,6 +140,7 @@ namespace Member:
         pedersen_ptr : HashBuiltin*,
         range_check_ptr,
     }(address: felt) -> ():
+        return ()
     end
 
     # Implementer les getter, setter, contains, blah blah de members
@@ -160,5 +166,5 @@ func membersAddresses(index: felt) -> (address: felt):
 end
 
 @storage_var
-func membersInfo(address: felt) -> (member_: Member.Info):
+func membersInfo(address: felt) -> (member_: Member.InfoMember):
 end
