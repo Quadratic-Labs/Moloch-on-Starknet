@@ -77,7 +77,7 @@ namespace Proposal:
         return (proposal)
     end
 
-    func append_info{
+    func add_proposal{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr,

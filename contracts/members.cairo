@@ -98,7 +98,7 @@ namespace Member:
 
     # TODO remove external in the future
     @external
-    func add{
+    func add_member{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr,
