@@ -5,7 +5,8 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from actions import Actions
 from members import Member
 from proposals.library import Proposal, proposalParams, proposals
-from proposals.membership import submitOnboard, submitGuildKick
+from proposals.onboard import submitOnboard
+from proposals.guildkick import submitGuildKick
 from proposals.order import submitOrder
 from proposals.tokens import submitApproveToken, submitRemoveToken
 from ragequit import ragequit
@@ -27,5 +28,7 @@ func constructor{
     proposalParams.write('ApproveToken', params)
     proposalParams.write('RemoveToken', params)
     proposalParams.write('Order', params)
+    # Add deployer as a member
+    # Grant deployer admin privileges
     return ()
 end

@@ -136,3 +136,5 @@ dmypy.json
 
 # vscode project settings
 .vscode/
+
+tests/contracts

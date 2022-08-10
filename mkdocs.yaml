@@ -15,7 +15,7 @@ copyright: Proprietary of Quadratic-Labs. All rights reserved.
 # Configuration
 theme:
     name: material
-    logo: assets/logo.png
+    logo: assets/quadratic-DAO.png
 markdown_extensions:
   - admonition:
   - codehilite:
