@@ -1,8 +1,6 @@
-import os
 from pathlib import Path
 import pytest
 import sys
-import typing
 import shutil
 
 # from starkware.starknet.testing.starknet import Starknet
@@ -10,6 +8,7 @@ import starknet_devnet.state
 import starknet_devnet.server
 
 from .externalize_cairo import externalize_dir
+from .contracts import populate_generic_contract
 
 
 # L'init fait l'équivalent de run la commande
@@ -77,7 +76,7 @@ async def starknet():
 
 
 @pytest.fixture
-async def contract(starknet, test_contracts):
+async def empty_contract(starknet, test_contracts):
     # Deploy the contract.
     test_contract_dir, test_contract_file = test_contracts
     return await starknet.deploy(
@@ -85,3 +84,23 @@ async def contract(starknet, test_contracts):
         cairo_path=[test_contract_dir],
         constructor_calldata=[50, 60, 10, 10],
     )
+
+
+@pytest.fixture
+async def contract(starknet, test_contracts):
+    test_contract_dir, test_contract_file = test_contracts
+
+    majority = 10
+    quorom = 10
+    grace_period = 10
+    voting_duration = 10
+
+    contract = await starknet.deploy(
+        source=str(test_contract_file),
+        cairo_path=[test_contract_dir],
+        constructor_calldata=[majority, quorom, grace_period, voting_duration],
+    )
+
+    contract = populate_generic_contract(contract)
+
+    return contract
