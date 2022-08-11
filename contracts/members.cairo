@@ -17,8 +17,6 @@ namespace Member:
     end
 
 
-    # TODO remove external in the future
-    @external
     func is_member{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
@@ -96,8 +94,6 @@ namespace Member:
         return (user)
     end
 
-    # TODO remove external in the future
-    @external
     func add_member{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,

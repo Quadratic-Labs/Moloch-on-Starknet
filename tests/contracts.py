@@ -51,7 +51,7 @@ MEMBERS: list[Member] = [
     ),
     Member(
         address=2,
-        accountKey=1,
+        accountKey=2,
         shares=5,
         loot=5,
         jailed=0,
@@ -59,7 +59,7 @@ MEMBERS: list[Member] = [
     ),
     Member(
         address=3,
-        accountKey=1,
+        accountKey=3,
         shares=10,
         loot=5,
         jailed=0,
@@ -67,7 +67,7 @@ MEMBERS: list[Member] = [
     ),
     Member(
         address=4,
-        accountKey=1,
+        accountKey=4,
         shares=50,
         loot=0,
         jailed=1,
@@ -75,7 +75,7 @@ MEMBERS: list[Member] = [
     ),
     Member(
         address=5,
-        accountKey=1,
+        accountKey=5,
         shares=5,
         loot=5,
         jailed=0,
@@ -95,36 +95,66 @@ MEMBER_ROLES = {
 }
 
 PROPOSALS: list[Proposal] = [
-    Proposal(
+    Proposal( # Submitted and vote + grace open
         id=1,
         type=1,
         submittedBy=1,
         submittedAt=1,
-        votingEndsAt=1,
-        graceEndsAt=1,
+        votingEndsAt=1664575200, #Oct 01 2022 00:00:00
+        graceEndsAt=1661983200, #Sep 01 2022 00:00:00
         expiresAt=1,
-        quorum=1,
-        majority=1,
-        yesVotes=1,
-        noVotes=1,
-        status=1,
+        quorum=3,
+        majority=3,
+        yesVotes=0,
+        noVotes=0,
+        status=1, # SUBMITTED
         description=1,
     ),
-    Proposal(
+    Proposal(# ACCEPTED and vote closed
         id=2,
+        type=1,
+        submittedBy=3,
+        submittedAt=1,
+        votingEndsAt=1659304800, #Aug 01 2022 00:00:00
+        graceEndsAt=1656626400,  #Jul 01 2022 00:00:00
+        expiresAt=1,
+        quorum=2,
+        majority=3,
+        yesVotes=3,
+        noVotes=2,
+        status=2, #ACCEPTED
+        description=1,
+    ),    
+    Proposal(# Rejected and vote closed
+        id=3,
         type=1,
         submittedBy=1,
         submittedAt=1,
-        votingEndsAt=1,
-        graceEndsAt=1,
+        votingEndsAt=1659304800, #Aug 01 2022 00:00:00
+        graceEndsAt=1656626400,  #Jul 01 2022 00:00:00
         expiresAt=1,
-        quorum=1,
-        majority=1,
-        yesVotes=1,
-        noVotes=1,
-        status=1,
+        quorum=3,
+        majority=3,
+        yesVotes=2,
+        noVotes=3,
+        status=3, #REJECTED
         description=1,
     ),
+    Proposal( # Submitted and vote open + grace closed
+        id=4,
+        type=1,
+        submittedBy=3,
+        submittedAt=1,
+        votingEndsAt=1664575200, #Oct 01 2022 00:00:00
+        graceEndsAt=1659304800, #Aug 01 2022 00:00:00
+        expiresAt=1,
+        quorum=3,
+        majority=3,
+        yesVotes=0,
+        noVotes=0,
+        status=1, # SUBMITTED
+        description=1,
+    ),    
 ]
 
 

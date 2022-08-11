@@ -13,6 +13,7 @@ namespace Proposal:
     const FAILED = 6  # Execution failed
 
     struct Info:
+        #TODO define the meaning of each element
         member id: felt
         member type: felt
         member submittedBy: felt
@@ -112,7 +113,10 @@ namespace Proposal:
         end
         return ()
     end
+
 end
+
+
 
 
 @storage_var
