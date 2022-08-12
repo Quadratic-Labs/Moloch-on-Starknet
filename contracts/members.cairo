@@ -141,13 +141,15 @@ namespace Member:
 
     # Implementer les getter, setter, contains, blah blah de members
 
-    # @view
-    # func get_membersLength() -> (length: felt):
-    #     let length = membersLength.read()
-    #     return (length)
-    # end
+    func get_membersLength{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }() -> (length: felt):
+        let (length) = membersLength.read()
+        return (length)
+    end
 
-    # fun set_membersLength(length: felt)
 
 
 end
