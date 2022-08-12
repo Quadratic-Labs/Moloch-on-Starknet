@@ -26,6 +26,7 @@ async def test_not_admin(contract):
         shares=10,
         loot=10,
     )
+
     with pytest.raises(Exception):
         await contract.submitOnboard(address=member.address, accountKey=member.accountKey, shares=member.shares, loot=member.loot).invoke(caller_address=caller_address)
 
