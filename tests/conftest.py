@@ -158,16 +158,7 @@ MEMBERS: list[Member] = [
     ),
 ]
 
-govern = 1
-admin = 0
 
-MEMBER_ROLES = {
-    1: [admin],
-    2: [admin, govern],
-    3: [govern],
-    4: [govern],
-    5: [],
-}
 
 PROPOSALS: list[Proposal] = [
     Proposal( # Submitted and vote + grace open
@@ -246,7 +237,16 @@ async def contract(starknet, test_contracts):
         cairo_path=[test_contract_dir],
         constructor_calldata=[majority, quorom, grace_period, voting_duration],
     )
+    govern = (await contract.roles(1).invoke()).result.role
+    admin = (await contract.roles(0).invoke()).result.role
 
+    MEMBER_ROLES = {
+        1: [admin],
+        2: [admin, govern],
+        3: [govern],
+        4: [govern],
+        5: [],
+}
     for member in MEMBERS:
         await contract.add_member(astuple(member)).invoke()
         for role in MEMBER_ROLES[member.address]:
