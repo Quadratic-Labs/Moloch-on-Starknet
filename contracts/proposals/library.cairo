@@ -90,6 +90,16 @@ namespace Proposal:
         return ()
     end
 
+
+    func get_proposals_length{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }() -> (length : felt):
+        let (length: felt) = proposalsLength.read()
+        return (length)
+    end
+
     func get_vote{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
