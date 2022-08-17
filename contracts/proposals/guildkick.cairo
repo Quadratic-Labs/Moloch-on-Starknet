@@ -17,7 +17,7 @@ func submitGuildKick{
     let (local caller) = get_caller_address()
     # assert the caller is member
     Member.assert_is_member(caller)
-    # assert the caller is admin
+    # assert the caller is govern
     Roles.require_role('govern')
     # assert the submitted user is not a memeber
     Member.assert_is_member(memberAddress)
