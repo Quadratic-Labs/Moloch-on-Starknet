@@ -88,7 +88,7 @@ namespace Roles:
     }(role: felt):
         alloc_locals
         let (caller) = get_caller_address()
-        let (authorized) = has_role(role, caller)
+        let (authorized) = has_role(caller, role)
         with_attr error_message("AccessControl: caller is missing role {role}"):
             assert authorized = TRUE
         end
