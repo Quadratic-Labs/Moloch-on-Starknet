@@ -42,8 +42,8 @@ namespace Member:
         if length == current_number :
             return (FALSE)
         end
-        let  (current_adress) = membersAddresses.read(current_number)
-        if  current_adress == value :
+        let  (current_address) = membersAddresses.read(current_number)
+        if  current_address == value :
             return (TRUE)
         end
         let (local res) = contains(value, current_number + 1, length)
