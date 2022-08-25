@@ -244,7 +244,7 @@ PROPOSALS: list[Proposal] = [
         quorum=4,
         majority=1,
         yesVotes=2,
-        noVotes=5,
+        noVotes=1,
         status=1,  # SUBMITTED
         description=1,
     ),

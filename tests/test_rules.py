@@ -60,7 +60,7 @@ async def test_did_not_reach_quorum(contract):
 async def test_apply(contract):
     # given votes has both majority and quorum, when invoking should_accept or apply, should return True
     caller_address = 42  # admin
-    proposalId = 6  # Submitted and reached quorom and majority
+    proposalId = 7  # Submitted and reached quorom and majority
     return_value = await contract.apply(proposalId=proposalId).invoke(
         caller_address=caller_address
     )
