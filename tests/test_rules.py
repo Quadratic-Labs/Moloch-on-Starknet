@@ -27,7 +27,7 @@ async def test_non_existing_proposal(contract):
 async def test_grace_period_not_ended(contract):
     # given proposal has not ended grace period, when invoking apply, should fail
     caller_address = 42
-    proposalId = 1  # proposal with grace period not ended ends on Sep 01 2022 00:00:00
+    proposalId = 0  # proposal with grace period not ended ends on Sep 01 2022 00:00:00
     with pytest.raises(Exception):
         await contract.apply(proposalId=proposalId).invoke(
             caller_address=caller_address
@@ -38,7 +38,7 @@ async def test_grace_period_not_ended(contract):
 async def test_did_not_reach_majority(contract):
     # given votes has not reached majority, when invoking should_accept or apply, should return False
     caller_address = 42  # admin
-    proposalId = 5  # Submitted and didn't reach majority
+    proposalId = 4  # Submitted and didn't reach majority
     return_value = await contract.apply(proposalId=proposalId).invoke(
         caller_address=caller_address
     )
@@ -49,7 +49,7 @@ async def test_did_not_reach_majority(contract):
 async def test_did_not_reach_quorum(contract):
     # given votes has not reached quorum, when invoking should_accept or apply, should return False
     caller_address = 42  # admin
-    proposalId = 6  # Submitted and didn't reach quorom
+    proposalId = 5  # Submitted and didn't reach quorom
     return_value = await contract.apply(proposalId=proposalId).invoke(
         caller_address=caller_address
     )
@@ -60,7 +60,7 @@ async def test_did_not_reach_quorum(contract):
 async def test_apply(contract):
     # given votes has both majority and quorum, when invoking should_accept or apply, should return True
     caller_address = 42  # admin
-    proposalId = 7  # Submitted and reached quorom and majority
+    proposalId = 6  # Submitted and reached quorom and majority
     return_value = await contract.apply(proposalId=proposalId).invoke(
         caller_address=caller_address
     )

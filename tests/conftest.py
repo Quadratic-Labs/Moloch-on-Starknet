@@ -159,7 +159,7 @@ MEMBERS: list[Member] = [
 
 PROPOSALS: list[Proposal] = [
     Proposal(  # Submitted and vote + grace open
-        id=1,
+        id=0,
         type=1,
         submittedBy=1,
         submittedAt=1,
@@ -174,7 +174,7 @@ PROPOSALS: list[Proposal] = [
         description=1,
     ),
     Proposal(  # ACCEPTED and vote closed
-        id=2,
+        id=1,
         type=1,
         submittedBy=3,
         submittedAt=1,
@@ -189,7 +189,7 @@ PROPOSALS: list[Proposal] = [
         description=1,
     ),
     Proposal(  # Rejected and vote closed
-        id=3,
+        id=2,
         type=1,
         submittedBy=1,
         submittedAt=1,
@@ -204,7 +204,7 @@ PROPOSALS: list[Proposal] = [
         description=1,
     ),
     Proposal(  # Submitted and vote open + grace closed
-        id=4,
+        id=3,
         type=1,
         submittedBy=3,
         submittedAt=1,
@@ -219,7 +219,7 @@ PROPOSALS: list[Proposal] = [
         description=1,
     ),
     Proposal(  # Submitted and didn't reach majority
-        id=5,
+        id=4,
         type=1,
         submittedBy=3,
         submittedAt=1,
@@ -234,7 +234,7 @@ PROPOSALS: list[Proposal] = [
         description=1,
     ),
     Proposal(  # Submitted and didn't reach quorom
-        id=6,
+        id=5,
         type=1,
         submittedBy=3,
         submittedAt=1,
@@ -249,7 +249,7 @@ PROPOSALS: list[Proposal] = [
         description=1,
     ),
     Proposal(  # Submitted and reached qurom and majority
-        id=7,
+        id=6,
         type=1,
         submittedBy=3,
         submittedAt=1,
@@ -279,6 +279,7 @@ async def contract(starknet, test_contracts):
         source=str(test_contract_file),
         cairo_path=[test_contract_dir],
         constructor_calldata=[majority, quorom, grace_period, voting_duration],
+        disable_hint_validation=True,
     )
     govern = (await contract.roles(1).invoke()).result.role
     admin = (await contract.roles(0).invoke()).result.role
