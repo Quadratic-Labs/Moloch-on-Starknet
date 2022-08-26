@@ -263,6 +263,21 @@ PROPOSALS: list[Proposal] = [
         status=1,  # SUBMITTED
         description=1,
     ),
+    Proposal(  # Submitted and reached qurom and majority
+        id=7,
+        type=1,
+        submittedBy=3,
+        submittedAt=1,
+        votingEndsAt=1659304800,  # Aug 01 2022 00:00:00
+        graceEndsAt=1656626400,  # Jul 01 2022 00:00:00
+        expiresAt=1,
+        quorum=2,
+        majority=2,
+        yesVotes=2,
+        noVotes=3,
+        status=1,  # SUBMITTED
+        description=1,
+    ),
 ]
 
 

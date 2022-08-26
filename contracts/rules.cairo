@@ -32,6 +32,7 @@ namespace Rules:
         if majority == 1:
             return (FALSE)
         end
+
         # check votes
         let (votes) = is_le(info.yesVotes,info.noVotes)
         if votes == 1:
@@ -54,17 +55,68 @@ namespace Rules:
         alloc_locals
         let (local info: Proposal.Info) = Proposal.get_info(proposalId)
         let (local caller) = get_caller_address()
+
         # assert the caller is member
-        Member.assert_is_member(caller)
+        with_attr error_message("AccessControl: user {caller} is not a member."):
+             Member.assert_is_member(caller)
+        end
+        
         local today_timestamp
         %{
             from datetime import datetime
             dt = datetime.now()
             ids.today_timestamp = int(datetime.timestamp(dt))
         %}
-        assert_lt(info.graceEndsAt,today_timestamp)
+       
+        # assert the gracePeriod ended 
+        with_attr error_message("The proposal has not ended grace period."):
+             assert_lt(info.graceEndsAt,today_timestamp)
+        end
+
+        # assert the votingEndsAt ended 
+        with_attr error_message("The proposal has not ended voring period."):
+             assert_lt(info.votingEndsAt,today_timestamp)
+        end
+
         let (accepted: felt) = should_accept(proposalId)
-        # TODO change the status of the proposal 
+        if accepted == FALSE:
+            let proposal: Proposal.Info = Proposal.Info(
+                                                    id=info.id,
+                                                    type=info.type,
+                                                    submittedBy=info.submittedBy,
+                                                    submittedAt=info.submittedAt,
+                                                    votingEndsAt=info.votingEndsAt,
+                                                    graceEndsAt=info.graceEndsAt,
+                                                    expiresAt=info.expiresAt,
+                                                    quorum=info.quorum,
+                                                    majority=info.majority,
+                                                    yesVotes=info.yesVotes,
+                                                    noVotes=info.noVotes,
+                                                    status=Proposal.REJECTED,
+                                                    description=info.description
+                                                    )
+            Proposal.update_proposal(info.id,proposal)
+            return(accepted)
+        end
+        
+        let proposal: Proposal.Info = Proposal.Info(
+                                                    id=info.id,
+                                                    type=info.type,
+                                                    submittedBy=info.submittedBy,
+                                                    submittedAt=info.submittedAt,
+                                                    votingEndsAt=info.votingEndsAt,
+                                                    graceEndsAt=info.graceEndsAt,
+                                                    expiresAt=info.expiresAt,
+                                                    quorum=info.quorum,
+                                                    majority=info.majority,
+                                                    yesVotes=info.yesVotes,
+                                                    noVotes=info.noVotes,
+                                                    status=Proposal.ACCEPTED,
+                                                    description=info.description
+                                                    )
+        Proposal.update_proposal(info.id,proposal)
+
+
         return (accepted)
     end
 end
