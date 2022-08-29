@@ -12,6 +12,9 @@ namespace Proposal:
     const EXECUTED = 5  # Execution is finalised and successful
     const FAILED = 6  # Execution failed
 
+
+
+    const NOTFOUND = -1
     struct Info:
         #TODO define the meaning of each element
         member id: felt
@@ -78,6 +81,42 @@ namespace Proposal:
         return (proposal)
     end
 
+
+    func search_position_by_id{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }(id : felt, current_position : felt, length : felt) -> (position : felt):
+        alloc_locals
+        if length == 0:
+            return (NOTFOUND)
+        end
+
+        if length == current_position :
+            return (NOTFOUND)
+        end
+        let (info) = get_info(current_position)
+        if  info.id == id :
+            return (current_position)
+        end
+        let (local res) = search_position_by_id(id, current_position + 1, length)
+        return (res)
+    end
+
+    func get_proposal_by_id{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }(id: felt) -> (proposal: Info):
+
+        let (length) = proposalsLength.read()
+        
+        let (position) = search_position_by_id(id, 0, length)
+
+        let (info : Info) = get_info(position)
+        return (info)
+    end
+    
     func add_proposal{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
