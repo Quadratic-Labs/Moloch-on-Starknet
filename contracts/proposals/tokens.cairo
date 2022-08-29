@@ -24,7 +24,7 @@ func submitApproveToken{
     # assert the caller is admin
     Roles.require_role('admin')
     # assert the token is not already whitelisted
-    Token.assert_token_whitelisted(tokenAddress)
+    Token.assert_token_not_whitelisted(tokenAddress)
 
     # record the proposal
     let (id) = Proposal.get_proposals_length()
@@ -74,7 +74,7 @@ func submitRemoveToken{
     # assert the caller is admin
     Roles.require_role('admin')
     # assert the token is whitelisted
-    Token.assert_token_not_whitelisted(tokenAddress)
+    Token.assert_token_whitelisted(tokenAddress)
     # check the token is ERC20 or ERC721.
     # TODO to complete
 
