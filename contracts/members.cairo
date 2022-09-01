@@ -60,6 +60,19 @@ namespace Member:
         return ()
     end
 
+
+    func assert_is_not_member{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }(address: felt) -> ():
+        with_attr error_message("Address {address} is not a member"):
+            let (res) = is_member(address)
+            assert res = FALSE
+        end
+        return ()
+    end
+
     func assert_within_bounds_members{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,

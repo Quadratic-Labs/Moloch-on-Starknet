@@ -100,7 +100,6 @@ namespace Proposal:
         return (length)
     end
 
-
     func get_vote{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
