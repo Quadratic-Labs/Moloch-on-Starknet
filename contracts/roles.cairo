@@ -11,11 +11,11 @@ from starkware.cairo.common.bool import TRUE, FALSE
 # ------
 
 @event
-func RoleGranted(role: felt, account: felt, sender: felt):
+func RoleGranted(account: felt, role: felt, sender: felt):
 end
 
 @event
-func RoleRevoked(role: felt, account: felt, sender: felt):
+func RoleRevoked(account: felt, role: felt, sender: felt):
 end
 
 @event
@@ -38,15 +38,24 @@ end
 
 
 namespace Roles:
-    const rolesLength = 2
-
-    func roles(idx: felt) -> (role: felt):
-        tempvar list: felt* = new ('admin', 'govern')
-        let x = list[idx]
-        return (x)
+    func _grant_role{
+            syscall_ptr : felt*,
+            pedersen_ptr : HashBuiltin*,
+            range_check_ptr
+    }(user: felt, role: felt):
+        membersRoles.write(user, role, TRUE)
+        return ()
     end
 
-    # Getters and setters
+    func _revoke_role{
+            syscall_ptr : felt*,
+            pedersen_ptr : HashBuiltin*,
+            range_check_ptr
+    }(user: felt, role: felt):
+        membersRoles.write(user, role, FALSE)
+        return ()
+    end
+
     func has_role{
             syscall_ptr : felt*,
             pedersen_ptr : HashBuiltin*,
@@ -54,31 +63,6 @@ namespace Roles:
     }(user: felt, role: felt) -> (has_role: felt):
         let (authorized: felt) = membersRoles.read(user, role)
         return (authorized)
-    end
-
-    func modify_role{
-            syscall_ptr : felt*,
-            pedersen_ptr : HashBuiltin*,
-            range_check_ptr
-    }(user: felt, role: felt, perm: felt):
-        let (authorized: felt) = has_role(user, role)
-
-        # tempvar instructions are mandatory otherwise modify_role can't be
-        # external while testing because the access to the implicit vars will be revoked
-        # For more information, visit:
-        # https://www.cairo-lang.org/docs/how_cairo_works/builtins.html#revoked-implicit-arguments
-        if authorized != perm:
-            membersRoles.write(user, role, perm)
-            tempvar syscall_ptr = syscall_ptr
-            tempvar pedersen_ptr = pedersen_ptr
-            tempvar range_check_ptr = range_check_ptr
-        else:
-            tempvar syscall_ptr = syscall_ptr
-            tempvar pedersen_ptr = pedersen_ptr
-            tempvar range_check_ptr = range_check_ptr
-        end
-
-        return ()
     end
 
     func require_role{
@@ -106,8 +90,8 @@ namespace Roles:
         let (user_has_role: felt) = has_role(user, role)
         if user_has_role == FALSE:
             let (caller: felt) = get_caller_address()
-            membersRoles.write(role, user, TRUE)
-            RoleGranted.emit(role, user, caller)
+            _grant_role(user, role)
+            RoleGranted.emit(user, role, caller)
             return ()
         end
         return ()
@@ -121,22 +105,13 @@ namespace Roles:
     }(role: felt, user: felt):
         let (admin: felt) = adminRoles.read(role)
         require_role(admin)
-        let (user_has_role: felt) = has_role(role, user)
+        let (user_has_role: felt) = has_role(user, role)
         if user_has_role == TRUE:
             let (caller: felt) = get_caller_address()
-            membersRoles.write(role, user, FALSE)
-            RoleRevoked.emit(role, user, caller)
+            _revoke_role(role, user, FALSE)
+            RoleRevoked.emit(user, role, caller)
             return ()
         end
-        return ()
-    end
-    
-    func add_role{
-            syscall_ptr : felt*,
-            pedersen_ptr : HashBuiltin*,
-            range_check_ptr
-    }(user: felt, role: felt):
-        membersRoles.write(user, role, TRUE)
         return ()
     end
 
