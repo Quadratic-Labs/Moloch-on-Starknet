@@ -11,18 +11,13 @@ func ragequit{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
         range_check_ptr,
-}(user: felt, shares: felt, loot: felt) -> (success: felt):
+}(shares: felt, loot: felt) -> (success: felt):
+    alloc_locals
+    let (local caller) = get_caller_address()
     # check if the user is a member
-    Member.assert_is_member(user)
-    let (member_: Member.InfoMember) = Member.get_info_members(user)
+    Member.assert_is_member(caller)
+    let (member_: Member.InfoMember) = Member.get_info_members(caller)
     
-    # assert the caller is the ragequitter
-    #TODO determine if we keep this part
-    let (caller) = get_caller_address()
-    with_attr error_message("Can not call a ragequit for another member"):
-            assert user = caller
-    end
-
     # assert enough shares
     with_attr error_message("Not enough shares"):
             assert_le(shares, member_.shares)
