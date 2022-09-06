@@ -3,17 +3,17 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 
-from contracts.actions import Actions
-from contracts.members import Member
-from contracts.proposals.library import Proposal, proposalParams, proposals
-from contracts.proposals.onboard import submitOnboard
-from contracts.proposals.guildkick import submitGuildKick
-from contracts.proposals.order import submitOrder
-from contracts.proposals.tokens import submitApproveToken, submitRemoveToken
-from contracts.ragequit import ragequit
-from contracts.roles import Roles, adminRoles, membersRoles
-from contracts.rules import Rules
-from contracts.voting import Voting
+from actions import Actions
+from members import Member
+from proposals.library import Proposal, proposalParams, proposals
+from proposals.onboard import submitOnboard
+from proposals.guildkick import submitGuildKick
+from proposals.order import submitOrder
+from proposals.tokens import submitApproveToken, submitRemoveToken
+from ragequit import ragequit
+from roles import Roles, adminRoles, membersRoles
+from tally import Tally
+from voting import Voting
 
 @constructor
 func constructor{
@@ -22,6 +22,7 @@ func constructor{
         range_check_ptr,
 }(majority: felt, quorum: felt, votingDuration: felt, graceDuration: felt):
     alloc_locals
+    
     local params: Proposal.Params = Proposal.Params(majority, quorum, votingDuration, graceDuration)
     proposalParams.write('Onboard', params)
     proposalParams.write('GuildKick', params)
