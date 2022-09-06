@@ -6,6 +6,7 @@ from starkware.cairo.common.math import assert_le
 from starkware.starknet.common.syscalls import get_caller_address
 from contracts.members import Member, membersInfo
 
+
 @external
 func ragequit{
         syscall_ptr : felt*,
@@ -29,14 +30,14 @@ func ragequit{
     end
 
     let member_updated: Member.InfoMember = Member.InfoMember(
-                                                                address=member_.address,
-                                                                accountKey=member_.accountKey,
-                                                                shares=member_.shares - shares,
-                                                                loot=member_.loot - loot,
-                                                                jailed=member_.jailed,
-                                                                lastProposalYesVote=member_.lastProposalYesVote
-                                                                )
+        address=member_.address,
+        delegatedKey=member_.deleguatedKey,
+        shares=member_.shares - shares,
+        loot=member_.loot - loot,
+        jailed=member_.jailed,
+        lastProposalYesVote=member_.lastProposalYesVote
+    )
     # execute the transaction
-    membersInfo.write(user,member_updated)
+    membersInfo.write(user, member_updated)
     return (TRUE)
 end
