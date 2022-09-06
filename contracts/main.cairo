@@ -3,17 +3,17 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 
-from actions import Actions
-from members import Member
-from proposals.library import Proposal, proposalParams, proposals
-from proposals.onboard import submitOnboard
-from proposals.guildkick import submitGuildKick
-from proposals.order import submitOrder
-from proposals.tokens import submitApproveToken, submitRemoveToken
-from ragequit import ragequit
-from roles import Roles, adminRoles, membersRoles
-from rules import Rules
-from voting import Voting
+from contracts.actions import Actions
+from contracts.members import Member
+from contracts.proposals.library import Proposal, proposalParams, proposals
+from contracts.proposals.onboard import submitOnboard
+from contracts.proposals.guildkick import submitGuildKick
+from contracts.proposals.order import submitOrder
+from contracts.proposals.tokens import submitApproveToken, submitRemoveToken
+from contracts.ragequit import ragequit
+from contracts.roles import Roles, adminRoles, membersRoles
+from contracts.rules import Rules
+from contracts.voting import Voting
 
 @constructor
 func constructor{

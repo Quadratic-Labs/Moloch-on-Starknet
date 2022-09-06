@@ -9,7 +9,7 @@ namespace Member:
     # No pointers in InfoMember please
     struct InfoMember:
         member address: felt
-        member accountKey: felt  # aka deleguatedKey
+        member delegatedKey: felt
         member shares: felt
         member loot: felt
         member jailed: felt
@@ -152,8 +152,6 @@ namespace Member:
         return ()
     end
 
-    # Implementer les getter, setter, contains, blah blah de members
-
     func get_membersLength{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
@@ -162,7 +160,6 @@ namespace Member:
         let (length) = membersLength.read()
         return (length)
     end
-
 
 
 end
