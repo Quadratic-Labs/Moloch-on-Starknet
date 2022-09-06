@@ -12,20 +12,14 @@ namespace Proposal:
     const EXECUTED = 5  # Execution is finalised and successful
     const FAILED = 6  # Execution failed
 
-
-
     const NOTFOUND = -1
+
     struct Info:
         #TODO define the meaning of each element
         member id: felt
         member type: felt
         member submittedBy: felt
         member submittedAt: felt
-        member votingEndsAt: felt
-        member graceEndsAt: felt
-        member expiresAt: felt
-        member quorum: felt
-        member majority: felt
         member yesVotes: felt
         member noVotes: felt
         member status: felt
@@ -93,6 +87,25 @@ namespace Proposal:
         return ()
     end
 
+    func update_status{
+        syscall_ptr : felt*,
+        pedersen_ptr : HashBuiltin*,
+        range_check_ptr,
+    }(id: felt, status: felt) -> ():
+        let (info: Info) = get_info(id)
+        let proposal: Proposal.Info = Proposal.Info(
+            id=info.id,
+            type=info.type,
+            submittedBy=info.submittedBy,
+            submittedAt=info.submittedAt,
+            yesVotes=info.yesVotes,
+            noVotes=info.noVotes,
+            status=status,
+            description=info.description
+        )
+        Proposal.update_proposal(info.id, proposal)
+        return ()
+    end
 
     func search_position_by_id{
         syscall_ptr : felt*,
@@ -126,7 +139,6 @@ namespace Proposal:
         return (info)
     end
 
-
     func update_proposal{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
@@ -142,8 +154,6 @@ namespace Proposal:
         return ()
     end
 
-
-
     func get_proposals_length{
         syscall_ptr : felt*,
         pedersen_ptr : HashBuiltin*,
@@ -152,7 +162,6 @@ namespace Proposal:
         let (length: felt) = proposalsLength.read()
         return (length)
     end
-
 
     func get_vote{
         syscall_ptr : felt*,

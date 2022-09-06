@@ -12,7 +12,7 @@ from proposals.order import submitOrder
 from proposals.tokens import submitApproveToken, submitRemoveToken
 from ragequit import ragequit
 from roles import Roles, adminRoles, membersRoles
-from rules import Rules
+from tally import Tally
 from voting import Voting
 
 @constructor
@@ -22,6 +22,7 @@ func constructor{
         range_check_ptr,
 }(majority: felt, quorum: felt, votingDuration: felt, graceDuration: felt):
     alloc_locals
+    
     local params: Proposal.Params = Proposal.Params(majority, quorum, votingDuration, graceDuration)
     proposalParams.write('Onboard', params)
     proposalParams.write('GuildKick', params)

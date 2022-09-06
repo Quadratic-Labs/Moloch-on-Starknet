@@ -102,11 +102,6 @@ class Proposal:
     type: int
     submittedBy: int
     submittedAt: int
-    votingEndsAt: int
-    graceEndsAt: int
-    expiresAt: int
-    quorum: int
-    majority: int
     yesVotes: int
     noVotes: int
     status: int
@@ -160,14 +155,9 @@ MEMBERS: list[Member] = [
 PROPOSALS: list[Proposal] = [
     Proposal(  # Submitted and vote + grace open
         id=0,
-        type=1,
+        type=22357892214649444,  # Onboard
         submittedBy=1,
         submittedAt=1,
-        votingEndsAt=1664575200,  # Oct 01 2022 00:00:00
-        graceEndsAt=1661983200,  # Sep 01 2022 00:00:00
-        expiresAt=1,
-        quorum=3,
-        majority=3,
         yesVotes=0,
         noVotes=0,
         status=1,  # SUBMITTED
@@ -175,14 +165,9 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # ACCEPTED and vote closed
         id=1,
-        type=1,
+        type=22357892214649444,  # Onboard
         submittedBy=3,
         submittedAt=1,
-        votingEndsAt=1659304800,  # Aug 01 2022 00:00:00
-        graceEndsAt=1656626400,  # Jul 01 2022 00:00:00
-        expiresAt=1,
-        quorum=2,
-        majority=3,
         yesVotes=3,
         noVotes=2,
         status=2,  # ACCEPTED
@@ -190,14 +175,9 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Rejected and vote closed
         id=2,
-        type=1,
+        type=22357892214649444,  # Onboard
         submittedBy=1,
         submittedAt=1,
-        votingEndsAt=1659304800,  # Aug 01 2022 00:00:00
-        graceEndsAt=1656626400,  # Jul 01 2022 00:00:00
-        expiresAt=1,
-        quorum=3,
-        majority=3,
         yesVotes=2,
         noVotes=3,
         status=3,  # REJECTED
@@ -205,14 +185,9 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and vote open + grace closed
         id=3,
-        type=1,
+        type=22357892214649444,  # Onboard
         submittedBy=3,
         submittedAt=1,
-        votingEndsAt=1664575200,  # Oct 01 2022 00:00:00
-        graceEndsAt=1659304800,  # Aug 01 2022 00:00:00
-        expiresAt=1,
-        quorum=3,
-        majority=3,
         yesVotes=0,
         noVotes=0,
         status=1,  # SUBMITTED
@@ -220,14 +195,9 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and didn't reach majority
         id=4,
-        type=1,
+        type=22357892214649444,  # Onboard
         submittedBy=3,
         submittedAt=1,
-        votingEndsAt=1659304800,  # Aug 01 2022 00:00:00
-        graceEndsAt=1656626400,  # Jul 01 2022 00:00:00
-        expiresAt=1,
-        quorum=2,
-        majority=3,
         yesVotes=2,
         noVotes=5,
         status=1,  # SUBMITTED
@@ -235,14 +205,9 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and didn't reach quorom
         id=5,
-        type=1,
+        type=22357892214649444,  # Onboard
         submittedBy=3,
         submittedAt=1,
-        votingEndsAt=1659304800,  # Aug 01 2022 00:00:00
-        graceEndsAt=1656626400,  # Jul 01 2022 00:00:00
-        expiresAt=1,
-        quorum=4,
-        majority=1,
         yesVotes=2,
         noVotes=1,
         status=1,  # SUBMITTED
@@ -250,50 +215,41 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and reached qurom and majority
         id=6,
-        type=1,
+        type=22357892214649444,  # Onboard
         submittedBy=3,
         submittedAt=1,
-        votingEndsAt=1659304800,  # Aug 01 2022 00:00:00
-        graceEndsAt=1656626400,  # Jul 01 2022 00:00:00
-        expiresAt=1,
-        quorum=2,
-        majority=2,
-        yesVotes=3,
-        noVotes=2,
+        yesVotes=4,
+        noVotes=3,
         status=1,  # SUBMITTED
         description=1,
     ),
     Proposal(  # Submitted and reached qurom and majority
         id=7,
-        type=1,
+        type=22357892214649444,  # Onboard
         submittedBy=3,
         submittedAt=1,
-        votingEndsAt=1659304800,  # Aug 01 2022 00:00:00
-        graceEndsAt=1656626400,  # Jul 01 2022 00:00:00
-        expiresAt=1,
-        quorum=2,
-        majority=2,
-        yesVotes=2,
-        noVotes=3,
+        yesVotes=3,
+        noVotes=4,
         status=1,  # SUBMITTED
         description=1,
     ),
 ]
 
 
+
 @pytest.fixture
 async def contract(starknet, test_contracts):
     test_contract_dir, test_contract_file = test_contracts
 
-    majority = 10
-    quorom = 10
-    grace_period = 10
+    majority = 50
+    quorum = 60
+    grace_duration = 10
     voting_duration = 10
 
     contract = await starknet.deploy(
         source=str(test_contract_file),
         cairo_path=[test_contract_dir],
-        constructor_calldata=[majority, quorom, grace_period, voting_duration],
+        constructor_calldata=[majority, quorum, grace_duration, voting_duration],
         disable_hint_validation=True,
     )
     govern = (await contract.roles(1).invoke()).result.role
