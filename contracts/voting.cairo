@@ -7,6 +7,7 @@ from starkware.cairo.common.math import  assert_lt
 from members import Member
 from proposals.library import Proposal
 
+
 namespace Voting:
     @external
     func submitVote{
@@ -31,9 +32,11 @@ namespace Voting:
             ids.today_timestamp = int(datetime.timestamp(dt))
         %}
 
+        # TODO: should rewrite VotingPeriod checks.
+        # let (params: Proposal.Params) = Proposal.get_params
         # assert the votingPeriod has not ended 
         with_attr error_message("The voting period has ended."):
-             assert_lt(today_timestamp, proposal.votingEndsAt)
+             assert_lt(today_timestamp, proposal.submittedAt)  # TODO Should rewrite
         end
 
         # Set vote
