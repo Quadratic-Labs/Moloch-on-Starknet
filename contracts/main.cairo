@@ -35,7 +35,7 @@ func constructor{
     adminRoles.write('govern','admin')
 
     # Add deployer as a member
-    local deployer: Member.InfoMember = Member.InfoMember(address = 42, accountKey = 42, shares = 50, loot = 50, jailed = 0, lastProposalYesVote = 0 )
+    local deployer: Member.InfoMember = Member.InfoMember(address = 42, delegatedKey = 42, shares = 1, loot = 50, jailed = 0, lastProposalYesVote = 0 )
     Member.add_member(deployer)
     # Grant deployer admin privileges
     membersRoles.write(deployer.address, 'admin', TRUE)

@@ -31,13 +31,13 @@ func ragequit{
 
     let member_updated: Member.InfoMember = Member.InfoMember(
         address=member_.address,
-        delegatedKey=member_.deleguatedKey,
+        delegatedKey=member_.delegatedKey,
         shares=member_.shares - shares,
         loot=member_.loot - loot,
         jailed=member_.jailed,
         lastProposalYesVote=member_.lastProposalYesVote
     )
     # execute the transaction
-    membersInfo.write(user, member_updated)
+    membersInfo.write(caller, member_updated)
     return (TRUE)
 end

@@ -236,7 +236,6 @@ PROPOSALS: list[Proposal] = [
 ]
 
 
-
 @pytest.fixture
 async def contract(starknet, test_contracts):
     test_contract_dir, test_contract_file = test_contracts
@@ -252,8 +251,8 @@ async def contract(starknet, test_contracts):
         constructor_calldata=[majority, quorum, grace_duration, voting_duration],
         disable_hint_validation=True,
     )
-    govern = (await contract.roles(1).invoke()).result.role
-    admin = (await contract.roles(0).invoke()).result.role
+    govern = 113728425390702  # govern in felt
+    admin = 418296719726  # admin in felt
 
     MEMBER_ROLES = {
         1: [admin],
@@ -265,7 +264,7 @@ async def contract(starknet, test_contracts):
     for member in MEMBERS:
         await contract.add_member(astuple(member)).invoke()
         for role in MEMBER_ROLES[member.address]:
-            await contract.add_role(member.address, role).invoke()
+            await contract.grant_role(role, member.address).invoke(caller_address=42)
 
     for proposal in PROPOSALS:
         await contract.add_proposal(astuple(proposal)).invoke()

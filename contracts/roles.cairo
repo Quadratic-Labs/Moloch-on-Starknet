@@ -108,7 +108,7 @@ namespace Roles:
         let (user_has_role: felt) = has_role(user, role)
         if user_has_role == TRUE:
             let (caller: felt) = get_caller_address()
-            _revoke_role(role, user, FALSE)
+            _revoke_role(role, user)
             RoleRevoked.emit(user, role, caller)
             return ()
         end
