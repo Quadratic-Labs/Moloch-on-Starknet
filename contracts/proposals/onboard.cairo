@@ -27,11 +27,6 @@ func submitOnboard{
     let type = 'Onboard'
     let submittedBy = caller
     let submittedAt = 0 
-    let votingEndsAt = 0 
-    let graceEndsAt = 0
-    let expiresAt = 0
-    let quorum = 0
-    let majority = 0 
     let yesVotes = 0
     let noVotes = 0
     let status = 1
