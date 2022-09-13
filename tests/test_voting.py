@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime
 
 
 @pytest.mark.asyncio
@@ -36,9 +37,23 @@ async def test_outside_voting_period(contract):
 
 @pytest.mark.asyncio
 async def test_vote(contract):
+    # create a proposal for the purpose of the tests
+
+    proposal = (
+        8,  # id
+        22357892214649444,  # type # 22357892214649444 = Onboard
+        3,  # submittedBy
+        int(datetime.timestamp(datetime.now())),  # submittedAt
+        3,  # yesVotes
+        4,  # noVotes
+        1,  # status # 1 = SUBMITTED
+        1,  # description
+    )
+    await contract.add_proposal(proposal).invoke()
+
     # voting 1 on an existing proposal should succeed
     caller_address = 42
-    proposalId = 1
+    proposalId = 8
     return_value = await contract.submitVote(proposalId=proposalId, vote=True).invoke(
         caller_address=caller_address
     )

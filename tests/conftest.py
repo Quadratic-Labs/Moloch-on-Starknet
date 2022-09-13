@@ -8,6 +8,7 @@ import starknet_devnet.state
 import starknet_devnet.server
 
 from .externalize_cairo import externalize_dir
+from .uti import to_cairo_felt
 from dataclasses import dataclass, astuple
 
 
@@ -75,7 +76,7 @@ async def starknet():
     starknet_devnet.state.state = starknet_devnet.state.State()
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 async def empty_contract(starknet, test_contracts):
     # Deploy the contract.
     test_contract_dir, test_contract_file = test_contracts
@@ -251,9 +252,8 @@ async def contract(starknet, test_contracts):
         constructor_calldata=[majority, quorum, grace_duration, voting_duration],
         disable_hint_validation=True,
     )
-    govern = 113728425390702  # govern in felt
-    admin = 418296719726  # admin in felt
-
+    govern = to_cairo_felt("govern")  # govern in felt
+    admin = to_cairo_felt("admin")  # admin in felt
     MEMBER_ROLES = {
         1: [admin],
         2: [admin, govern],

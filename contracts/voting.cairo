@@ -23,7 +23,8 @@ namespace Voting:
         end
 
         # check if the proposal exists and get its info
-        let (proposal : Proposal.Info) = Proposal.get_proposal_by_id(proposalId)
+        let (local proposal : Proposal.Info) = Proposal.get_proposal_by_id(proposalId)
+        let (local params: Proposal.Params) = Proposal.get_params(proposal.type)
 
         local today_timestamp
         %{
@@ -32,11 +33,9 @@ namespace Voting:
             ids.today_timestamp = int(datetime.timestamp(dt))
         %}
 
-        # TODO: should rewrite VotingPeriod checks.
-        # let (params: Proposal.Params) = Proposal.get_params
         # assert the votingPeriod has not ended 
         with_attr error_message("The voting period has ended."):
-             assert_lt(today_timestamp, proposal.submittedAt)  # TODO Should rewrite
+             assert_lt(today_timestamp, proposal.submittedAt + params.votingDuration)  
         end
 
         # Set vote
