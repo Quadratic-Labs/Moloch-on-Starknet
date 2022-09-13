@@ -9,7 +9,7 @@ from proposals.library import Proposal, proposalParams, proposals
 from proposals.onboard import submitOnboard
 from proposals.guildkick import submitGuildKick
 from proposals.order import submitOrder
-from proposals.tokens import submitApproveToken, submitRemoveToken
+from proposals.tokens import submitApproveToken, submitRemoveToken,Token
 from ragequit import ragequit
 from roles import Roles, adminRoles, membersRoles
 from tally import Tally
@@ -40,5 +40,7 @@ func constructor{
     # Grant deployer admin privileges
     membersRoles.write(deployer.address, 'admin', TRUE)
 
+    # add a whitelisted token
+    Token.add_token(123)
     return ()
 end

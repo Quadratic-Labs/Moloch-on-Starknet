@@ -156,7 +156,7 @@ MEMBERS: list[Member] = [
 PROPOSALS: list[Proposal] = [
     Proposal(  # Submitted and vote + grace open
         id=0,
-        type=22357892214649444,  # Onboard
+        type=to_cairo_felt("Onboard"),  # Onboard
         submittedBy=1,
         submittedAt=1,
         yesVotes=0,
@@ -166,7 +166,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # ACCEPTED and vote closed
         id=1,
-        type=22357892214649444,  # Onboard
+        type=to_cairo_felt("Onboard"),  # Onboard
         submittedBy=3,
         submittedAt=1,
         yesVotes=3,
@@ -176,7 +176,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Rejected and vote closed
         id=2,
-        type=22357892214649444,  # Onboard
+        type=to_cairo_felt("Onboard"),  # Onboard
         submittedBy=1,
         submittedAt=1,
         yesVotes=2,
@@ -186,7 +186,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and vote open + grace closed
         id=3,
-        type=22357892214649444,  # Onboard
+        type=to_cairo_felt("Onboard"),  # Onboard
         submittedBy=3,
         submittedAt=1,
         yesVotes=0,
@@ -196,7 +196,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and didn't reach majority
         id=4,
-        type=22357892214649444,  # Onboard
+        type=to_cairo_felt("Onboard"),  # Onboard
         submittedBy=3,
         submittedAt=1,
         yesVotes=2,
@@ -206,7 +206,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and didn't reach quorom
         id=5,
-        type=22357892214649444,  # Onboard
+        type=to_cairo_felt("Onboard"),  # Onboard
         submittedBy=3,
         submittedAt=1,
         yesVotes=2,
@@ -216,7 +216,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and reached qurom and majority
         id=6,
-        type=22357892214649444,  # Onboard
+        type=to_cairo_felt("Onboard"),  # Onboard
         submittedBy=3,
         submittedAt=1,
         yesVotes=4,
@@ -226,7 +226,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and reached qurom and majority
         id=7,
-        type=22357892214649444,  # Onboard
+        type=to_cairo_felt("Onboard"),  # Onboard
         submittedBy=3,
         submittedAt=1,
         yesVotes=3,
