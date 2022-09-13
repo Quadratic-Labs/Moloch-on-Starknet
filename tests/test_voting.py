@@ -1,5 +1,6 @@
 import pytest
 from datetime import datetime
+from uti import to_cairo_felt
 
 
 @pytest.mark.asyncio
@@ -41,7 +42,7 @@ async def test_vote(contract):
 
     proposal = (
         8,  # id
-        22357892214649444,  # type # 22357892214649444 = Onboard
+        to_cairo_felt("Onboard"),  # type # 22357892214649444 = Onboard
         3,  # submittedBy
         int(datetime.timestamp(datetime.now())),  # submittedAt
         3,  # yesVotes

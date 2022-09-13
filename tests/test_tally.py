@@ -1,4 +1,6 @@
 import pytest
+from datetime import datetime
+from uti import to_cairo_felt
 
 
 @pytest.mark.asyncio
@@ -25,20 +27,23 @@ async def test_non_existing_proposal(contract):
 
 @pytest.mark.asyncio
 async def test_grace_period_not_ended(contract):
+    # create a proposal for the purpose of the tests
+
+    proposal = (
+        9,  # id
+        to_cairo_felt("Onboard"),  # type # 22357892214649444 = Onboard
+        3,  # submittedBy
+        int(datetime.timestamp(datetime.now())),  # submittedAt
+        3,  # yesVotes
+        4,  # noVotes
+        1,  # status # 1 = SUBMITTED
+        1,  # description
+    )
+    await contract.add_proposal(proposal).invoke()
+
     # given proposal has not ended grace period, when invoking apply, should fail
     caller_address = 42
-    proposalId = 0  # proposal with grace period not ended ends on Sep 01 2022 00:00:00
-    with pytest.raises(Exception):
-        await contract.apply(proposalId=proposalId).invoke(
-            caller_address=caller_address
-        )
-
-
-@pytest.mark.asyncio
-async def test_voting_period_not_ended(contract):
-    # given proposal has not ended grace period, when invoking apply, should fail
-    caller_address = 42
-    proposalId = 3  # proposal with grace period ended and voting period open
+    proposalId = 9  # proposal with grace period not ended ends on Sep 01 2022 00:00:00
     with pytest.raises(Exception):
         await contract.apply(proposalId=proposalId).invoke(
             caller_address=caller_address

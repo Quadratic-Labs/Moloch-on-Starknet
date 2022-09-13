@@ -7,8 +7,8 @@ import shutil
 import starknet_devnet.state
 import starknet_devnet.server
 
-from .externalize_cairo import externalize_dir
-from .uti import to_cairo_felt
+from externalize_cairo import externalize_dir
+from uti import to_cairo_felt
 from dataclasses import dataclass, astuple
 
 

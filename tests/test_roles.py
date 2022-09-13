@@ -1,6 +1,6 @@
 import pytest
 
-from .uti import to_cairo_felt
+from uti import to_cairo_felt
 
 
 @pytest.mark.asyncio
