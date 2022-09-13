@@ -1,11 +1,13 @@
 from pathlib import Path
 import pytest
-import sys
 import shutil
 
 # from starkware.starknet.testing.starknet import Starknet
+import starknet_devnet.devnet_config
 import starknet_devnet.state
 import starknet_devnet.server
+from starknet_devnet.starknet_wrapper import StarknetWrapper
+from starknet_devnet.devnet_config import DevnetConfig
 
 from .externalize_cairo import externalize_dir
 from .uti import to_cairo_felt
@@ -55,7 +57,7 @@ def test_contracts():
     # Decorate internal functions with @external to be able to test them
     externalize_dir(str(source_contracts_dir), str(test_contract_dir))
     yield test_contract_dir, test_contract_file
-    shutil.rmtree(test_contract_dir, ignore_errors=True)
+    # shutil.rmtree(test_contract_dir, ignore_errors=True)
 
 
 @pytest.fixture
@@ -63,17 +65,20 @@ async def starknet():
     # Create a new Starknet class that simulates the StarkNet
     # system.
     # return await Starknet.empty()
-    sys.argv = (
-        "starknet_devnet --host localhost --port 5050 --seed 42 --accounts 5".split()
+    args = starknet_devnet.devnet_config.parse_args(
+        "--host localhost --port 5050 --seed 42 --accounts 5"
+        .split()
     )
-    args = starknet_devnet.util.parse_args()
-    await starknet_devnet.state.state.starknet_wrapper.initialize()
-    starknet_devnet.server.generate_accounts(args)
-    starknet_devnet.server.enable_lite_mode(args)
-    starknet_devnet.server.set_start_time(args)
-    starknet_devnet.server.set_gas_price(args)
-    yield await starknet_devnet.state.state.starknet_wrapper._StarknetWrapper__get_starknet()
-    starknet_devnet.state.state = starknet_devnet.state.State()
+    state = starknet_devnet.state.State()
+    state.set_starknet_wrapper(StarknetWrapper(DevnetConfig(args)))
+    await state.starknet_wrapper.initialize()
+    # starknet_devnet.server.generate_accounts(args)
+    # starknet_devnet.server.enable_lite_mode(args)
+    # starknet_devnet.server.set_start_time(args)
+    # starknet_devnet.server.set_gas_price(args)
+    yield state.starknet_wrapper.starknet
+    # yield await starknet_devnet.state.state.starknet_wrapper._StarknetWrapper__get_starknet()
+    # starknet_devnet.state.state = starknet_devnet.state.State()
 
 
 @pytest.fixture(scope="session")
