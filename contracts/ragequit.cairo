@@ -4,7 +4,8 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_le
 from starkware.starknet.common.syscalls import get_caller_address
-from contracts.members import Member, membersInfo
+from members import Member, membersInfo
+
 
 @external
 func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(

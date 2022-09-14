@@ -1,0 +1,8 @@
+from {package} import {namespace}
+
+
+@external
+func {namespace}_{func_identifier}_test{func_implicits}{func_signature}\{
+    let (ret: felt) = {namespace}.{funcshould_accept(proposalId)
+    return (ret)
+\}

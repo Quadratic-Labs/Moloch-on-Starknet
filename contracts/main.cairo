@@ -13,6 +13,7 @@ from proposals.tokens import submitApproveToken, submitRemoveToken, Token
 from ragequit import ragequit
 from roles import Roles, adminRoles, membersRoles
 from tally import Tally
+from tally.Tally import launch_tally
 from voting import Voting
 
 

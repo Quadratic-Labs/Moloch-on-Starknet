@@ -57,7 +57,7 @@ def test_contracts():
     # Decorate internal functions with @external to be able to test them
     externalize_dir(str(source_contracts_dir), str(test_contract_dir))
     yield test_contract_dir, test_contract_file
-    # shutil.rmtree(test_contract_dir, ignore_errors=True)
+    shutil.rmtree(test_contract_dir, ignore_errors=True)
 
 
 @pytest.fixture
@@ -266,6 +266,7 @@ async def contract(starknet, test_contracts):
         4: [govern],
         5: [],
     }
+    breakpoint()
     for member in MEMBERS:
         await contract.add_member(astuple(member)).invoke()
         for role in MEMBER_ROLES[member.address]:
