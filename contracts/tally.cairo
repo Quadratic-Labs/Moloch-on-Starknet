@@ -39,7 +39,6 @@ func should_accept{
     if (majority == 0) {
         return (FALSE,);
     }
-
     return (TRUE,);
 }
 
@@ -61,14 +60,9 @@ func launch_tally{
     with_attr error_message("AccessControl: user {caller} is not a member.") {
         Member.assert_is_member(caller);
     }
-    
-    local today_timestamp;
-    %{
-        from datetime import datetime
-        dt = datetime.now()
-        ids.today_timestamp = int(datetime.timestamp(dt))
-    %}
-    
+
+    local today_timestamp = 10;
+
     // assert the gracePeriod ended
     with_attr error_message("The proposal has not ended grace period.") {
         assert_lt(
@@ -81,7 +75,7 @@ func launch_tally{
         Proposal.update_status(info.id, Proposal.REJECTED);
         return (FALSE,);
     }
-    
+
     Proposal.update_status(info.id, Proposal.ACCEPTED);
     return (TRUE,);
 }
