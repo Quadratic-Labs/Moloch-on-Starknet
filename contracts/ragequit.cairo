@@ -15,7 +15,7 @@ func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     let (local caller) = get_caller_address();
     // check if the user is a member
     Member.assert_is_member(caller);
-    let (member_: Member.InfoMember) = Member.get_info_members(caller);
+    let (member_: Member.Info) = Member.get_info(caller);
 
     // assert enough shares
     with_attr error_message("Not enough shares") {
@@ -27,7 +27,7 @@ func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         assert_le(loot, member_.loot);
     }
 
-    let member_updated: Member.InfoMember = Member.InfoMember(
+    let member_updated: Member.Info = Member.Info(
         address=member_.address,
         delegatedKey=member_.delegatedKey,
         shares=member_.shares - shares,

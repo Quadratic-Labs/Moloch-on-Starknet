@@ -6,46 +6,43 @@ from starkware.cairo.common.math import assert_nn, assert_lt
 
 
 namespace Member {
-    // No pointers in InfoMember please
-    struct InfoMember {
+    // member's Info must be felt-like (no pointer) as it is put in storage
+    struct Info {
         address: felt,
         delegatedKey: felt,
         shares: felt,
         loot: felt,
         jailed: felt,
-        lastProposalYesVote: felt,  // may be needed, we will see
+        lastProposalYesVote: felt,
     }
 
-    func is_member{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        address: felt
-    ) -> (success: felt) {
-        let current_number = 0;
-        let (length) = membersLength.read();
-        return contains(address, current_number, length);
+    // Guards
+
+    func is_member{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(address: felt) -> (success: felt) {
+        let (len: felt) = total_count();
+        return _contains(address, 0, len);
     }
 
-    func contains{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        value: felt, current_number: felt, length: felt
-    ) -> (success: felt) {
+    func _contains{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(value: felt, iter: felt, length: felt) -> (success: felt) {
         alloc_locals;
         if (length == 0) {
             return (FALSE,);
         }
-
-        if (length == current_number) {
-            return (FALSE,);
-        }
-        let (current_address) = membersAddresses.read(current_number);
+        let (current_address) = membersAddresses.read(iter);
         if (current_address == value) {
             return (TRUE,);
         }
-        let (local res) = contains(value, current_number + 1, length);
+        let (local res) = _contains(value, iter + 1, length - 1);
         return (res,);
     }
 
-    func assert_is_member{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        address: felt
-    ) -> () {
+    func assert_is_member{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(address: felt) -> () {
         with_attr error_message("Address {address} is not a member") {
             let (res) = is_member(address);
             assert res = TRUE;
@@ -53,9 +50,9 @@ namespace Member {
         return ();
     }
 
-    func assert_is_not_member{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        address: felt
-    ) -> () {
+    func assert_is_not_member{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(address: felt) -> () {
         with_attr error_message("Address {address} is not a member") {
             let (res) = is_member(address);
             assert res = FALSE;
@@ -63,7 +60,7 @@ namespace Member {
         return ();
     }
 
-    func assert_within_bounds_members{
+    func assert_within_bounds{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(id: felt) -> () {
         let (len: felt) = membersLength.read();
@@ -71,50 +68,18 @@ namespace Member {
             assert_nn(id);
             assert_lt(id, len);
         }
-
         return ();
     }
 
-    func get_address{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(id: felt) -> (
-        address: felt
-    ) {
-        assert_within_bounds_members(id);
-        let (address: felt) = membersAddresses.read(id);
-        return (address,);
-    }
-
-    func get_info_members{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        address: felt
-    ) -> (member_: InfoMember) {
-        assert_is_member(address);
-        let (user: InfoMember) = membersInfo.read(address);
-        return (user,);
-    }
-
-    func add_member{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        info: InfoMember
-    ) -> () {
-        alloc_locals;
-        let (is_in: felt) = is_member(info.address);
-        with_attr error_message("Cannot add {info.address}: already in DAO") {
-            assert is_in = FALSE;
-        }
-        let (local len: felt) = membersLength.read();
-        membersInfo.write(info.address, info);
-        membersAddresses.write(len, info.address);
-        membersLength.write(len + 1);
-        return ();
-    }
-
-    func is_jailed{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        address: felt
-    ) -> (res: felt) {
+    func is_jailed{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(address: felt) -> (res: felt) {
         return (0,);
     }
 
-    func assert_not_jailed{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        address: felt
-    ) -> () {
+    func assert_not_jailed{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(address: felt) -> () {
         with_attr error_message("Member {address} has been jailed") {
             let (res) = is_jailed(address);
             assert res = FALSE;
@@ -122,19 +87,60 @@ namespace Member {
         return ();
     }
 
-    func jail{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(address: felt) -> (
-        ) {
-        return ();
+    // Getters-Setters
+
+    func get_address{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(id: felt) -> (address: felt) {
+        assert_within_bounds(id);
+        let (address: felt) = membersAddresses.read(id);
+        return (address,);
     }
 
-    func get_membersLength{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
-        length: felt
-    ) {
+    func get_info{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(address: felt) -> (member_: Info) {
+        assert_is_member(address);
+        let (user: Info) = membersInfo.read(address);
+        return (user,);
+    }
+
+    func total_count{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }() -> (length: felt) {
         let (length) = membersLength.read();
         return (length,);
     }
+
+    func add_new{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(info: Info) -> () {
+        alloc_locals;
+        let (is_in: felt) = is_member(info.address);
+        with_attr error_message("Cannot add {info.address}: already in DAO") {
+            assert is_in = FALSE;
+        }
+        let (local len: felt) = membersLength.read();
+        membersLength.write(len + 1);
+        membersAddresses.write(len + 1, info.address);
+        membersInfo.write(info.address, info);
+        return ();
+    }
+
+    func update{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(info: Info) -> () {
+        alloc_locals;
+        let (is_in: felt) = is_member(info.address);
+        with_attr error_message("Cannot update {info.address}: not a member") {
+            assert is_in = TRUE;
+        }
+        membersInfo.write(info.address, info);
+        return ();
+    }
 }
 
+// Mapping address -> members, keeping keys array
 @storage_var
 func membersLength() -> (length: felt) {
 }
@@ -144,5 +150,5 @@ func membersAddresses(index: felt) -> (address: felt) {
 }
 
 @storage_var
-func membersInfo(address: felt) -> (member_: Member.InfoMember) {
+func membersInfo(address: felt) -> (member_: Member.Info) {
 }

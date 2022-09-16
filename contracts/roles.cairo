@@ -65,48 +65,49 @@ namespace Roles {
         }
         return ();
     }
+}
 
-    @external
-    func grant_role{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        role: felt, user: felt
-    ) {
-        let (admin: felt) = adminRoles.read(role);
-        require_role(admin);
-        let (user_has_role: felt) = has_role(user, role);
-        if (user_has_role == FALSE) {
-            let (caller: felt) = get_caller_address();
-            _grant_role(user, role);
-            RoleGranted.emit(user, role, caller);
-            return ();
-        }
+
+@external
+func grant_role{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(role: felt, user: felt) -> () {
+    let (admin: felt) = adminRoles.read(role);
+    Roles.require_role(admin);
+    let (user_has_role: felt) = Roles.has_role(user, role);
+    if (user_has_role == FALSE) {
+        let (caller: felt) = get_caller_address();
+        Roles._grant_role(user, role);
+        RoleGranted.emit(user, role, caller);
         return ();
     }
+    return ();
+}
 
-    @external
-    func revoke_role{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        role: felt, user: felt
-    ) {
-        let (admin: felt) = adminRoles.read(role);
-        require_role(admin);
-        let (user_has_role: felt) = has_role(user, role);
-        if (user_has_role == TRUE) {
-            let (caller: felt) = get_caller_address();
-            _revoke_role(role, user);
-            RoleRevoked.emit(user, role, caller);
-            return ();
-        }
+@external
+func revoke_role{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(role: felt, user: felt) -> () {
+    let (admin: felt) = adminRoles.read(role);
+    Roles.require_role(admin);
+    let (user_has_role: felt) = Roles.has_role(user, role);
+    if (user_has_role == TRUE) {
+        let (caller: felt) = get_caller_address();
+        Roles._revoke_role(role, user);
+        RoleRevoked.emit(user, role, caller);
         return ();
     }
+    return ();
+}
 
-    @external
-    func delegate_admin_role{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        role: felt, admin_role: felt
-    ) {
-        alloc_locals;
-        let (local previous_admin_role: felt) = adminRoles.read(role);
-        require_role(previous_admin_role);
-        adminRoles.write(role, admin_role);
-        RoleAdminChanged.emit(role, previous_admin_role, admin_role);
-        return ();
-    }
+@external
+func delegate_admin_role{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(role: felt, admin_role: felt) -> () {
+    alloc_locals;
+    let (local previous_admin_role: felt) = adminRoles.read(role);
+    Roles.require_role(previous_admin_role);
+    adminRoles.write(role, admin_role);
+    RoleAdminChanged.emit(role, previous_admin_role, admin_role);
+    return ();
 }

@@ -1,6 +1,8 @@
-from pathlib import Path
 import pytest
-import shutil
+
+from dataclasses import dataclass, astuple
+import os
+from pathlib import Path
 
 # from starkware.starknet.testing.starknet import Starknet
 import starknet_devnet.devnet_config
@@ -9,9 +11,7 @@ import starknet_devnet.server
 from starknet_devnet.starknet_wrapper import StarknetWrapper
 from starknet_devnet.devnet_config import DevnetConfig
 
-from .externalize_cairo import externalize_dir
-from .uti import to_cairo_felt
-from dataclasses import dataclass, astuple
+from . import utils
 
 
 # L'init fait l'équivalent de run la commande
@@ -48,16 +48,20 @@ from dataclasses import dataclass, astuple
 
 
 @pytest.fixture(scope="session")
-def test_contracts():
-    test_contract_dir = Path(__file__).parent.joinpath("contracts").absolute()
-    test_contract_file = test_contract_dir / "main.cairo"
-
-    source_contracts_dir = Path(__file__).parent.parent.joinpath("contracts").absolute()
+def test_contract_file():
+    rootdir = Path(__file__).parent.parent
+    source_file = rootdir / "contracts" / "main.cairo"
+    import_file = rootdir / "contracts" / "testing" / "main.cairo"
+    output_file = rootdir / "tests" / "main.cairo"
 
     # Decorate internal functions with @external to be able to test them
-    externalize_dir(str(source_contracts_dir), str(test_contract_dir))
-    yield test_contract_dir, test_contract_file
-    shutil.rmtree(test_contract_dir, ignore_errors=True)
+    utils.create_main_test(
+        source_file.absolute(),
+        import_file.absolute(),
+        output_file.absolute(),
+    )
+    yield output_file
+    os.remove(output_file.absolute())
 
 
 @pytest.fixture
@@ -82,12 +86,11 @@ async def starknet():
 
 
 @pytest.fixture(scope="session")
-async def empty_contract(starknet, test_contracts):
-    # Deploy the contract.
-    test_contract_dir, test_contract_file = test_contracts
+async def empty_contract(starknet, test_contract_file):
+    contracts_path = Path(__file__).parent.parent / "contracts"
     return await starknet.deploy(
-        source=str(test_contract_file),
-        cairo_path=[test_contract_dir],
+        source=str(test_contract_file.absolute()),
+        cairo_path=[contracts_path.absolute()],
         constructor_calldata=[50, 60, 10, 10],
     )
 
@@ -161,7 +164,7 @@ MEMBERS: list[Member] = [
 PROPOSALS: list[Proposal] = [
     Proposal(  # Submitted and vote + grace open
         id=0,
-        type=to_cairo_felt("Onboard"),  # Onboard
+        type=utils.str_to_felt("Onboard"),  # Onboard
         submittedBy=1,
         submittedAt=1,
         yesVotes=0,
@@ -171,7 +174,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # ACCEPTED and vote closed
         id=1,
-        type=to_cairo_felt("Onboard"),  # Onboard
+        type=utils.str_to_felt("Onboard"),  # Onboard
         submittedBy=3,
         submittedAt=1,
         yesVotes=3,
@@ -181,7 +184,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Rejected and vote closed
         id=2,
-        type=to_cairo_felt("Onboard"),  # Onboard
+        type=utils.str_to_felt("Onboard"),  # Onboard
         submittedBy=1,
         submittedAt=1,
         yesVotes=2,
@@ -191,7 +194,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and vote open + grace closed
         id=3,
-        type=to_cairo_felt("Onboard"),  # Onboard
+        type=utils.str_to_felt("Onboard"),  # Onboard
         submittedBy=3,
         submittedAt=1,
         yesVotes=0,
@@ -201,7 +204,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and didn't reach majority
         id=4,
-        type=to_cairo_felt("Onboard"),  # Onboard
+        type=utils.str_to_felt("Onboard"),  # Onboard
         submittedBy=3,
         submittedAt=1,
         yesVotes=2,
@@ -211,7 +214,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and didn't reach quorom
         id=5,
-        type=to_cairo_felt("Onboard"),  # Onboard
+        type=utils.str_to_felt("Onboard"),  # Onboard
         submittedBy=3,
         submittedAt=1,
         yesVotes=2,
@@ -221,7 +224,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and reached qurom and majority
         id=6,
-        type=to_cairo_felt("Onboard"),  # Onboard
+        type=utils.str_to_felt("Onboard"),  # Onboard
         submittedBy=3,
         submittedAt=1,
         yesVotes=4,
@@ -231,7 +234,7 @@ PROPOSALS: list[Proposal] = [
     ),
     Proposal(  # Submitted and reached qurom and majority
         id=7,
-        type=to_cairo_felt("Onboard"),  # Onboard
+        type=utils.str_to_felt("Onboard"),  # Onboard
         submittedBy=3,
         submittedAt=1,
         yesVotes=3,
@@ -243,22 +246,21 @@ PROPOSALS: list[Proposal] = [
 
 
 @pytest.fixture
-async def contract(starknet, test_contracts):
-    test_contract_dir, test_contract_file = test_contracts
-
+async def contract(starknet, test_contract_file):
     majority = 50
     quorum = 60
     grace_duration = 10
     voting_duration = 10
 
+    contracts_path = Path(__file__).parent.parent / "contracts"
     contract = await starknet.deploy(
-        source=str(test_contract_file),
-        cairo_path=[test_contract_dir],
+        source=str(test_contract_file.absolute()),
+        cairo_path=[contracts_path.absolute()],
         constructor_calldata=[majority, quorum, grace_duration, voting_duration],
         disable_hint_validation=True,
     )
-    govern = to_cairo_felt("govern")  # govern in felt
-    admin = to_cairo_felt("admin")  # admin in felt
+    govern = utils.str_to_felt("govern")  # govern in felt
+    admin = utils.str_to_felt("admin")  # admin in felt
     MEMBER_ROLES = {
         1: [admin],
         2: [admin, govern],
@@ -266,13 +268,12 @@ async def contract(starknet, test_contracts):
         4: [govern],
         5: [],
     }
-    breakpoint()
     for member in MEMBERS:
-        await contract.add_member(astuple(member)).invoke()
+        await contract.Member_add_new_proxy(astuple(member)).execute()
         for role in MEMBER_ROLES[member.address]:
-            await contract.grant_role(role, member.address).invoke(caller_address=42)
+            await contract.grant_role(role, member.address).execute(caller_address=42)
 
-    for proposal in PROPOSALS:
-        await contract.add_proposal(astuple(proposal)).invoke()
+    # for proposal in PROPOSALS:
+    #     await contract.add_proposal(astuple(proposal)).execute()
 
     return contract
