@@ -8,7 +8,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from actions import Actions
 from members import Member, MemberInfo
-from proposals.library import Proposal, proposalParams, proposals, ProposalParams
+from proposals.library import Proposal, ProposalParams
 from proposals.onboard import submitOnboard
 from proposals.guildkick import submitGuildKick
 from proposals.order import submitOrder
@@ -26,11 +26,11 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     alloc_locals;
 
     local params: ProposalParams = ProposalParams(majority, quorum, votingDuration, graceDuration);
-    proposalParams.write('Onboard', params);
-    proposalParams.write('GuildKick', params);
-    proposalParams.write('ApproveToken', params);
-    proposalParams.write('RemoveToken', params);
-    proposalParams.write('Order', params);
+    Proposal.set_params('Onboard', params);
+    Proposal.set_params('GuildKick', params);
+    Proposal.set_params('ApproveToken', params);
+    Proposal.set_params('RemoveToken', params);
+    Proposal.set_params('Order', params);
 
     // add roles setup
     adminRoles.write('admin', 'admin');

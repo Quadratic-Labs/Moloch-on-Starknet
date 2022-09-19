@@ -7,7 +7,7 @@ from starkware.starknet.common.syscalls import get_caller_address
 
 from starkware.cairo.common.math import assert_lt
 
-from proposals.library import Proposal, proposals, ProposalInfo
+from proposals.library import Proposal, ProposalInfo
 from members import Member
 
 

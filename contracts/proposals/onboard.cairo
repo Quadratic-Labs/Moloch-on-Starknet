@@ -5,7 +5,7 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_caller_address
 
 from roles import Roles
-from members import Member, membersLength  // TODO remove memebrsLength
+from members import Member
 from proposals.library import Proposal, ProposalInfo
 
 @external

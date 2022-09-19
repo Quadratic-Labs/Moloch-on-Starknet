@@ -4,8 +4,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_le
 from starkware.starknet.common.syscalls import get_caller_address
-// TODO : changer le membersInfo qui est une storage var par un getter dans members pour être plus propre
-from members import Member, membersInfo, MemberInfo
+from members import Member, MemberInfo
 
 
 @external
@@ -29,7 +28,7 @@ func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     }
 
     let member_updated: MemberInfo = MemberInfo(
-        address=member_.address,
+        address=caller,
         delegatedKey=member_.delegatedKey,
         shares=member_.shares - shares,
         loot=member_.loot - loot,
@@ -37,6 +36,6 @@ func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         lastProposalYesVote=member_.lastProposalYesVote,
     );
     // execute the transaction
-    membersInfo.write(caller, member_updated);
+    Member.update(member_updated);
     return (TRUE,);
 }
