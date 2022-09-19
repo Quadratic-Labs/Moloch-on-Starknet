@@ -139,3 +139,5 @@ dmypy.json
 
 tests/contracts
 local
+
+node.json

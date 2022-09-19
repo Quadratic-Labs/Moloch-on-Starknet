@@ -7,7 +7,7 @@ async def test_caller_not_member(contract):
     loot = 5
     caller_address = 404  # not existing member
     with pytest.raises(Exception):
-        await contract.ragequit(shares=shares, loot=loot).invoke(
+        await contract.ragequit(shares=shares, loot=loot).execute(
             caller_address=caller_address
         )
 
@@ -19,14 +19,14 @@ async def test_caller_not_enough_shares_loot(contract):
     shares = 50
     loot = 2
     with pytest.raises(Exception):
-        await contract.ragequit(shares=shares, loot=loot).invoke(
+        await contract.ragequit(shares=shares, loot=loot).execute(
             caller_address=caller_address
         )
     # not enough loot
     shares = 5
     loot = 20
     with pytest.raises(Exception):
-        await contract.ragequit(shares=shares, loot=loot).invoke(
+        await contract.ragequit(shares=shares, loot=loot).execute(
             caller_address=caller_address
         )
 
@@ -36,12 +36,12 @@ async def test_ragequit(contract):
     shares = 5
     loot = 5
     caller_address = 3  # has 10 shares and 5 loot
-    return_value = await contract.ragequit(shares=shares, loot=loot).invoke(
+    return_value = await contract.ragequit(shares=shares, loot=loot).execute(
         caller_address=caller_address
     )
     assert return_value.result.success == 1
 
-    return_value = await contract.get_info_members(address=caller_address).invoke(
+    return_value = await contract.Member_get_info_proxy(address=caller_address).execute(
         caller_address=caller_address
     )
     assert (

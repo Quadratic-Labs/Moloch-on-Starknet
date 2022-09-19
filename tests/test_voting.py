@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime
-from .uti import to_cairo_felt
+from . import utils
 
 
 @pytest.mark.asyncio
@@ -9,7 +9,7 @@ async def test_non_member(contract):
     caller_address = 404  # not a member
     proposalId = 1
     with pytest.raises(Exception):
-        await contract.submitVote(proposalId=proposalId, vote=True).invoke(
+        await contract.submitVote(proposalId=proposalId, vote=True).execute(
             caller_address=caller_address
         )
 
@@ -20,7 +20,7 @@ async def test_non_existing_proposal(contract):
     caller_address = 42
     proposalId = 404
     with pytest.raises(Exception):
-        await contract.submitVote(proposalId=proposalId, vote=True).invoke(
+        await contract.submitVote(proposalId=proposalId, vote=True).execute(
             caller_address=caller_address
         )
 
@@ -31,7 +31,7 @@ async def test_outside_voting_period(contract):
     caller_address = 42
     proposalId = 3  # voting period ended in Aug 01 2022 00:00:00
     with pytest.raises(Exception):
-        await contract.submitVote(proposalId=proposalId, vote=True).invoke(
+        await contract.submitVote(proposalId=proposalId, vote=True).execute(
             caller_address=caller_address
         )
 
@@ -42,7 +42,7 @@ async def test_vote(contract):
 
     proposal = (
         8,  # id
-        to_cairo_felt("Onboard"),  # type # 22357892214649444 = Onboard
+        utils.str_to_felt("Onboard"),  # type # 22357892214649444 = Onboard
         3,  # submittedBy
         int(datetime.timestamp(datetime.now())),  # submittedAt
         3,  # yesVotes
@@ -50,30 +50,30 @@ async def test_vote(contract):
         1,  # status # 1 = SUBMITTED
         1,  # description
     )
-    await contract.add_proposal(proposal).invoke()
+    await contract.Proposal_add_proposal_proxy(proposal).execute()
 
     # voting 1 on an existing proposal should succeed
     caller_address = 42
     proposalId = 8
-    return_value = await contract.submitVote(proposalId=proposalId, vote=True).invoke(
+    return_value = await contract.submitVote(proposalId=proposalId, vote=True).execute(
         caller_address=caller_address
     )
     assert return_value.result.success == 1
     # checking the vote is 1
-    check_vote = await contract.get_vote(id=proposalId, address=caller_address).invoke(
+    check_vote = await contract.get_vote(id=proposalId, address=caller_address).execute(
         caller_address=caller_address
     )
     assert check_vote.result.vote == 1
 
     # vote again on the same proposal, 0 this time
 
-    return_value = await contract.submitVote(proposalId=proposalId, vote=False).invoke(
+    return_value = await contract.submitVote(proposalId=proposalId, vote=False).execute(
         caller_address=caller_address
     )
     assert return_value.result.success == 1
 
     # checking the vote is now 0
-    check_vote = await contract.get_vote(id=proposalId, address=caller_address).invoke(
+    check_vote = await contract.get_vote(id=proposalId, address=caller_address).execute(
         caller_address=caller_address
     )
     assert check_vote.result.vote == 0

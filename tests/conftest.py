@@ -70,8 +70,7 @@ async def starknet():
     # system.
     # return await Starknet.empty()
     args = starknet_devnet.devnet_config.parse_args(
-        "--host localhost --port 5050 --seed 42 --accounts 5"
-        .split()
+        "--host localhost --port 5050 --seed 42 --accounts 5".split()
     )
     state = starknet_devnet.state.State()
     state.set_starknet_wrapper(StarknetWrapper(DevnetConfig(args)))
@@ -273,7 +272,7 @@ async def contract(starknet, test_contract_file):
         for role in MEMBER_ROLES[member.address]:
             await contract.grant_role(role, member.address).execute(caller_address=42)
 
-    # for proposal in PROPOSALS:
-    #     await contract.add_proposal(astuple(proposal)).execute()
+    for proposal in PROPOSALS:
+        await contract.Proposal_add_proposal_proxy(astuple(proposal)).execute()
 
     return contract

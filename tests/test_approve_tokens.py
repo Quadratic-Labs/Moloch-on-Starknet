@@ -7,7 +7,7 @@ async def test_not_member(contract):
     caller_address = 404  # not a member
     token_address = 1
     with pytest.raises(Exception):
-        await contract.submitApproveToken(tokenAddress=token_address).invoke(
+        await contract.submitApproveToken(tokenAddress=token_address).execute(
             caller_address=caller_address
         )
 
@@ -18,7 +18,7 @@ async def test_not_admin(contract):
     caller_address = 3  # not admin
     token_address = 1
     with pytest.raises(Exception):
-        await contract.submitApproveToken(tokenAddress=token_address).invoke(
+        await contract.submitApproveToken(tokenAddress=token_address).execute(
             caller_address=caller_address
         )
 
@@ -29,7 +29,7 @@ async def test_already_whitelisted(contract):
     caller_address = 42  # admin
     token_address = 123  # a whitelisted token
     with pytest.raises(Exception):
-        await contract.submitApproveToken(tokenAddress=token_address).invoke(
+        await contract.submitApproveToken(tokenAddress=token_address).execute(
             caller_address=caller_address
         )
 
@@ -42,7 +42,7 @@ async def test_not_ERCs(contract):
     caller_address = 42  # admin
     token_address = 1
     with pytest.raises(Exception):
-        await contract.submitApproveToken(tokenAddress=token_address).invoke(
+        await contract.submitApproveToken(tokenAddress=token_address).execute(
             caller_address=caller_address
         )
 
@@ -54,15 +54,19 @@ async def test_submit_token(contract):
     token_address = 1  # a non whitelisted token
 
     number_before_submit = (
-        await contract.get_proposals_length().call(caller_address=caller_address)
+        await contract.Proposal_get_proposals_length_proxy().call(
+            caller_address=caller_address
+        )
     ).result.length
-    return_value = await contract.submitApproveToken(tokenAddress=token_address).invoke(
-        caller_address=caller_address
-    )
+    return_value = await contract.submitApproveToken(
+        tokenAddress=token_address
+    ).execute(caller_address=caller_address)
     assert return_value.result.success == 1
 
     number_after_submit = (
-        await contract.get_proposals_length().call(caller_address=caller_address)
+        await contract.Proposal_get_proposals_length_proxy().call(
+            caller_address=caller_address
+        )
     ).result.length
 
     # Check if the proposal was taken into account
