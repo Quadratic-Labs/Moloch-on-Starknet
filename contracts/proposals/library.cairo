@@ -3,6 +3,25 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import assert_nn, assert_lt
 
+struct ProposalInfo {
+    // TODO define the meaning of each element
+    id: felt,
+    type: felt,
+    submittedBy: felt,
+    submittedAt: felt,
+    yesVotes: felt,
+    noVotes: felt,
+    status: felt,
+    description: felt,
+}
+
+// params apply to all proposals of the same kind
+struct ProposalParams {
+    majority: felt,
+    quorum: felt,
+    votingDuration: felt,
+    graceDuration: felt,
+}
 namespace Proposal {
     const SUBMITTED = 1;
     const ACCEPTED = 2;  // Can proceed to execution if any actions
@@ -14,35 +33,17 @@ namespace Proposal {
 
     const NOTFOUND = -1;
 
-    struct Info {
-        // TODO define the meaning of each element
-        id: felt,
-        type: felt,
-        submittedBy: felt,
-        submittedAt: felt,
-        yesVotes: felt,
-        noVotes: felt,
-        status: felt,
-        description: felt,
-    }
 
-    // params apply to all proposals of the same kind
-    struct Params {
-        majority: felt,
-        quorum: felt,
-        votingDuration: felt,
-        graceDuration: felt,
-    }
 
     func get_params{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         kind: felt
-    ) -> (params: Params) {
-        let (params: Params) = proposalParams.read(kind);
+    ) -> (params: ProposalParams) {
+        let (params: ProposalParams) = proposalParams.read(kind);
         return (params,);
     }
 
     func set_params{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        kind: felt, params: Params
+        kind: felt, params: ProposalParams
     ) -> () {
         proposalParams.write(kind, params);
         return ();
@@ -60,10 +61,10 @@ namespace Proposal {
     }
 
     func get_info{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(id: felt) -> (
-        proposal: Info
+        proposal: ProposalInfo
     ) {
         assert_within_bounds(id);
-        let (proposal: Info) = proposals.read(id);
+        let (proposal: ProposalInfo) = proposals.read(id);
         return (proposal,);
     }
 
@@ -87,7 +88,7 @@ namespace Proposal {
     }
 
     func add_proposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        info: Info
+        info: ProposalInfo
     ) -> () {
         alloc_locals;
         let (local len: felt) = proposalsLength.read();
@@ -99,8 +100,8 @@ namespace Proposal {
     func update_status{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt, status: felt
     ) -> () {
-        let (info: Info) = get_info(id);
-        let proposal: Proposal.Info = Proposal.Info(
+        let (info: ProposalInfo) = get_info(id);
+        let proposal: ProposalInfo = ProposalInfo(
             id=info.id,
             type=info.type,
             submittedBy=info.submittedBy,
@@ -116,15 +117,15 @@ namespace Proposal {
 
     func get_proposal_by_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt
-    ) -> (proposal: Info) {
+    ) -> (proposal: ProposalInfo) {
         let (length) = proposalsLength.read();
         let (position) = search_position_by_id(id, 0, length);
-        let (info: Info) = get_info(position);
+        let (info: ProposalInfo) = get_info(position);
         return (info,);
     }
 
     func update_proposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        id: felt, info: Info
+        id: felt, info: ProposalInfo
     ) -> () {
         let (length) = proposalsLength.read();
         let (position) = search_position_by_id(id, 0, length);
@@ -164,7 +165,7 @@ namespace Proposal {
 }
 
 @storage_var
-func proposalParams(proposalKind: felt) -> (params: Proposal.Params) {
+func proposalParams(proposalKind: felt) -> (params: ProposalParams) {
 }
 
 // List of proposals
@@ -173,7 +174,7 @@ func proposalsLength() -> (length: felt) {
 }
 
 @storage_var
-func proposals(id: felt) -> (proposal: Proposal.Info) {
+func proposals(id: felt) -> (proposal: ProposalInfo) {
 }
 // End list of proposals
 

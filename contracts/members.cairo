@@ -5,16 +5,17 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_nn, assert_lt
 
 
+// member's Info must be felt-like (no pointer) as it is put in storage
+struct MemberInfo {
+    address: felt,
+    delegatedKey: felt,
+    shares: felt,
+    loot: felt,
+    jailed: felt,
+    lastProposalYesVote: felt,
+}
+
 namespace Member {
-    // member's Info must be felt-like (no pointer) as it is put in storage
-    struct Info {
-        address: felt,
-        delegatedKey: felt,
-        shares: felt,
-        loot: felt,
-        jailed: felt,
-        lastProposalYesVote: felt,
-    }
 
     // Guards
 
@@ -99,9 +100,9 @@ namespace Member {
 
     func get_info{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    }(address: felt) -> (member_: Info) {
+    }(address: felt) -> (member_: MemberInfo) {
         assert_is_member(address);
-        let (user: Info) = membersInfo.read(address);
+        let (user: MemberInfo) = membersInfo.read(address);
         return (user,);
     }
 
@@ -114,7 +115,7 @@ namespace Member {
 
     func add_new{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    }(info: Info) -> () {
+    }(info: MemberInfo) -> () {
         alloc_locals;
         let (is_in: felt) = is_member(info.address);
         with_attr error_message("Cannot add {info.address}: already in DAO") {
@@ -129,7 +130,7 @@ namespace Member {
 
     func update{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    }(info: Info) -> () {
+    }(info: MemberInfo) -> () {
         alloc_locals;
         let (is_in: felt) = is_member(info.address);
         with_attr error_message("Cannot update {info.address}: not a member") {
@@ -150,5 +151,5 @@ func membersAddresses(index: felt) -> (address: felt) {
 }
 
 @storage_var
-func membersInfo(address: felt) -> (member_: Member.Info) {
+func membersInfo(address: felt) -> (member_: MemberInfo) {
 }

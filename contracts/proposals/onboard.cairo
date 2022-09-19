@@ -6,7 +6,7 @@ from starkware.starknet.common.syscalls import get_caller_address
 
 from roles import Roles
 from members import Member, membersLength  // TODO remove memebrsLength
-from proposals.library import Proposal
+from proposals.library import Proposal, ProposalInfo
 
 @external
 func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -29,7 +29,7 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     let noVotes = 0;
     let status = 1;
     let description = 0;
-    let proposal: Proposal.Info = Proposal.Info(
+    let proposal: ProposalInfo = ProposalInfo(
         id=id,
         type=type,
         submittedBy=submittedBy,

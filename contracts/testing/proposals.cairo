@@ -2,19 +2,19 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 
-from proposals.library import Proposal
+from proposals.library import Proposal, ProposalInfo, ProposalParams
 
 @external
 func Proposal_get_params_proxy{
 syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(kind: felt) -> (params: Proposal.Params) {
+}(kind: felt) -> (params: ProposalParams) {
     return Proposal.get_params(kind);
 }
 
 @external
 func Proposal_set_params_proxy{
 syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(kind: felt, params: Proposal.Params) -> () {
+}(kind: felt, params: ProposalParams) -> () {
     return Proposal.set_params(kind,params);
 }
 
@@ -28,7 +28,7 @@ syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 @external
 func Proposal_get_info_proxy{
 syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(id: felt) -> (proposal: Proposal.Info) {
+}(id: felt) -> (proposal: ProposalInfo) {
     return Proposal.get_info(id);
 }
 
@@ -42,7 +42,7 @@ syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 @external
 func Proposal_add_proposal_proxy{
 syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(info: Proposal.Info) -> () {
+}(info: ProposalInfo) -> () {
     return Proposal.add_proposal(info);
 }
 
@@ -56,14 +56,14 @@ syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 @external
 func Proposal_get_proposal_by_id_proxy{
 syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(id: felt) -> (proposal: Proposal.Info) {
+}(id: felt) -> (proposal: ProposalInfo) {
     return Proposal.get_proposal_by_id(id);
 }
 
 @external
 func Proposal_update_proposal_proxy{
 syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(id: felt, info: Proposal.Info) -> () {
+}(id: felt, info: ProposalInfo) -> () {
     return Proposal.update_proposal(id,info);
 }
 

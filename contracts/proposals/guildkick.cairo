@@ -5,7 +5,7 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_caller_address
 from members import Member
 from roles import Roles
-from proposals.library import Proposal
+from proposals.library import Proposal, ProposalInfo
 
 @external
 func submitGuildKick{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -29,7 +29,7 @@ func submitGuildKick{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     let noVotes = 0;
     let status = 1;
     let description = 0;
-    let proposal: Proposal.Info = Proposal.Info(
+    let proposal: ProposalInfo = ProposalInfo(
         id=id,
         type=type,
         submittedBy=submittedBy,

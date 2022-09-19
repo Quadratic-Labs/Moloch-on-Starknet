@@ -5,7 +5,7 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_caller_address
 from roles import Roles
 from members import Member
-from proposals.library import Proposal
+from proposals.library import Proposal, ProposalInfo
 // from roles import Roles
 
 @external
@@ -31,7 +31,7 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     let noVotes = 0;
     let status = 1;
     let description = 0;
-    let proposal: Proposal.Info = Proposal.Info(
+    let proposal: ProposalInfo = ProposalInfo(
         id=id,
         type=type,
         submittedBy=submittedBy,
@@ -71,7 +71,7 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     let noVotes = 0;
     let status = 1;
     let description = 0;
-    let proposal: Proposal.Info = Proposal.Info(
+    let proposal: ProposalInfo = ProposalInfo(
         id=id,
         type=type,
         submittedBy=submittedBy,

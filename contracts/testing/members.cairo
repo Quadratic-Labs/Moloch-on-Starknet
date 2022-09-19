@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 
-from members import Member
+from members import Member, MemberInfo
 
 
 @external
@@ -57,7 +57,7 @@ func Member_get_address_proxy{
 @external
 func Member_get_info_proxy{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(address: felt) -> (member_: Member.Info) {
+}(address: felt) -> (member_: MemberInfo) {
     return Member.get_info(address);
 }
 
@@ -71,13 +71,13 @@ func Member_total_count_proxy{
 @external
 func Member_add_new_proxy{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(info: Member.Info) -> () {
+}(info: MemberInfo) -> () {
     return Member.add_new(info);
 }
 
 @external
 func Member_update_proxy{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(info: Member.Info) -> () {
+}(info: MemberInfo) -> () {
     return Member.update(info);
 }

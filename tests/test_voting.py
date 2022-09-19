@@ -60,9 +60,9 @@ async def test_vote(contract):
     )
     assert return_value.result.success == 1
     # checking the vote is 1
-    check_vote = await contract.get_vote(id=proposalId, address=caller_address).execute(
-        caller_address=caller_address
-    )
+    check_vote = await contract.Proposal_get_vote_proxy(
+        id=proposalId, address=caller_address
+    ).execute(caller_address=caller_address)
     assert check_vote.result.vote == 1
 
     # vote again on the same proposal, 0 this time
@@ -73,7 +73,7 @@ async def test_vote(contract):
     assert return_value.result.success == 1
 
     # checking the vote is now 0
-    check_vote = await contract.get_vote(id=proposalId, address=caller_address).execute(
-        caller_address=caller_address
-    )
+    check_vote = await contract.Proposal_get_vote_proxy(
+        id=proposalId, address=caller_address
+    ).execute(caller_address=caller_address)
     assert check_vote.result.vote == 0

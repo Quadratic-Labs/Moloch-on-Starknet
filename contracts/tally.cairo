@@ -7,7 +7,7 @@ from starkware.starknet.common.syscalls import get_caller_address
 
 from starkware.cairo.common.math import assert_lt
 
-from proposals.library import Proposal, proposals
+from proposals.library import Proposal, proposals, ProposalInfo
 from members import Member
 
 
@@ -19,7 +19,7 @@ func should_accept{
     alloc_locals;
 
     // get proposal's info if it exists, fails otherwise
-    let (local info: Proposal.Info) = Proposal.get_info(proposalId);
+    let (local info: ProposalInfo) = Proposal.get_info(proposalId);
     let (local params) = Proposal.get_params(info.type);
 
     // check quorum
@@ -52,7 +52,7 @@ func launch_tally{
     // Requires voting and grace period have ended
     // Modify Proposal status which is used by the front
     alloc_locals;
-    let (local info: Proposal.Info) = Proposal.get_info(proposalId);
+    let (local info: ProposalInfo) = Proposal.get_info(proposalId);
     let (local params) = Proposal.get_params(info.type);
     let (local caller) = get_caller_address();
 
