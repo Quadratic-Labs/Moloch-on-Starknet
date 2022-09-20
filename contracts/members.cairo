@@ -3,6 +3,7 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_nn, assert_lt
+from starkware.starknet.common.syscalls import get_caller_address
 
 
 // member's Info must be felt-like (no pointer) as it is put in storage
@@ -141,6 +142,55 @@ namespace Member {
     }
 }
 
+
+@external
+func addDelegatedKey{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(delegatedKey: felt) -> (success: felt) {
+    alloc_locals;
+    // assert the caller is member
+    let (local caller) = get_caller_address();
+    Member.assert_is_member(caller);
+    // get member's info
+    let (local member_) = Member.get_info(caller);
+    // create updated member
+    let updated_member: MemberInfo = MemberInfo(
+        address = caller,
+        delegatedKey = delegatedKey,
+        shares = member_.shares,
+        loot = member_.loot,
+        jailed = member_.jailed,
+        lastProposalYesVote = member_.lastProposalYesVote
+    );
+    // update member's info
+    Member.update(updated_member);
+    return (TRUE,);
+
+}
+@external
+func revokeDelegatedKey{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }() -> (success: felt) {
+    alloc_locals;
+     // assert the caller is member
+    let (local caller) = get_caller_address();
+    Member.assert_is_member(caller);
+    // get member's info
+    let (local member_) = Member.get_info(caller);
+    // create updated member
+    let updated_member : MemberInfo = MemberInfo(
+        address = caller,
+        delegatedKey = caller,
+        shares = member_.shares,
+        loot = member_.loot,
+        jailed = member_.jailed,
+        lastProposalYesVote = member_.lastProposalYesVote
+    );
+    // update member's info
+    Member.update(updated_member);
+    return (TRUE,);
+
+}
 // Mapping address -> members, keeping keys array
 @storage_var
 func membersLength() -> (length: felt) {

@@ -97,7 +97,7 @@ async def empty_contract(starknet, test_contract_file):
 @dataclass
 class Member:
     address: int
-    accountKey: int
+    delegatedKey: int
     shares: int
     loot: int
     jailed: int
@@ -119,7 +119,7 @@ class Proposal:
 MEMBERS: list[Member] = [
     Member(
         address=1,
-        accountKey=1,
+        delegatedKey=1,
         shares=5,
         loot=5,
         jailed=0,
@@ -127,7 +127,7 @@ MEMBERS: list[Member] = [
     ),
     Member(
         address=2,
-        accountKey=2,
+        delegatedKey=5,
         shares=5,
         loot=5,
         jailed=0,
@@ -135,7 +135,7 @@ MEMBERS: list[Member] = [
     ),
     Member(
         address=3,
-        accountKey=3,
+        delegatedKey=3,
         shares=10,
         loot=5,
         jailed=0,
@@ -143,7 +143,7 @@ MEMBERS: list[Member] = [
     ),
     Member(
         address=4,
-        accountKey=4,
+        delegatedKey=4,
         shares=50,
         loot=0,
         jailed=1,
@@ -151,7 +151,7 @@ MEMBERS: list[Member] = [
     ),
     Member(
         address=5,
-        accountKey=5,
+        delegatedKey=5,
         shares=5,
         loot=5,
         jailed=0,
