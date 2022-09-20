@@ -5,14 +5,18 @@ import pytest
 async def test_caller_not_member(contract):
     caller_address = 404  # not existing member
     with pytest.raises(Exception):
-        await contract.submitOrder().execute(caller_address=caller_address)
+        await contract.submitSignaling(description=123456789).execute(
+            caller_address=caller_address
+        )
 
 
 @pytest.mark.asyncio
 async def test_caller_not_govern(contract):
     caller_address = 1  # existing but not govern member
     with pytest.raises(Exception):
-        await contract.submitOrder().execute(caller_address=caller_address)
+        await contract.submitSignaling(description=123456789).execute(
+            caller_address=caller_address
+        )
 
 
 @pytest.mark.asyncio
@@ -25,7 +29,7 @@ async def test_submitSignaling(contract):
         )
     ).result.length
 
-    return_value = await contract.submitSignaling().execute(
+    return_value = await contract.submitSignaling(description=123456789).execute(
         caller_address=caller_address
     )
     assert return_value.result.success == 1

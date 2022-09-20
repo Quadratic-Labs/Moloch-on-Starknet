@@ -10,7 +10,7 @@ from proposals.library import Proposal, ProposalInfo
 
 @external
 func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    address: felt, accountKey: felt, shares: felt, loot: felt
+    address: felt, accountKey: felt, shares: felt, loot: felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -28,7 +28,6 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     let yesVotes = 0;
     let noVotes = 0;
     let status = 1;
-    let description = 0;
     let proposal: ProposalInfo = ProposalInfo(
         id=id,
         type=type,

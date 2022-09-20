@@ -10,7 +10,7 @@ from proposals.library import Proposal, ProposalInfo
 
 @external
 func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt
+    tokenAddress: felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -30,7 +30,6 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     let yesVotes = 0;
     let noVotes = 0;
     let status = 1;
-    let description = 0;
     let proposal: ProposalInfo = ProposalInfo(
         id=id,
         type=type,
@@ -48,7 +47,7 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
 
 @external
 func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt
+    tokenAddress: felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -69,7 +68,6 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     let yesVotes = 0;
     let noVotes = 0;
     let status = 1;
-    let description = 0;
     let proposal: ProposalInfo = ProposalInfo(
         id=id,
         type=type,

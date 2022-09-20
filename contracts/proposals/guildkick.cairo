@@ -9,8 +9,7 @@ from proposals.library import Proposal, ProposalInfo
 
 
 @external
-func submitGuildKick{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    memberAddress: felt
+func submitGuildKick{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(memberAddress: felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -28,7 +27,6 @@ func submitGuildKick{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     let yesVotes = 0;
     let noVotes = 0;
     let status = 1;
-    let description = 0;
     let proposal: ProposalInfo = ProposalInfo(
         id=id,
         type=type,

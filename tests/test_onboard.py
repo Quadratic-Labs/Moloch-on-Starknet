@@ -32,6 +32,7 @@ async def test_not_admin(contract):
             accountKey=member.accountKey,
             shares=member.shares,
             loot=member.loot,
+            description=123456789,
         ).execute(caller_address=caller_address)
 
 
@@ -40,18 +41,14 @@ async def test_already_member(contract):
     # given the user is already a member, after submitting the user, should fail
     caller_address = 42  # admin
 
-    member = Member(  # existing member
-        address=3,
-        accountKey=3,
-        shares=10,
-        loot=10,
-    )
+    member = Member(address=3, accountKey=3, shares=10, loot=10)  # existing member
     with pytest.raises(Exception):
         await contract.submitOnboard(
             address=member.address,
             accountKey=member.accountKey,
             shares=member.shares,
             loot=member.loot,
+            description=123456789,
         ).execute(caller_address=caller_address)
 
 
@@ -77,6 +74,7 @@ async def test_submit_onboard(contract):
         accountKey=member.accountKey,
         shares=member.shares,
         loot=member.loot,
+        description=123456789,
     ).execute(caller_address=caller_address)
     assert return_value.result.success == 1
 

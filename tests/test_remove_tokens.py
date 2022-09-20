@@ -7,9 +7,9 @@ async def test_not_member(contract):
     caller_address = 404  # not a member
     token_address = 123
     with pytest.raises(Exception):
-        await contract.submitRemoveToken(tokenAddress=token_address).execute(
-            caller_address=caller_address
-        )
+        await contract.submitRemoveToken(
+            tokenAddress=token_address, description=123456789
+        ).execute(caller_address=caller_address)
 
 
 @pytest.mark.asyncio
@@ -18,9 +18,9 @@ async def test_not_admin(contract):
     caller_address = 3  # not admin
     token_address = 123
     with pytest.raises(Exception):
-        await contract.submitRemoveToken(tokenAddress=token_address).execute(
-            caller_address=caller_address
-        )
+        await contract.submitRemoveToken(
+            tokenAddress=token_address, description=123456789
+        ).execute(caller_address=caller_address)
 
 
 @pytest.mark.asyncio
@@ -29,9 +29,9 @@ async def test_not_whitelisted(contract):
     caller_address = 42  # admin
     token_address = 404  # a non whitelisted token
     with pytest.raises(Exception):
-        await contract.submitRemoveToken(tokenAddress=token_address).execute(
-            caller_address=caller_address
-        )
+        await contract.submitRemoveToken(
+            tokenAddress=token_address, description=123456789
+        ).execute(caller_address=caller_address)
 
 
 @pytest.mark.asyncio
@@ -45,9 +45,9 @@ async def test_submit_token(contract):
             caller_address=caller_address
         )
     ).result.length
-    return_value = await contract.submitRemoveToken(tokenAddress=token_address).execute(
-        caller_address=caller_address
-    )
+    return_value = await contract.submitRemoveToken(
+        tokenAddress=token_address, description=123456789
+    ).execute(caller_address=caller_address)
     assert return_value.result.success == 1
 
     number_after_submit = (

@@ -8,7 +8,7 @@ from roles import Roles
 from proposals.library import Proposal, ProposalInfo
 
 @external
-func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
+func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(description: felt) -> (
     success: felt
 ) {
     alloc_locals;
@@ -26,7 +26,6 @@ func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     let yesVotes = 0;
     let noVotes = 0;
     let status = 1;
-    let description = 0;
     let proposal: ProposalInfo = ProposalInfo(
         id=id,
         type=type,
