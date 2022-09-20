@@ -10,6 +10,7 @@ from actions import Actions
 from members import Member, MemberInfo
 from proposals.library import Proposal, ProposalParams
 from proposals.onboard import submitOnboard
+from proposals.signaling import submitSignaling
 from proposals.guildkick import submitGuildKick
 from proposals.order import submitOrder
 from proposals.tokens import submitApproveToken, submitRemoveToken, Token
