@@ -2,6 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import assert_nn, assert_lt
+from starkware.cairo.common.bool import TRUE, FALSE
 
 struct ProposalInfo {
     // TODO define the meaning of each element
@@ -162,6 +163,20 @@ namespace Proposal {
         }
         return ();
     }
+
+    func get_has_voted{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        proposal_id: felt, address: felt
+    ) -> (vote: felt) {
+        let (vote: felt) = hasVoted.read(proposal_id, address);
+        return (vote,);
+    }
+
+    func set_has_voted{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        proposal_id: felt, address: felt
+    ) -> () {
+        hasVoted.write(proposal_id, address, TRUE);
+        return ();
+    }
 }
 
 @storage_var
@@ -181,3 +196,8 @@ func proposals(id: felt) -> (proposal: ProposalInfo) {
 @storage_var
 func proposalsVotes(proposalId: felt, memberAddress: felt) -> (vote: felt) {
 }
+
+@storage_var
+func hasVoted(proposalId: felt, memberAddress: felt) -> (bool: felt) {
+}
+

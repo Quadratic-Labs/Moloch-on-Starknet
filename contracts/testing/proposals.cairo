@@ -87,3 +87,16 @@ syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(id: felt, address: felt, vote: felt) -> () {
     return Proposal.set_vote(id, address, vote);
 }
+
+@external
+func  Proposal_get_has_voted_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        proposal_id: felt, address: felt
+    ) -> (vote: felt) {
+        return Proposal.get_has_voted(proposal_id, address);
+    }
+@external
+func  Proposal_set_has_voted_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    proposal_id: felt, address: felt
+) -> () {
+    return Proposal.set_has_voted(proposal_id, address);
+}

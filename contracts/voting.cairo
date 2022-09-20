@@ -29,8 +29,24 @@ func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
         assert_lt(today_timestamp, proposal.submittedAt + params.votingDuration);
     }
 
+
+    // assert the caller has not voted
+    let (has_voted) = Proposal.get_has_voted(proposalId, caller);
+    with_attr error_message("The caller has already voted.") {
+        assert has_voted = FALSE;
+    }
+
+    %{
+        print("has_voted=",ids.has_voted)
+        print("has_voted=",ids.proposalId)
+        print("has_voted=",ids.caller)
+    %}
     // Set vote
     Proposal.set_vote(id=proposalId, address=caller, vote=vote);
+
+
+    // Set has voted
+    Proposal.set_has_voted(proposalId, caller);
 
     return (TRUE,);
 }

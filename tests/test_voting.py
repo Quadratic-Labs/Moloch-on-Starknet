@@ -65,15 +65,9 @@ async def test_vote(contract):
     ).execute(caller_address=caller_address)
     assert check_vote.result.vote == 1
 
-    # vote again on the same proposal, 0 this time
+    # vote again on the same proposal, should fail
 
-    return_value = await contract.submitVote(proposalId=proposalId, vote=False).execute(
-        caller_address=caller_address
-    )
-    assert return_value.result.success == 1
-
-    # checking the vote is now 0
-    check_vote = await contract.Proposal_get_vote_proxy(
-        id=proposalId, address=caller_address
-    ).execute(caller_address=caller_address)
-    assert check_vote.result.vote == 0
+    with pytest.raises(Exception):
+        await contract.submitVote(proposalId=proposalId, vote=False).execute(
+            caller_address=caller_address
+        )
