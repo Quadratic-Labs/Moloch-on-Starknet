@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
-from starkware.starknet.common.syscalls import get_caller_address
+from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
 from starkware.cairo.common.math import assert_lt
 from members import Member
 from proposals.library import Proposal, ProposalInfo, ProposalParams
@@ -22,12 +22,7 @@ func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
     let (local proposal: ProposalInfo) = Proposal.get_proposal_by_id(proposalId);
     let (local params: ProposalParams) = Proposal.get_params(proposal.type);
 
-    local today_timestamp = 10;
-    // %{
-    //     from datetime import datetime
-    //     dt = datetime.now()
-    //     ids.today_timestamp = int(datetime.timestamp(dt))
-    // %}
+    let (local today_timestamp) = get_block_timestamp();
 
     // assert the votingPeriod has not ended
     with_attr error_message("The voting period has ended.") {

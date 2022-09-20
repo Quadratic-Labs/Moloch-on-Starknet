@@ -3,7 +3,7 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math_cmp import is_le
-from starkware.starknet.common.syscalls import get_caller_address
+from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
 
 from starkware.cairo.common.math import assert_lt
 
@@ -61,7 +61,7 @@ func launch_tally{
         Member.assert_is_member(caller);
     }
 
-    local today_timestamp = 10;
+    let (local today_timestamp) = get_block_timestamp();
 
     // assert the gracePeriod ended
     with_attr error_message("The proposal has not ended grace period.") {

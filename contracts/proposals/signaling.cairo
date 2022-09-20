@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
-from starkware.starknet.common.syscalls import get_caller_address
+from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
 from members import Member
 from roles import Roles
 from proposals.library import Proposal, ProposalInfo
@@ -22,7 +22,7 @@ func submitSignaling{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     let type = 'Signaling';
     // TODO update with the appropriate information
     let submittedBy = caller;
-    let submittedAt = 0;
+    let (submittedAt) = get_block_timestamp();
     let yesVotes = 0;
     let noVotes = 0;
     let status = 1;
