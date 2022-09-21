@@ -36,11 +36,6 @@ func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
         assert has_voted = FALSE;
     }
 
-    %{
-        print("has_voted=",ids.has_voted)
-        print("has_voted=",ids.proposalId)
-        print("has_voted=",ids.caller)
-    %}
     // Set vote
     Proposal.set_vote(id=proposalId, address=caller, vote=vote);
 

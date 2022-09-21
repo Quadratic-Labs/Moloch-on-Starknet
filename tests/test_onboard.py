@@ -8,7 +8,7 @@ from dataclasses import dataclass, astuple
 @dataclass
 class Member:
     address: int
-    accountKey: int
+    delegatedKey: int
     shares: int
     loot: int
     # jailed: int not needed for now
@@ -21,7 +21,7 @@ async def test_not_admin(contract):
     caller_address = 3  # not admin
     member = Member(
         address=123,
-        accountKey=123,
+        delegatedKey=123,
         shares=10,
         loot=10,
     )
@@ -29,7 +29,7 @@ async def test_not_admin(contract):
     with pytest.raises(Exception):
         await contract.submitOnboard(
             address=member.address,
-            accountKey=member.accountKey,
+            delegatedKey=member.delegatedKey,
             shares=member.shares,
             loot=member.loot,
             description=123456789,
@@ -41,11 +41,11 @@ async def test_already_member(contract):
     # given the user is already a member, after submitting the user, should fail
     caller_address = 42  # admin
 
-    member = Member(address=3, accountKey=3, shares=10, loot=10)  # existing member
+    member = Member(address=3, delegatedKey=3, shares=10, loot=10)  # existing member
     with pytest.raises(Exception):
         await contract.submitOnboard(
             address=member.address,
-            accountKey=member.accountKey,
+            delegatedKey=member.delegatedKey,
             shares=member.shares,
             loot=member.loot,
             description=123456789,
@@ -59,7 +59,7 @@ async def test_submit_onboard(contract):
 
     member = Member(  # non existing member
         address=123,
-        accountKey=123,
+        delegatedKey=123,
         shares=10,
         loot=10,
     )
@@ -71,7 +71,7 @@ async def test_submit_onboard(contract):
     ).result.length
     return_value = await contract.submitOnboard(
         address=member.address,
-        accountKey=member.accountKey,
+        delegatedKey=member.delegatedKey,
         shares=member.shares,
         loot=member.loot,
         description=123456789,

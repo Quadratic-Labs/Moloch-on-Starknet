@@ -6,7 +6,31 @@ from starkware.starknet.common.syscalls import get_caller_address, get_block_tim
 from roles import Roles
 from members import Member
 from proposals.library import Proposal, ProposalInfo
-// from roles import Roles
+
+struct TokenParams {
+    tokenAddress: felt,
+}
+
+@storage_var
+func tokenParams(proposalId: felt) -> (params: TokenParams) {
+}
+
+func get_tokenParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    id: felt
+) -> (params: TokenParams) {
+    let (params: TokenParams) = tokenParams.read(id);
+    return (params,);
+}
+
+func set_tokenParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    id: felt, params: TokenParams
+) -> () {
+    tokenParams.write(id, params);
+    return ();
+}
+
+
+
 
 @external
 func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -24,7 +48,6 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     // record the proposal
     let (id) = Proposal.get_proposals_length();
     let type = 'approveToken';
-    // TODO update with the appropriate information
     let submittedBy = caller;
     let (submittedAt) = get_block_timestamp();
     let yesVotes = 0;
@@ -42,6 +65,9 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     );
 
     Proposal.add_proposal(proposal);
+    // register params
+    let params: TokenParams= TokenParams(tokenAddress=tokenAddress);
+    set_tokenParams(id, params);
     return (TRUE,);
 }
 
@@ -80,6 +106,9 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     );
 
     Proposal.add_proposal(proposal);
+    // register params
+    let params: TokenParams= TokenParams(tokenAddress=tokenAddress);
+    set_tokenParams(id, params);
     return (TRUE,);
 }
 

@@ -5,7 +5,6 @@ from starkware.cairo.common.math import assert_nn, assert_lt
 from starkware.cairo.common.bool import TRUE, FALSE
 
 struct ProposalInfo {
-    // TODO define the meaning of each element
     id: felt,
     type: felt,
     submittedBy: felt,

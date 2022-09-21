@@ -20,7 +20,6 @@ func submitSignaling{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     // record the proposal
     let (id) = Proposal.get_proposals_length();
     let type = 'Signaling';
-    // TODO update with the appropriate information
     let submittedBy = caller;
     let (submittedAt) = get_block_timestamp();
     let yesVotes = 0;

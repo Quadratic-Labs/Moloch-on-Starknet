@@ -32,6 +32,7 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     Proposal.set_params('ApproveToken', params);
     Proposal.set_params('RemoveToken', params);
     Proposal.set_params('Order', params);
+    Proposal.set_params('Signaling', params);
 
     // add roles setup
     adminRoles.write('admin', 'admin');

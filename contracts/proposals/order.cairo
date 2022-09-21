@@ -7,10 +7,37 @@ from members import Member
 from roles import Roles
 from proposals.library import Proposal, ProposalInfo
 
+
+
+struct OrderParams {
+    tributeOffered: felt,
+    tributeAddress: felt,
+    paymentRequested: felt,
+    paymentAddress: felt,
+}
+
+@storage_var
+func orderParams(proposalId: felt) -> (params: OrderParams) {
+}
+
+func get_orderParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    id: felt
+) -> (params: OrderParams) {
+    let (params: OrderParams) = orderParams.read(id);
+    return (params,);
+}
+
+func set_orderParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    id: felt, params: OrderParams
+) -> () {
+    orderParams.write(id, params);
+    return ();
+}
+
+
 @external
-func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(description: felt) -> (
-    success: felt
-) {
+func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    tributeOffered: felt, tributeAddress: felt, paymentRequested: felt, paymentAddress: felt,description: felt) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
     // assert the caller is member
@@ -20,7 +47,8 @@ func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     // record the proposal
     let (id) = Proposal.get_proposals_length();
     let type = 'Order';
-    // TODO update with the appropriate information
+    // TODO assert the token is whitelisted
+    // TODO assert enough tokens in the bank
     let submittedBy = caller;
     let (submittedAt) = get_block_timestamp();
     let yesVotes = 0;
@@ -38,5 +66,11 @@ func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     );
 
     Proposal.add_proposal(proposal);
+    // register params
+    let params: OrderParams= OrderParams(tributeOffered=tributeOffered,
+                                        tributeAddress=tributeAddress,
+                                        paymentRequested=paymentRequested,
+                                        paymentAddress=paymentAddress,);
+    set_orderParams(id, params);
     return (TRUE,);
 }
