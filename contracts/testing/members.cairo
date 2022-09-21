@@ -69,10 +69,10 @@ func Member_total_count_proxy{
 }
 
 @external
-func Member_add_new_proxy{
+func Member_add_member_proxy{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(info: MemberInfo) -> () {
-    return Member.add_new(info);
+    return Member.add_member(info);
 }
 
 @external

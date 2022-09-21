@@ -15,20 +15,21 @@ struct GuildKickParams {
 func guildKickParams(proposalId: felt) -> (params: GuildKickParams) {
 }
 
-func get_guildKickParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    id: felt
-) -> (params: GuildKickParams) {
-    let (params: GuildKickParams) = guildKickParams.read(id);
-    return (params,);
-}
+namespace Guildkick{
+    func get_guildKickParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        id: felt
+    ) -> (params: GuildKickParams) {
+        let (params: GuildKickParams) = guildKickParams.read(id);
+        return (params,);
+    }
 
-func set_guildKickParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    id: felt, params: GuildKickParams
-) -> () {
-    guildKickParams.write(id, params);
-    return ();
+    func set_guildKickParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        id: felt, params: GuildKickParams
+    ) -> () {
+        guildKickParams.write(id, params);
+        return ();
+    }
 }
-
 
 
 
@@ -65,6 +66,6 @@ func submitGuildKick{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     Proposal.add_proposal(proposal);
     // register params
     let params: GuildKickParams= GuildKickParams(memberAddress=memberAddress);
-    set_guildKickParams(id, params);
+    Guildkick.set_guildKickParams(id, params);
     return (TRUE,);
 }

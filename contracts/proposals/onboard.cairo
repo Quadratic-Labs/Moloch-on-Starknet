@@ -14,19 +14,20 @@ from proposals.library import Proposal, ProposalInfo
 @storage_var
 func onBoardParams(proposalId: felt) -> (params: MemberInfo) {
 }
+namespace Onboard{
+    func get_onBoardParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        id: felt
+    ) -> (params: MemberInfo) {
+        let (params: MemberInfo) = onBoardParams.read(id);
+        return (params,);
+    }
 
-func get_onBoardParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    id: felt
-) -> (params: MemberInfo) {
-    let (params: MemberInfo) = onBoardParams.read(id);
-    return (params,);
-}
-
-func set_onBoardParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    id: felt, params: MemberInfo
-) -> () {
-    onBoardParams.write(id, params);
-    return ();
+    func set_onBoardParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        id: felt, params: MemberInfo
+    ) -> () {
+        onBoardParams.write(id, params);
+        return ();
+    }
 }
 
 @external
@@ -69,6 +70,6 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
                                         jailed=0, 
                                         lastProposalYesVote=0
                                         );
-    set_onBoardParams(id, params);
+    Onboard.set_onBoardParams(id, params);
     return (TRUE,);
 }

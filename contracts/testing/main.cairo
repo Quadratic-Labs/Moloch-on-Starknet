@@ -9,7 +9,7 @@ from testing.members import (
     Member_assert_not_jailed_proxy,
     Member_get_info_proxy,
     Member_total_count_proxy,
-    Member_add_new_proxy,
+    Member_add_member_proxy,
     Member_update_proxy
 )
 

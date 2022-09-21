@@ -6,7 +6,7 @@ from starkware.starknet.common.syscalls import get_caller_address, get_block_tim
 from roles import Roles
 from members import Member
 from proposals.library import Proposal, ProposalInfo
-
+from bank import Bank
 struct TokenParams {
     tokenAddress: felt,
 }
@@ -14,21 +14,21 @@ struct TokenParams {
 @storage_var
 func tokenParams(proposalId: felt) -> (params: TokenParams) {
 }
+namespace Tokens{
+    func get_tokenParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        id: felt
+    ) -> (params: TokenParams) {
+        let (params: TokenParams) = tokenParams.read(id);
+        return (params,);
+    }
 
-func get_tokenParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    id: felt
-) -> (params: TokenParams) {
-    let (params: TokenParams) = tokenParams.read(id);
-    return (params,);
+    func set_tokenParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        id: felt, params: TokenParams
+    ) -> () {
+        tokenParams.write(id, params);
+        return ();
+    }
 }
-
-func set_tokenParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    id: felt, params: TokenParams
-) -> () {
-    tokenParams.write(id, params);
-    return ();
-}
-
 
 
 
@@ -43,7 +43,7 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     // assert the caller is admin
     Roles.require_role('admin');
     // assert the token is not already whitelisted
-    Token.assert_token_not_whitelisted(tokenAddress);
+    Bank.assert_token_not_whitelisted(tokenAddress);
 
     // record the proposal
     let (id) = Proposal.get_proposals_length();
@@ -67,7 +67,7 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     Proposal.add_proposal(proposal);
     // register params
     let params: TokenParams= TokenParams(tokenAddress=tokenAddress);
-    set_tokenParams(id, params);
+    Tokens.set_tokenParams(id, params);
     return (TRUE,);
 }
 
@@ -82,7 +82,7 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     // assert the caller is admin
     Roles.require_role('admin');
     // assert the token is whitelisted
-    Token.assert_token_whitelisted(tokenAddress);
+    Bank.assert_token_whitelisted(tokenAddress);
     // check the token is ERC20 or ERC721.
     // TODO to complete
 
@@ -108,60 +108,8 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     Proposal.add_proposal(proposal);
     // register params
     let params: TokenParams= TokenParams(tokenAddress=tokenAddress);
-    set_tokenParams(id, params);
+    Tokens.set_tokenParams(id, params);
     return (TRUE,);
 }
 
-namespace Token {
-    func assert_token_whitelisted{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        tokenAddress: felt
-    ) {
-        with_attr error_message("Token {tokenAddress} is not whitelisted") {
-            let (res) = whitelistedTokens.read(tokenAddress);
-            assert res = TRUE;
-        }
-        return ();
-    }
 
-    func assert_token_not_whitelisted{
-        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    }(tokenAddress: felt) {
-        with_attr error_message("Token {tokenAddress} is not whitelisted") {
-            let (res) = whitelistedTokens.read(tokenAddress);
-            assert res = FALSE;
-        }
-        return ();
-    }
-
-    func add_token{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        tokenAddress: felt
-    ) {
-        whitelistedTokens.write(tokenAddress, TRUE);
-        let (len) = whitelistedTokensLenght.read();
-        whitelistedTokensLenght.write(len + 1);
-        return ();
-    }
-
-    func remove_token{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        tokenAddress: felt
-    ) {
-        assert_token_whitelisted(tokenAddress);
-        whitelistedTokens.write(tokenAddress, FALSE);
-        return ();
-    }
-
-    func get_tokensLength{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
-        length: felt
-    ) {
-        let (length) = whitelistedTokensLenght.read();
-        return (length,);
-    }
-}
-
-@storage_var
-func whitelistedTokens(tokenAddress: felt) -> (whitelisted: felt) {
-}
-
-@storage_var
-func whitelistedTokensLenght() -> (length: felt) {
-}

@@ -13,11 +13,12 @@ from proposals.onboard import submitOnboard
 from proposals.signaling import submitSignaling
 from proposals.guildkick import submitGuildKick
 from proposals.order import submitOrder
-from proposals.tokens import submitApproveToken, submitRemoveToken, Token
+from proposals.tokens import submitApproveToken, submitRemoveToken
 from ragequit import ragequit
 from roles import Roles, grant_role, revoke_role, delegate_admin_role, adminRoles, membersRoles
 from tally import launch_tally
 from voting import submitVote
+from bank import Bank
 
 
 @constructor
@@ -40,11 +41,11 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 
     // Add deployer as a member
     local deployer: MemberInfo = MemberInfo(address=42, delegatedKey=42, shares=1, loot=50, jailed=0, lastProposalYesVote=0);
-    Member.add_new(deployer);
+    Member.add_member(deployer);
     // Grant deployer admin privileges
     membersRoles.write(deployer.address, 'admin', TRUE);
 
     // add a whitelisted token
-    Token.add_token(123);
+    Bank.add_token(123);
     return ();
 }

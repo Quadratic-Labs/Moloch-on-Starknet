@@ -4,7 +4,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_nn, assert_lt
 from starkware.starknet.common.syscalls import get_caller_address
-
+from bank import Bank, TotalSupply
 
 // member's Info must be felt-like (no pointer) as it is put in storage
 struct MemberInfo {
@@ -114,7 +114,7 @@ namespace Member {
         return (length,);
     }
 
-    func add_new{
+    func add_member{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(info: MemberInfo) -> () {
         alloc_locals;
@@ -126,7 +126,24 @@ namespace Member {
         membersLength.write(len + 1);
         membersAddresses.write(len + 1, info.address);
         membersInfo.write(info.address, info);
+        let (guild_bank: TotalSupply) = Bank.get_totalSupply();
+        let new_balance: TotalSupply = TotalSupply(shares=guild_bank.shares+info.shares, 
+                                                    loot=guild_bank.loot+info.loot);
+        Bank.set_totalSupply(new_balance);
         return ();
+    }
+    func jail_member{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(address: felt) -> () {
+
+        let (member_: MemberInfo) = membersInfo.read(address);
+        let updated_member: MemberInfo = MemberInfo(address=member_.address,
+                                                    delegatedKey=member_.delegatedKey,
+                                                    shares=member_.shares,
+                                                    loot=member_.loot,
+                                                    jailed=TRUE,
+                                                    lastProposalYesVote=member_.lastProposalYesVote);
+        update(updated_member);
     }
 
     func update{

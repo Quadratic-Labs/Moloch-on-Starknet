@@ -20,18 +20,20 @@ struct OrderParams {
 func orderParams(proposalId: felt) -> (params: OrderParams) {
 }
 
-func get_orderParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    id: felt
-) -> (params: OrderParams) {
-    let (params: OrderParams) = orderParams.read(id);
-    return (params,);
-}
+namespace Order{
+    func get_orderParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        id: felt
+    ) -> (params: OrderParams) {
+        let (params: OrderParams) = orderParams.read(id);
+        return (params,);
+    }
 
-func set_orderParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    id: felt, params: OrderParams
-) -> () {
-    orderParams.write(id, params);
-    return ();
+    func set_orderParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        id: felt, params: OrderParams
+    ) -> () {
+        orderParams.write(id, params);
+        return ();
+    }
 }
 
 
@@ -71,6 +73,6 @@ func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
                                         tributeAddress=tributeAddress,
                                         paymentRequested=paymentRequested,
                                         paymentAddress=paymentAddress,);
-    set_orderParams(id, params);
+    Order.set_orderParams(id, params);
     return (TRUE,);
 }
