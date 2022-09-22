@@ -46,7 +46,7 @@ namespace Bank{
         tokenAddress: felt
     ) -> (amount: felt) {
         let (amount: felt) = tokenBalance.read(tokenAddress);
-        return (amount);
+        return (amount,);
     }
 
     func set_tokenBalance{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -78,7 +78,7 @@ namespace Bank{
     func assert_token_not_whitelisted{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(tokenAddress: felt) {
-        with_attr error_message("Token {tokenAddress} is not whitelisted") {
+        with_attr error_message("Token {tokenAddress} is already whitelisted") {
             let (res) = whitelistedTokens.read(tokenAddress);
             assert res = FALSE;
         }
@@ -88,6 +88,7 @@ namespace Bank{
     func add_token{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         tokenAddress: felt
     ) {
+        assert_token_not_whitelisted(tokenAddress);
         whitelistedTokens.write(tokenAddress, TRUE);
         return ();
     }

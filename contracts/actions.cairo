@@ -6,7 +6,7 @@ from proposals.onboard import Onboard
 from members import Member, MemberInfo
 from proposals.order import Order, OrderParams
 from proposals.tokens import Tokens, TokenParams
-from proposals.library import Proposal
+from proposals.library import Proposal, ProposalInfo
 from bank import Bank, TotalSupply
 // TODO later: Automate actions.
 // Might need to call other contracts
@@ -21,8 +21,9 @@ namespace Actions {
     }
 
     func execute_guildkick{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
+        alloc_locals;
         let (params: GuildKickParams) = Guildkick.get_guildKickParams(proposalId);
-        let (member_: MemberInfo) = Member.get_info(params.memberAddress);
+        let (local member_: MemberInfo) = Member.get_info(params.memberAddress);
         // move member's shares to loot and jail the member 
         let updated_member: MemberInfo = MemberInfo(address=member_.address,
                                                     delegatedKey=member_.delegatedKey,
@@ -34,17 +35,21 @@ namespace Actions {
 
         // update the bank 
         let (guild_balance: TotalSupply) = Bank.get_totalSupply();
-        let (new_supply : TotalSupply) = TotalSupply(shares=guild_balance.shares-member_.shares, 
+        let new_supply : TotalSupply = TotalSupply(shares=guild_balance.shares-member_.shares, 
                                                      loot=guild_balance.loot+member_.shares);
-        Bank.set_get_totalSupply(new_supply);
+        Bank.set_totalSupply(new_supply);
         return (TRUE,);
     }
     
     func execute_approve_token{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
+        let (params: TokenParams) = Tokens.get_tokenParams(proposalId);
+        Bank.add_token(params.tokenAddress);
         return (TRUE,);
     }
 
     func execute_remove_token{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
+        let (params: TokenParams) = Tokens.get_tokenParams(proposalId);
+        Bank.remove_token(params.tokenAddress);
         return (TRUE,);
     }
 
@@ -53,14 +58,60 @@ namespace Actions {
     }
 
     func execute_order{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
+        let (params: OrderParams) = Order.get_orderParams(proposalId);
+        let (old_amount_tribute: felt) = Bank.get_tokenBalance(params.tributeAddress);
+        let (old_amount_payment: felt) = Bank.get_tokenBalance(params.paymentAddress);
+        Bank.set_tokenBalance(params.tributeAddress, params.tributeOffered + old_amount_tribute);
+        Bank.set_tokenBalance(params.paymentAddress, params.paymentRequested + old_amount_payment);
         return (TRUE,);
     }
 }
 
 @external
-func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> () {
+func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt) {
     // Requires proposal to be accepted
     // Executes the proposal's actions if preconditions are satisfied
     // Modify Proposal status which is used by the front
-    return ();
+    alloc_locals;
+    let (local proposal: ProposalInfo) = Proposal.get_proposal_by_id(proposalId);
+
+    // assert the proposal is accepted
+    with_attr error_message("The proposal should be accepted first.") {
+        assert proposal.status = Proposal.ACCEPTED;
+    }
+    
+    // execute action
+    if (proposal.type == 'Onboard'){
+        Actions.execute_onboard(proposalId);
+        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        return (TRUE,);
+    }
+    if (proposal.type == 'GuildKick'){
+        Actions.execute_guildkick(proposalId);
+        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        return (TRUE,);
+    }
+    if (proposal.type == 'ApproveToken'){
+        Actions.execute_approve_token(proposalId);
+        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        return (TRUE,);
+    }
+    if (proposal.type == 'RemoveToken'){
+        Actions.execute_remove_token(proposalId);
+        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        return (TRUE,);
+    }
+    if (proposal.type == 'Order'){
+        Actions.execute_order(proposalId);
+        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        return (TRUE,);
+    }
+    if (proposal.type == 'Signaling'){
+        Actions.execute_signaling(proposalId);
+        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        return (TRUE,);
+    }
+
+    // update proposal status
+    return (TRUE,);
 }

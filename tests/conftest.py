@@ -268,7 +268,7 @@ async def contract(starknet, test_contract_file):
         5: [],
     }
     for member in MEMBERS:
-        await contract.Member_add_new_proxy(astuple(member)).execute()
+        await contract.Member_add_member_proxy(astuple(member)).execute()
         for role in MEMBER_ROLES[member.address]:
             await contract.grant_role(role, member.address).execute(caller_address=42)
 
