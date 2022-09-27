@@ -2,6 +2,9 @@ import pytest
 from datetime import datetime
 from . import utils
 
+YESVOTE = utils.str_to_felt("yes")
+NOVOTE = utils.str_to_felt("no")
+
 
 @pytest.mark.asyncio
 async def test_non_member(contract):
@@ -9,7 +12,7 @@ async def test_non_member(contract):
     caller_address = 404  # not a member
     proposalId = 1
     with pytest.raises(Exception):
-        await contract.submitVote(proposalId=proposalId, vote=True).execute(
+        await contract.submitVote(proposalId=proposalId, vote=YESVOTE).execute(
             caller_address=caller_address
         )
 
@@ -20,7 +23,7 @@ async def test_non_existing_proposal(contract):
     caller_address = 42
     proposalId = 404
     with pytest.raises(Exception):
-        await contract.submitVote(proposalId=proposalId, vote=True).execute(
+        await contract.submitVote(proposalId=proposalId, vote=YESVOTE).execute(
             caller_address=caller_address
         )
 
@@ -31,7 +34,7 @@ async def test_outside_voting_period(contract):
     caller_address = 42
     proposalId = 3  # voting period ended in Aug 01 2022 00:00:00
     with pytest.raises(Exception):
-        await contract.submitVote(proposalId=proposalId, vote=True).execute(
+        await contract.submitVote(proposalId=proposalId, vote=YESVOTE).execute(
             caller_address=caller_address
         )
 
@@ -55,19 +58,19 @@ async def test_vote(contract):
     # voting 1 on an existing proposal should succeed
     caller_address = 42
     proposalId = 8
-    return_value = await contract.submitVote(proposalId=proposalId, vote=True).execute(
-        caller_address=caller_address
-    )
+    return_value = await contract.submitVote(
+        proposalId=proposalId, vote=YESVOTE
+    ).execute(caller_address=caller_address)
     assert return_value.result.success == 1
     # checking the vote is 1
     check_vote = await contract.Proposal_get_vote_proxy(
         id=proposalId, address=caller_address
     ).execute(caller_address=caller_address)
-    assert check_vote.result.vote == 1
+    assert check_vote.result.vote == YESVOTE
 
     # vote again on the same proposal, should fail
 
     with pytest.raises(Exception):
-        await contract.submitVote(proposalId=proposalId, vote=False).execute(
+        await contract.submitVote(proposalId=proposalId, vote=NOVOTE).execute(
             caller_address=caller_address
         )

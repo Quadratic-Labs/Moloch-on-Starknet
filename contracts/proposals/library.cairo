@@ -33,7 +33,8 @@ namespace Proposal {
 
     const NOTFOUND = -1;
 
-
+    const YESVOTE = 'yes';
+    const NOVOTE = 'no';
 
     func get_params{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         kind: felt
@@ -154,28 +155,10 @@ namespace Proposal {
     func set_vote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt, address: felt, vote: felt
     ) -> () {
-        assert_within_bounds(id);
-        if (vote == 0) {
-            proposalsVotes.write(id, address, 0);
-        } else {
-            proposalsVotes.write(id, address, 1);
-        }
+        proposalsVotes.write(id, address, vote);
         return ();
     }
 
-    func get_has_voted{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        proposal_id: felt, address: felt
-    ) -> (vote: felt) {
-        let (vote: felt) = hasVoted.read(proposal_id, address);
-        return (vote,);
-    }
-
-    func set_has_voted{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        proposal_id: felt, address: felt
-    ) -> () {
-        hasVoted.write(proposal_id, address, TRUE);
-        return ();
-    }
 }
 
 @storage_var
@@ -196,7 +179,4 @@ func proposals(id: felt) -> (proposal: ProposalInfo) {
 func proposalsVotes(proposalId: felt, memberAddress: felt) -> (vote: felt) {
 }
 
-@storage_var
-func hasVoted(proposalId: felt, memberAddress: felt) -> (bool: felt) {
-}
 

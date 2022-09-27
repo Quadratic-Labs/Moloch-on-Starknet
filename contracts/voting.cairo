@@ -31,17 +31,19 @@ func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
 
 
     // assert the caller has not voted
-    let (has_voted) = Proposal.get_has_voted(proposalId, caller);
+    let (current_vote) = Proposal.get_vote(proposalId, caller);
     with_attr error_message("The caller has already voted.") {
-        assert has_voted = FALSE;
+        assert current_vote = 0;
     }
 
     // Set vote
     Proposal.set_vote(id=proposalId, address=caller, vote=vote);
 
-
-    // Set has voted
-    Proposal.set_has_voted(proposalId, caller);
+    //TODO replace has voted by check wether user vote is null or not
+    // TODO update member info by puting the id of the last proposal he voted yes (useful later for ragequits)
+    // TODO check wether the user is jaled or no
+    // TODO check if the vote is one of the allowed value
+    // TODO dans MOLOCH V2, le vote est mis à jour avec le nombre de shares du user et non pas en augmentant de 1
 
     return (TRUE,);
 }

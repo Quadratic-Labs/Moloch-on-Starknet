@@ -4,6 +4,8 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_lt
 
+
+// TODO transform this to functions
 struct TotalSupply{
     shares: felt,
     loot: felt,
