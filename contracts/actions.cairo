@@ -1,6 +1,8 @@
 %lang starknet
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
+from starkware.starknet.common.syscalls import get_block_timestamp
+from starkware.cairo.common.math import assert_lt
 from proposals.guildkick import Guildkick, GuildKickParams
 from proposals.onboard import Onboard
 from members import Member, MemberInfo
@@ -74,10 +76,20 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     // Modify Proposal status which is used by the front
     alloc_locals;
     let (local proposal: ProposalInfo) = Proposal.get_proposal_by_id(proposalId);
+    let (local params) = Proposal.get_params(proposal.type);
 
     // assert the proposal is accepted
     with_attr error_message("The proposal should be accepted first.") {
         assert proposal.status = Proposal.ACCEPTED;
+    }
+
+
+    // assert the grace period ended
+    let (local today_timestamp) = get_block_timestamp();
+    with_attr error_message("The proposal has not ended grace period.") {
+        assert_lt(
+            proposal.submittedAt + params.votingDuration + params.graceDuration, today_timestamp
+        );
     }
     
     // execute action

@@ -30,6 +30,7 @@ namespace Onboard{
     }
 }
 
+// remove delegated key from parameters
 @external
 func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     address: felt, delegatedKey: felt, shares: felt, loot: felt, description: felt

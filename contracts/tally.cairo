@@ -65,10 +65,10 @@ func launch_tally{
 
     let (local today_timestamp) = get_block_timestamp();
 
-    // assert the gracePeriod ended
-    with_attr error_message("The proposal has not ended grace period.") {
+    // assert the voting period ended
+    with_attr error_message("The proposal has not ended voting period.") {
         assert_lt(
-            info.submittedAt + params.graceDuration + params.votingDuration, today_timestamp
+            info.submittedAt + params.votingDuration, today_timestamp
         );
     }
 
