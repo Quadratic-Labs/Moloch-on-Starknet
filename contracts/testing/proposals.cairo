@@ -87,3 +87,10 @@ syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(id: felt, address: felt, vote: felt) -> () {
     return Proposal.set_vote(id, address, vote);
 }
+
+@external
+func Proposal_force_proposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        proposalId: felt
+    ) -> () {
+    return Proposal.force_proposal(proposalId);
+}

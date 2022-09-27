@@ -72,5 +72,8 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
                                         lastProposalYesVote=0
                                         );
     Onboard.set_onBoardParams(id, params);
+
+    // TODO not sure it is the best way to bypass the voting period
+    Proposal.force_proposal(id);
     return (TRUE,);
 }

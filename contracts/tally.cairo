@@ -58,6 +58,12 @@ func launch_tally{
     let (local params) = Proposal.get_params(info.type);
     let (local caller) = get_caller_address();
 
+    // assert proposal status is submitted
+    with_attr error_message("Tally needs a proposal with SUBMITTED as status") {
+        assert info.status = Proposal.SUBMITTED;
+    }
+
+
     // assert the caller is member
     with_attr error_message("AccessControl: user {caller} is not a member.") {
         Member.assert_is_member(caller);

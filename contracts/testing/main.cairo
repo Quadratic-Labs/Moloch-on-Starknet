@@ -25,7 +25,8 @@ from testing.proposals import (
     Proposal_update_proposal_proxy,
     Proposal_get_proposals_length_proxy,
     Proposal_get_vote_proxy,
-    Proposal_set_vote_proxy
+    Proposal_set_vote_proxy,
+    Proposal_force_proposal_proxy
 )
 
 from testing.roles import (

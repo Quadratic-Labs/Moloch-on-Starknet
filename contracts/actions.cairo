@@ -78,20 +78,33 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     let (local proposal: ProposalInfo) = Proposal.get_proposal_by_id(proposalId);
     let (local params) = Proposal.get_params(proposal.type);
 
-    // assert the proposal is accepted
-    with_attr error_message("The proposal should be accepted first.") {
-        assert proposal.status = Proposal.ACCEPTED;
+    // TODO rewrite this in an elegant way
+    if (proposal.status == Proposal.ACCEPTED){
+        
+    } else{ 
+        if (proposal.status == Proposal.FORCED){
+        } else{
+            // assert the proposal is accepted
+            with_attr error_message("The proposal status should be ACCEPTED or FORCED.") {
+                assert 0 = 1;
+            }
+        }
     }
-
-
+    
     // assert the grace period ended
     let (local today_timestamp) = get_block_timestamp();
     with_attr error_message("The proposal has not ended grace period.") {
+        if (proposal.status == Proposal.ACCEPTED){
         assert_lt(
             proposal.submittedAt + params.votingDuration + params.graceDuration, today_timestamp
         );
+        } else{
+        // if the proposal status is FORCED, ignore voting duration
+        assert_lt(
+            proposal.submittedAt + params.graceDuration, today_timestamp
+        );
+        }
     }
-    
     // execute action
     if (proposal.type == 'Onboard'){
         Actions.execute_onboard(proposalId);

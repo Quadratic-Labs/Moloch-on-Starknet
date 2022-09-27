@@ -3,6 +3,8 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import assert_nn, assert_lt
 from starkware.cairo.common.bool import TRUE, FALSE
+from starkware.starknet.common.syscalls import get_caller_address
+from roles import Roles
 
 struct ProposalInfo {
     id: felt,
@@ -30,7 +32,7 @@ namespace Proposal {
     const ABORTED = 4;  // Did not go completely through voting
     const EXECUTED = 5;  // Execution is finalised and successful
     const FAILED = 6;  // Execution failed
-
+    const FORCED = 7; // Sent directly to grace period by admin
     const NOTFOUND = -1;
 
     const YESVOTE = 'yes';
@@ -156,6 +158,14 @@ namespace Proposal {
         id: felt, address: felt, vote: felt
     ) -> () {
         proposalsVotes.write(id, address, vote);
+        return ();
+    }
+
+    func force_proposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        proposalId: felt
+    ) -> () {
+        Roles.require_role('admin');
+        update_status(proposalId, Proposal.ACCEPTED);
         return ();
     }
 
