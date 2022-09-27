@@ -13,7 +13,7 @@ from proposals.onboard import submitOnboard
 from proposals.signaling import submitSignaling
 from proposals.guildkick import submitGuildKick
 from proposals.order import submitOrder
-from proposals.tokens import submitApproveToken, submitRemoveToken
+from proposals.tokens import submitApproveToken, submitRemoveToken, adminApproveToken, adminRemoveToken
 from ragequit import ragequit
 from roles import Roles, grant_role, revoke_role, delegate_admin_role, adminRoles, membersRoles
 from tally import launch_tally

@@ -72,6 +72,23 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
 }
 
 @external
+func adminApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    tokenAddress: felt
+) -> (success: felt) {
+    alloc_locals;
+    let (local caller) = get_caller_address();
+    // assert the caller is member
+    Member.assert_is_member(caller);
+    // assert the caller is admin
+    Roles.require_role('admin');
+    // assert the token is not already whitelisted
+    Bank.assert_token_not_whitelisted(tokenAddress);
+    // add token
+    Bank.add_token(tokenAddress);
+    return (TRUE,);
+}
+
+@external
 func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     tokenAddress: felt, description: felt
 ) -> (success: felt) {
@@ -109,6 +126,26 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     // register params
     let params: TokenParams= TokenParams(tokenAddress=tokenAddress);
     Tokens.set_tokenParams(id, params);
+    return (TRUE,);
+}
+
+@external
+func adminRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    tokenAddress: felt
+) -> (success: felt) {
+    alloc_locals;
+    let (local caller) = get_caller_address();
+    // assert the caller is member
+    Member.assert_is_member(caller);
+    // assert the caller is admin
+    Roles.require_role('admin');
+    // assert the token is whitelisted
+    Bank.assert_token_whitelisted(tokenAddress);
+    // check the token is ERC20 or ERC721.
+    // TODO to complete
+
+    // remove token
+    Bank.remove_token(tokenAddress);
     return (TRUE,);
 }
 

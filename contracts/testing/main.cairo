@@ -34,3 +34,7 @@ from testing.roles import (
     Roles_has_role_proxy,
     Roles_require_role_proxy
 )
+from testing.bank import (
+    Bank_assert_token_not_whitelisted_proxy,
+    Bank_assert_token_whitelisted_proxy
+)
