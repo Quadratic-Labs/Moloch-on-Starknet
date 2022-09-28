@@ -3,8 +3,10 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_lt
-
-
+from starkware.starknet.common.syscalls import get_contract_address, get_caller_address
+from openzeppelin.token.erc20.IERC20 import IERC20
+from starkware.cairo.common.uint256 import Uint256
+from roles import Roles
 // TODO transform this to functions
 struct TotalSupply{
     shares: felt,
@@ -17,7 +19,7 @@ func totalSupply() -> (supply: TotalSupply) {
 
 
 @storage_var
-func tokenBalance(tokenAddress: felt) -> (amount: felt) {
+func userTokenBalances(userAddress: felt, tokenAddress: felt) -> (amount: Uint256) {
 }
 
 
@@ -25,7 +27,6 @@ func tokenBalance(tokenAddress: felt) -> (amount: felt) {
 @storage_var
 func whitelistedTokens(tokenAddress: felt) -> (whitelisted: felt) {
 }
-
 
 
 namespace Bank{
@@ -43,25 +44,40 @@ namespace Bank{
         return ();
     }
 
+    func bank_deposit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        tokenAddress: felt, amount: Uint256
+    ) -> (success: felt){   
+        alloc_locals;
+        // transfert token
+        let (local bank_address: felt) = get_contract_address();
+        let (local caller: felt) = get_caller_address();
+        //TODO double check with Thomas if the below line is correct
+        IERC20.transferFrom(contract_address=tokenAddress,sender=caller, recipient=bank_address, amount=amount);
+        // update guild balance
+        let (current_balance: Uint256) = get_userTokenBalances(userAddress=bank_address, tokenAddress=tokenAddress);
+        set_userTokenBalances(userAddress=bank_address, tokenAddress=tokenAddress, amount=amount);
+        return (TRUE,);
+    }
 
-    func get_tokenBalance{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        tokenAddress: felt
-    ) -> (amount: felt) {
-        let (amount: felt) = tokenBalance.read(tokenAddress);
+
+    func get_userTokenBalances{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        userAddress: felt, tokenAddress: felt
+    ) -> (amount: Uint256) {
+        let (amount: Uint256) = userTokenBalances.read(userAddress, tokenAddress);
         return (amount,);
     }
 
-    func set_tokenBalance{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        tokenAddress: felt, amount: felt    
+    func set_userTokenBalances{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        userAddress: felt, tokenAddress: felt, amount: Uint256    
     ) -> () {
-        tokenBalance.write(tokenAddress, amount);
+        userTokenBalances.write(userAddress, tokenAddress, amount);
         return ();
     }
 
     func assert_sufficient_balance{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         tokenAddress: felt, amount: felt
     ) -> () {
-        let (balance: felt) = get_tokenBalance(tokenAddress);
+        let (balance: amount) = get_userTokenBalances(tokenAddress);
         with_attr error_message("Requesting more tokens as payment than the available guild bank balance") {
             assert_lt(amount, balance);
         }

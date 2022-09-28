@@ -60,11 +60,11 @@ namespace Actions {
     }
 
     func execute_order{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
-        let (params: OrderParams) = Order.get_orderParams(proposalId);
-        let (old_amount_tribute: felt) = Bank.get_tokenBalance(params.tributeAddress);
-        let (old_amount_payment: felt) = Bank.get_tokenBalance(params.paymentAddress);
-        Bank.set_tokenBalance(params.tributeAddress, params.tributeOffered + old_amount_tribute);
-        Bank.set_tokenBalance(params.paymentAddress, params.paymentRequested + old_amount_payment);
+        // let (params: OrderParams) = Order.get_orderParams(proposalId);
+        // let (old_amount_tribute: felt) = Bank.get_userTokenBalances(params.tributeAddress);
+        // let (old_amount_payment: felt) = Bank.get_userTokenBalances(params.paymentAddress);
+        // Bank.set_userTokenBalances(params.tributeAddress, params.tributeOffered + old_amount_tribute);
+        // Bank.set_userTokenBalances(params.paymentAddress, params.paymentRequested + old_amount_payment);
         return (TRUE,);
     }
 }
