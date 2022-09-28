@@ -4,8 +4,9 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_lt
 from starkware.starknet.common.syscalls import get_contract_address, get_caller_address
-from openzeppelin.token.erc20.IERC20 import IERC20
 from starkware.cairo.common.uint256 import Uint256
+from openzeppelin.token.erc20.IERC20 import IERC20
+from openzeppelin.security.safemath.library import SafeUint256
 from roles import Roles
 // TODO transform this to functions
 struct TotalSupply{
@@ -28,6 +29,16 @@ func userTokenBalances(userAddress: felt, tokenAddress: felt) -> (amount: Uint25
 func whitelistedTokens(tokenAddress: felt) -> (whitelisted: felt) {
 }
 
+@external
+func adminDeposit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    tokenAddress: felt, amount: Uint256
+)->(success: felt) {
+    //assert the caller has admin role
+    Roles.require_role('admin');
+
+    Bank.bank_deposit(tokenAddress, amount);
+    return (TRUE,);
+}
 
 namespace Bank{
 
@@ -55,7 +66,8 @@ namespace Bank{
         IERC20.transferFrom(contract_address=tokenAddress,sender=caller, recipient=bank_address, amount=amount);
         // update guild balance
         let (current_balance: Uint256) = get_userTokenBalances(userAddress=bank_address, tokenAddress=tokenAddress);
-        set_userTokenBalances(userAddress=bank_address, tokenAddress=tokenAddress, amount=amount);
+        let (new_balance: Uint256) = SafeUint256.add(current_balance, amount);
+        set_userTokenBalances(userAddress=bank_address, tokenAddress=tokenAddress, amount=new_balance);
         return (TRUE,);
     }
 

@@ -18,7 +18,7 @@ from ragequit import ragequit
 from roles import Roles, grant_role, revoke_role, delegate_admin_role, adminRoles, membersRoles
 from tally import launch_tally
 from voting import submitVote
-from bank import Bank
+from bank import Bank, adminDeposit
 
 
 @constructor
