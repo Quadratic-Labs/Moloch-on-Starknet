@@ -38,5 +38,6 @@ from testing.roles import (
 from testing.bank import (
     Bank_assert_token_not_whitelisted_proxy,
     Bank_assert_token_whitelisted_proxy,
-    Bank_bank_deposit_proxy
+    Bank_bank_deposit_proxy,
+    Bank_is_token_whitelisted_proxy
 )

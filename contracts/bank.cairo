@@ -35,7 +35,19 @@ func adminDeposit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
 )->(success: felt) {
     //assert the caller has admin role
     Roles.require_role('admin');
-
+    //whitelist token if not already whitelisted
+    let (whitelisted: felt) = Bank.is_token_whitelisted(tokenAddress);
+    if (whitelisted == FALSE){
+        Bank.add_token(tokenAddress);
+        // tempvar to avoid revoked references
+        tempvar syscall_ptr = syscall_ptr;
+        tempvar pedersen_ptr = pedersen_ptr;
+        tempvar range_check_ptr = range_check_ptr;
+    }else{
+        tempvar syscall_ptr = syscall_ptr;
+        tempvar pedersen_ptr = pedersen_ptr;
+        tempvar range_check_ptr = range_check_ptr;
+    }
     Bank.bank_deposit(tokenAddress, amount);
     return (TRUE,);
 }
@@ -59,6 +71,8 @@ namespace Bank{
         tokenAddress: felt, amount: Uint256
     ) -> (success: felt){   
         alloc_locals;
+        // assert token is whitelisted
+        assert_token_whitelisted(tokenAddress);
         // transfert token
         let (local bank_address: felt) = get_contract_address();
         let (local caller: felt) = get_caller_address();
@@ -95,11 +109,23 @@ namespace Bank{
         }
         return ();
     }
+
+    func is_token_whitelisted{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        tokenAddress: felt
+    ) -> (res: felt){
+        let (whitelisted) = whitelistedTokens.read(tokenAddress);
+        if (whitelisted == TRUE){
+            return (TRUE,);
+        }
+        return (FALSE,);
+    }
+
+
     func assert_token_whitelisted{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         tokenAddress: felt
     ) {
         with_attr error_message("Token {tokenAddress} is not whitelisted") {
-            let (res) = whitelistedTokens.read(tokenAddress);
+            let (res) = is_token_whitelisted(tokenAddress);
             assert res = TRUE;
         }
         return ();
@@ -109,7 +135,7 @@ namespace Bank{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(tokenAddress: felt) {
         with_attr error_message("Token {tokenAddress} is already whitelisted") {
-            let (res) = whitelistedTokens.read(tokenAddress);
+            let (res) = is_token_whitelisted(tokenAddress);
             assert res = FALSE;
         }
         return ();
