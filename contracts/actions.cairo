@@ -3,6 +3,8 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_block_timestamp
 from starkware.cairo.common.math import assert_lt
+from starkware.starknet.common.syscalls import get_contract_address
+from starkware.cairo.common.uint256 import Uint256
 from proposals.guildkick import Guildkick, GuildKickParams
 from proposals.onboard import Onboard
 from members import Member, MemberInfo
@@ -60,11 +62,18 @@ namespace Actions {
     }
 
     func execute_order{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
-        // let (params: OrderParams) = Order.get_orderParams(proposalId);
-        // let (old_amount_tribute: felt) = Bank.get_userTokenBalances(params.tributeAddress);
-        // let (old_amount_payment: felt) = Bank.get_userTokenBalances(params.paymentAddress);
-        // Bank.set_userTokenBalances(params.tributeAddress, params.tributeOffered + old_amount_tribute);
-        // Bank.set_userTokenBalances(params.paymentAddress, params.paymentRequested + old_amount_payment);
+        alloc_locals;
+        let (local params: OrderParams) = Order.get_orderParams(proposalId);
+        let (local info: ProposalInfo) = Proposal.get_proposal_by_id(proposalId);
+        let (local bank_address: felt) = get_contract_address();
+        // assert enough payment token in the bank
+        Bank.assert_sufficient_balance(tokenAddress=params.paymentAddress, amount=params.paymentRequested);
+
+
+        // execute the payment
+        Bank.bank_deposit(tokenAddress=params.tributeAddress, amount=params.tributeOffered);
+        Bank.bank_payment(recipient=info.submittedBy, tokenAddress=params.paymentAddress, amount=params.paymentRequested);
+        
         return (TRUE,);
     }
 }

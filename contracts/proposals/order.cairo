@@ -3,6 +3,7 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
+from starkware.cairo.common.uint256 import Uint256
 from members import Member
 from roles import Roles
 from proposals.library import Proposal, ProposalInfo
@@ -10,9 +11,9 @@ from proposals.library import Proposal, ProposalInfo
 
 
 struct OrderParams {
-    tributeOffered: felt,
+    tributeOffered: Uint256,
     tributeAddress: felt,
-    paymentRequested: felt,
+    paymentRequested: Uint256,
     paymentAddress: felt,
 }
 
@@ -39,7 +40,7 @@ namespace Order{
 
 @external
 func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tributeOffered: felt, tributeAddress: felt, paymentRequested: felt, paymentAddress: felt,description: felt) -> (success: felt) {
+    tributeOffered: Uint256, tributeAddress: felt, paymentRequested: Uint256, paymentAddress: felt,description: felt) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
     // assert the caller is member
