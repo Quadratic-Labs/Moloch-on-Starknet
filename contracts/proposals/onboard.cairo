@@ -88,6 +88,7 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
 
     // collect tribute from proposer and store it in the Escrow until the proposal is processed
     Bank.bank_deposit(tokenAddress = tributeAddress, amount = tributeOffered);
+    // update bank accounting 
     Bank.increase_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered);
     Bank.increase_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered);
     return (TRUE,);

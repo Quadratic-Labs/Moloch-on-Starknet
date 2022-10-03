@@ -97,15 +97,22 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
         Proposal.update_status(proposalId,Proposal.EXECUTED);
         if (proposal.type == 'Onboard'){
             let (local onboard_params: OnboardParams) = Onboard.get_onBoardParams(proposalId);
+            // refund the submitter 
+            Bank.bank_payment(recipient = proposal.submittedBy, tokenAddress = onboard_params.tributeAddress, amount = onboard_params.tributeOffered);
+            // update bank accounting 
+            Bank.decrease_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=onboard_params.tributeAddress, amount=onboard_params.tributeOffered);
+            Bank.decrease_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=onboard_params.tributeAddress, amount=onboard_params.tributeOffered);
             return (TRUE,);
         }
         if (proposal.type == 'Order'){
             let (local order_params: OrderParams) = Order.get_orderParams(proposalId);
+            // refund the submitter 
+            Bank.bank_payment(recipient = proposal.submittedBy, tokenAddress = order_params.tributeAddress, amount = order_params.tributeOffered);
+            // update bank accounting 
+            Bank.decrease_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=order_params.tributeAddress, amount=order_params.tributeOffered);
+            Bank.decrease_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=order_params.tributeAddress, amount=order_params.tributeOffered);
             return (TRUE,);
         }
-        // if (proposal.type == 'Order'){
-            // let (local additional_params: OrderParams) = Order.get_orderParams(proposalId);
-        // }
         return (TRUE,);
     }
     // TODO rewrite this in an elegant way
