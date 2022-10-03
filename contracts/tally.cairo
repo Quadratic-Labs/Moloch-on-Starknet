@@ -13,8 +13,7 @@ from members import Member
 
 // should accept returns if a proposal should be accepted or rejected based
 // on current votes by applying the DAO's acceptance rules
-// TODO did_pass
-func should_accept{
+func did_pass{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(proposalId: felt) -> (accepted: felt) {
     alloc_locals;
@@ -50,9 +49,7 @@ func should_accept{
 
 // apply will check if the proposal's grace period has ended, and move the
 // proposal to the next state, ACCEPTED/REJECTED.
-// TODO change to tally
-@external
-func launch_tally{
+func _tally{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(proposalId: felt) -> (accepted: felt) {
     // Apply voting rules to determine if proposal is accepted or rejected
@@ -83,7 +80,7 @@ func launch_tally{
         );
     }
 
-    let (accepted: felt) = should_accept(proposalId);
+    let (accepted: felt) = did_pass(proposalId);
     if (accepted == FALSE) {
         Proposal.update_status(info.id, Proposal.REJECTED);
         return (FALSE,);

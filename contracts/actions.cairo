@@ -12,6 +12,7 @@ from proposals.order import Order, OrderParams
 from proposals.tokens import Tokens, TokenParams
 from proposals.library import Proposal, ProposalInfo
 from bank import Bank
+from tally import _tally
 // TODO later: Automate actions.
 // Might need to call other contracts
 // Might need its subdirectory
@@ -92,6 +93,9 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     let (local proposal: ProposalInfo) = Proposal.get_proposal_by_id(proposalId);
     let (local params) = Proposal.get_params(proposal.type);
 
+    // launch the tally
+    _tally(proposal.id);
+
     // if the proposal status is REJECTED refund the submitter and change status to EXECUTED
     if (proposal.status == Proposal.REJECTED){
         Proposal.update_status(proposalId,Proposal.EXECUTED);
@@ -115,17 +119,10 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
         }
         return (TRUE,);
     }
-    // TODO rewrite this in an elegant way
-    if (proposal.status == Proposal.ACCEPTED){
-        
-    } else{ 
-        if (proposal.status == Proposal.FORCED){
-        } else{
-            // assert the proposal is accepted
-            with_attr error_message("The proposal status should be ACCEPTED or FORCED.") {
-                assert 0 = 1;
-            }
-        }
+    // if the proposal status is ACCEPTED or FORCED, the below expression is equal to zero
+    let should_pass = (proposal.status - Proposal.ACCEPTED) * (proposal.status - Proposal.FORCED);
+    with_attr error_message("The proposal status should be ACCEPTED or FORCED.") {
+        assert should_pass = 0;
     }
     
     // assert the grace period ended

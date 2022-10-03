@@ -5,22 +5,22 @@ from . import utils
 
 @pytest.mark.asyncio
 async def test_not_member(contract):
-    # given caller is not a member, when invoking launch_tally, should fail
+    # given caller is not a member, when invoking _tally, should fail
     caller_address = 404  # not a member
     proposalId = 0
     with pytest.raises(Exception):
-        await contract.launch_tally(proposalId=proposalId).execute(
+        await contract._tally(proposalId=proposalId).execute(
             caller_address=caller_address
         )
 
 
 @pytest.mark.asyncio
 async def test_non_existing_proposal(contract):
-    # given proposal does not exists, when invoking launch_tally or should_accept, should fail
+    # given proposal does not exists, when invoking _tally or should_accept, should fail
     caller_address = 42
     proposalId = 404  # non existing proposal
     with pytest.raises(Exception):
-        await contract.launch_tally(proposalId=proposalId).execute(
+        await contract._tally(proposalId=proposalId).execute(
             caller_address=caller_address
         )
 
@@ -41,21 +41,21 @@ async def test_grace_period_not_ended(contract):
     )
     await contract.Proposal_add_proposal_proxy(proposal).execute()
 
-    # given proposal has not ended grace period, when invoking launch_tally, should fail
+    # given proposal has not ended grace period, when invoking _tally, should fail
     caller_address = 42
     proposalId = 9  # proposal with grace period not ended ends on Sep 01 2022 00:00:00
     with pytest.raises(Exception):
-        await contract.launch_tally(proposalId=proposalId).execute(
+        await contract._tally(proposalId=proposalId).execute(
             caller_address=caller_address
         )
 
 
 @pytest.mark.asyncio
 async def test_did_not_reach_majority(contract):
-    # given votes has not reached majority, when invoking should_accept or launch_tally, should return False
+    # given votes has not reached majority, when invoking should_accept or _tally, should return False
     caller_address = 42  # admin
     proposalId = 4  # Submitted and didn't reach majority
-    return_value = await contract.launch_tally(proposalId=proposalId).execute(
+    return_value = await contract._tally(proposalId=proposalId).execute(
         caller_address=caller_address
     )
     assert return_value.result.accepted == 0
@@ -63,10 +63,10 @@ async def test_did_not_reach_majority(contract):
 
 @pytest.mark.asyncio
 async def test_did_not_reach_quorum(contract):
-    # given votes has not reached quorum, when invoking should_accept or launch_tally, should return False
+    # given votes has not reached quorum, when invoking should_accept or _tally, should return False
     caller_address = 42  # admin
     proposalId = 5  # Submitted and didn't reach quorom
-    return_value = await contract.launch_tally(proposalId=proposalId).execute(
+    return_value = await contract._tally(proposalId=proposalId).execute(
         caller_address=caller_address
     )
     assert return_value.result.accepted == 0
@@ -74,7 +74,7 @@ async def test_did_not_reach_quorum(contract):
 
 @pytest.mark.asyncio
 async def test_accepted(contract):
-    # given votes has both majority and quorum, when invoking should_accept or launch_tally, should return True
+    # given votes has both majority and quorum, when invoking should_accept or _tally, should return True
     caller_address = 42  # admin
     proposalId = 6  # Submitted and reached quorom and majority
 
@@ -84,7 +84,7 @@ async def test_accepted(contract):
     # check if the status of the proposal is indeed "submitted"
     assert proposal_before_apply.result.proposal.status == 1
 
-    return_value = await contract.launch_tally(proposalId=proposalId).execute(
+    return_value = await contract._tally(proposalId=proposalId).execute(
         caller_address=caller_address
     )
     # check if the proposal was accepted
@@ -99,7 +99,7 @@ async def test_accepted(contract):
 
 @pytest.mark.asyncio
 async def test_rejected(contract):
-    # given votes has both majority and quorum, when invoking should_accept or launch_tally, should return True
+    # given votes has both majority and quorum, when invoking should_accept or _tally, should return True
     caller_address = 42  # admin
     proposalId = 7  # Submitted and reached quorom and majority
 
@@ -109,7 +109,7 @@ async def test_rejected(contract):
     # check if the status of the proposal is indeed "submitted"
     assert proposal_before_apply.result.proposal.status == 1
 
-    return_value = await contract.launch_tally(proposalId=proposalId).execute(
+    return_value = await contract._tally(proposalId=proposalId).execute(
         caller_address=caller_address
     )
     # check if the proposal was accepted
