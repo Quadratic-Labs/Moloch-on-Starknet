@@ -7,7 +7,7 @@ from starkware.cairo.common.uint256 import Uint256
 from members import Member
 from roles import Roles
 from proposals.library import Proposal, ProposalInfo
-
+from bank import Bank
 
 
 struct OrderParams {
@@ -75,5 +75,10 @@ func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
                                         paymentRequested=paymentRequested,
                                         paymentAddress=paymentAddress,);
     Order.set_orderParams(id, params);
+
+    // collect tribute from proposer and store it in the Escrow until the proposal is processed
+    Bank.bank_deposit(tokenAddress = tributeAddress, amount = tributeOffered);
+    Bank.increase_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered);
+    Bank.increase_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered);
     return (TRUE,);
 }

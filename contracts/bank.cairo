@@ -10,15 +10,6 @@ from openzeppelin.security.safemath.library import SafeUint256
 
 
 from roles import Roles
-// TODO transform this to functions
-struct TotalSupply{
-    shares: felt,
-    loot: felt,
-}
-
-@storage_var
-func totalSupply() -> (supply: TotalSupply) {
-}
 
 
 @storage_var
@@ -55,20 +46,10 @@ func adminDeposit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
 }
 
 namespace Bank{
-
-    func get_totalSupply{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    ) -> (supply: TotalSupply) {
-        let (supply: TotalSupply) = totalSupply.read();
-        return (supply,);
-    }
-
-    func set_totalSupply{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        supply: TotalSupply    
-    ) -> () {
-        totalSupply.write(supply);
-        return ();
-    }
-
+    const GUILD = 0xaaa;
+    const ESCROW = 0xbbb;
+    const TOTAL = 0xccc;
+    const LOOTADRESS = 0xddd;
 
 
     func get_userTokenBalances{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -115,8 +96,6 @@ namespace Bank{
         let (local caller: felt) = get_caller_address();
         //TODO double check with Thomas if the below line is correct
         IERC20.transferFrom(contract_address=tokenAddress,sender=caller, recipient=bank_address, amount=amount);
-        // update guild balance
-        increase_userTokenBalances(userAddress=bank_address, tokenAddress=tokenAddress, amount=amount);
         return (TRUE,);
     }
 
@@ -127,9 +106,7 @@ namespace Bank{
         // transfert token
         let (local bank_address: felt) = get_contract_address();
         //TODO double check with Thomas if the below line is correct
-        IERC20.transferFrom(contract_address=tokenAddress,sender=bank_address, recipient=recipient, amount=amount);
-        // update guild balance
-        decrease_userTokenBalances(userAddress=bank_address, tokenAddress=tokenAddress, amount=amount);
+        IERC20.transferFrom(contract_address=tokenAddress, sender=bank_address, recipient=recipient, amount=amount);
         return (TRUE,);
     }
 

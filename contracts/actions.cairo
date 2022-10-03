@@ -6,12 +6,12 @@ from starkware.cairo.common.math import assert_lt
 from starkware.starknet.common.syscalls import get_contract_address
 from starkware.cairo.common.uint256 import Uint256
 from proposals.guildkick import Guildkick, GuildKickParams
-from proposals.onboard import Onboard
+from proposals.onboard import Onboard, OnboardParams
 from members import Member, MemberInfo
 from proposals.order import Order, OrderParams
 from proposals.tokens import Tokens, TokenParams
 from proposals.library import Proposal, ProposalInfo
-from bank import Bank, TotalSupply
+from bank import Bank
 // TODO later: Automate actions.
 // Might need to call other contracts
 // Might need its subdirectory
@@ -19,8 +19,12 @@ from bank import Bank, TotalSupply
 namespace Actions {
 
     func execute_onboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
-        let (params: MemberInfo) = Onboard.get_onBoardParams(proposalId);
-        Member.add_member(params);
+        alloc_locals;
+        let (local params: OnboardParams) = Onboard.get_onBoardParams(proposalId);
+        Member.add_member(params.memberInfo);
+        // update the accounting for the tribute
+        Bank.decrease_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=params.tributeAddress, amount=params.tributeOffered);
+        Bank.increase_userTokenBalances(userAddress= Bank.GUILD, tokenAddress=params.tributeAddress, amount=params.tributeOffered);
         return (TRUE,);
     }
 
@@ -38,10 +42,6 @@ namespace Actions {
         Member.update(updated_member);
 
         // update the bank 
-        let (guild_balance: TotalSupply) = Bank.get_totalSupply();
-        let new_supply : TotalSupply = TotalSupply(shares=guild_balance.shares-member_.shares, 
-                                                     loot=guild_balance.loot+member_.shares);
-        Bank.set_totalSupply(new_supply);
         return (TRUE,);
     }
     
@@ -71,9 +71,14 @@ namespace Actions {
 
 
         // execute the payment
-        Bank.bank_deposit(tokenAddress=params.tributeAddress, amount=params.tributeOffered);
         Bank.bank_payment(recipient=info.submittedBy, tokenAddress=params.paymentAddress, amount=params.paymentRequested);
+        // update the accounting for the payment
+        Bank.decrease_userTokenBalances(userAddress= Bank.GUILD, tokenAddress=params.paymentAddress, amount=params.paymentRequested);
+        Bank.decrease_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=params.paymentAddress, amount=params.paymentRequested);
         
+        // update the accounting for the tribute
+        Bank.decrease_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=params.tributeAddress, amount=params.tributeOffered);
+        Bank.increase_userTokenBalances(userAddress= Bank.GUILD, tokenAddress=params.tributeAddress, amount=params.tributeOffered);
         return (TRUE,);
     }
 }
@@ -87,6 +92,22 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     let (local proposal: ProposalInfo) = Proposal.get_proposal_by_id(proposalId);
     let (local params) = Proposal.get_params(proposal.type);
 
+    // if the proposal status is REJECTED refund the submitter and change status to EXECUTED
+    if (proposal.status == Proposal.REJECTED){
+        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        if (proposal.type == 'Onboard'){
+            let (local onboard_params: OnboardParams) = Onboard.get_onBoardParams(proposalId);
+            return (TRUE,);
+        }
+        if (proposal.type == 'Order'){
+            let (local order_params: OrderParams) = Order.get_orderParams(proposalId);
+            return (TRUE,);
+        }
+        // if (proposal.type == 'Order'){
+            // let (local additional_params: OrderParams) = Order.get_orderParams(proposalId);
+        // }
+        return (TRUE,);
+    }
     // TODO rewrite this in an elegant way
     if (proposal.status == Proposal.ACCEPTED){
         
@@ -146,6 +167,5 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
         return (TRUE,);
     }
 
-    // update proposal status
     return (TRUE,);
 }

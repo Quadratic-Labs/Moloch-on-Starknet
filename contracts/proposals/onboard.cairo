@@ -7,23 +7,30 @@ from starkware.starknet.common.syscalls import get_caller_address, get_block_tim
 from roles import Roles
 from members import Member, MemberInfo
 from proposals.library import Proposal, ProposalInfo
+from starkware.cairo.common.uint256 import Uint256
+from bank import Bank
 
 
+struct OnboardParams {
+    tributeOffered: Uint256,
+    tributeAddress: felt,
+    memberInfo: MemberInfo,
+}
 
-
+// TODO add tributeToken and tributeAddress
 @storage_var
-func onBoardParams(proposalId: felt) -> (params: MemberInfo) {
+func onBoardParams(proposalId: felt) -> (params: OnboardParams) {
 }
 namespace Onboard{
     func get_onBoardParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt
-    ) -> (params: MemberInfo) {
-        let (params: MemberInfo) = onBoardParams.read(id);
+    ) -> (params: OnboardParams) {
+        let (params: OnboardParams) = onBoardParams.read(id);
         return (params,);
     }
 
     func set_onBoardParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        id: felt, params: MemberInfo
+        id: felt, params: OnboardParams
     ) -> () {
         onBoardParams.write(id, params);
         return ();
@@ -33,7 +40,7 @@ namespace Onboard{
 // remove delegated key from parameters
 @external
 func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    address: felt, delegatedKey: felt, shares: felt, loot: felt, description: felt
+    address: felt, shares: felt, loot: felt,tributeOffered: Uint256, tributeAddress: felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -64,16 +71,24 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
 
     Proposal.add_proposal(proposal);
     // register params
-    let params: MemberInfo= MemberInfo(address=address, 
-                                        delegatedKey=delegatedKey, 
+    let memberInfo = MemberInfo(address=address, 
+                                        delegatedKey=address, 
                                         shares=shares, 
                                         loot=loot, 
                                         jailed=0, 
                                         lastProposalYesVote=0
                                         );
+    let params: OnboardParams = OnboardParams(tributeOffered=tributeOffered,
+                                tributeAddress=tributeAddress,
+                                memberInfo=memberInfo);
     Onboard.set_onBoardParams(id, params);
 
     // TODO not sure it is the best way to bypass the voting period
     Proposal.force_proposal(id);
+
+    // collect tribute from proposer and store it in the Escrow until the proposal is processed
+    Bank.bank_deposit(tokenAddress = tributeAddress, amount = tributeOffered);
+    Bank.increase_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered);
+    Bank.increase_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered);
     return (TRUE,);
 }

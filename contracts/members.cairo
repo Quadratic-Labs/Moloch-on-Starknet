@@ -4,7 +4,8 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_nn, assert_lt
 from starkware.starknet.common.syscalls import get_caller_address
-from bank import Bank, TotalSupply
+from bank import Bank
+
 
 // member's Info must be felt-like (no pointer) as it is put in storage
 struct MemberInfo {
@@ -126,10 +127,6 @@ namespace Member {
         membersLength.write(len + 1);
         membersAddresses.write(len + 1, info.address);
         membersInfo.write(info.address, info);
-        let (guild_bank: TotalSupply) = Bank.get_totalSupply();
-        let new_balance: TotalSupply = TotalSupply(shares=guild_bank.shares+info.shares, 
-                                                    loot=guild_bank.loot+info.loot);
-        Bank.set_totalSupply(new_balance);
         return ();
     }
     func jail_member{

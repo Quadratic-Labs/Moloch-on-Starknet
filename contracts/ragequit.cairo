@@ -4,8 +4,9 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_le
 from starkware.starknet.common.syscalls import get_caller_address
+
 from members import Member, MemberInfo
-from bank import Bank, TotalSupply
+from bank import Bank
 
 @external
 func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -39,9 +40,5 @@ func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     Member.update(member_updated);
 
     //update the bank
-    let (guild_bank: TotalSupply) = Bank.get_totalSupply();
-    let new_balance: TotalSupply = TotalSupply(shares=guild_bank.shares-shares, 
-                                                loot=guild_bank.loot-loot,);
-    Bank.set_totalSupply(new_balance);
     return (TRUE,);
 }
