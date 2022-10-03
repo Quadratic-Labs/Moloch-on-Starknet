@@ -9,6 +9,7 @@ from proposals.library import Proposal, ProposalInfo
 from bank import Bank
 struct TokenParams {
     tokenAddress: felt,
+    tokenName:felt,
 }
 
 @storage_var
@@ -34,7 +35,7 @@ namespace Tokens{
 
 @external
 func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt, title:felt, description: felt
+    tokenAddress: felt,tokenName: felt, title:felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -63,7 +64,7 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
 
     Proposal.add_proposal(proposal);
     // register params
-    let params: TokenParams= TokenParams(tokenAddress=tokenAddress);
+    let params: TokenParams= TokenParams(tokenAddress=tokenAddress, tokenName=tokenName);
     Tokens.set_tokenParams(id, params);
     return (TRUE,);
 }
@@ -87,7 +88,7 @@ func adminApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 
 @external
 func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt, title:felt, description: felt
+    tokenAddress: felt, tokenName: felt,title:felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -118,7 +119,7 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 
     Proposal.add_proposal(proposal);
     // register params
-    let params: TokenParams= TokenParams(tokenAddress=tokenAddress);
+    let params: TokenParams= TokenParams(tokenAddress=tokenAddress, tokenName=tokenName);
     Tokens.set_tokenParams(id, params);
     return (TRUE,);
 }
