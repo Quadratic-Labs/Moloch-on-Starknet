@@ -1,7 +1,7 @@
 %lang starknet
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.starknet.common.syscalls import get_block_timestamp
+from starkware.starknet.common.syscalls import get_block_number
 from starkware.cairo.common.math import assert_lt
 from starkware.starknet.common.syscalls import get_contract_address
 from starkware.cairo.common.uint256 import Uint256
@@ -126,7 +126,7 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     }
     
     // assert the grace period ended
-    let (local today_timestamp) = get_block_timestamp();
+    let (local today_timestamp) = get_block_number();
     with_attr error_message("The proposal has not ended grace period.") {
         if (proposal.status == Proposal.ACCEPTED){
         assert_lt(

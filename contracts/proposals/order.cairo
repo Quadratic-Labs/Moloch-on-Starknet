@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
-from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
+from starkware.starknet.common.syscalls import get_caller_address, get_block_number
 from starkware.cairo.common.uint256 import Uint256
 from members import Member
 from roles import Roles
@@ -53,7 +53,7 @@ func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     // TODO assert the token is whitelisted
     // TODO assert enough tokens in the bank
     let submittedBy = caller;
-    let (submittedAt) = get_block_timestamp();
+    let (submittedAt) = get_block_number();
     let status = 1;
     let proposal: ProposalInfo = ProposalInfo(
         id=id,

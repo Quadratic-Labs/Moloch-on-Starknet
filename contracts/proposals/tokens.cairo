@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
-from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
+from starkware.starknet.common.syscalls import get_caller_address, get_block_number
 from roles import Roles
 from members import Member
 from proposals.library import Proposal, ProposalInfo
@@ -50,7 +50,7 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     let (id) = Proposal.get_proposals_length();
     let type = 'approveToken';
     let submittedBy = caller;
-    let (submittedAt) = get_block_timestamp();
+    let (submittedAt) = get_block_number();
     let status = 1;
     let proposal: ProposalInfo = ProposalInfo(
         id=id,
@@ -105,7 +105,7 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     let (id) = Proposal.get_proposals_length();
     let type = 'removeToken';
     let submittedBy = caller;
-    let (submittedAt) = get_block_timestamp();
+    let (submittedAt) = get_block_number();
     let status = 1;
     let proposal: ProposalInfo = ProposalInfo(
         id=id,
