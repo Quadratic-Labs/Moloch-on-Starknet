@@ -76,8 +76,8 @@ func Member_add_member_proxy{
 }
 
 @external
-func Member_update_proxy{
+func Member_update_member_proxy{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(info: MemberInfo) -> () {
-    return Member.update(info);
+    return Member.update_member(info);
 }

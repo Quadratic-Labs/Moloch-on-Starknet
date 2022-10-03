@@ -37,7 +37,7 @@ func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         lastProposalYesVote=member_.lastProposalYesVote,
     );
     // execute the transaction
-    Member.update(member_updated);
+    Member.update_member(member_updated);
 
     //update the bank
     return (TRUE,);

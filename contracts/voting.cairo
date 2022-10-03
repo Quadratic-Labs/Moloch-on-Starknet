@@ -9,14 +9,15 @@ from proposals.library import Proposal, ProposalInfo, ProposalParams
 
 @external
 func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    proposalId: felt, vote: felt
+    proposalId: felt, vote: felt, onBehalf: felt
 ) -> (success: felt) {
     alloc_locals;
     // assert the caller is member
     let (local caller) = get_caller_address();
-    with_attr error_message("AccessControl: user {caller} is not a member.") {
-        Member.assert_is_member(caller);
-    }
+    Member.assert_is_member(caller);
+
+    // assert the caller is authorized to vote on behalf of "behalf"
+    Member.assert_is_delegate(onBehalf);
 
     // check if the proposal exists and get its info
     let (local proposal: ProposalInfo) = Proposal.get_proposal_by_id(proposalId);
@@ -30,18 +31,17 @@ func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
     }
 
 
-    // assert the caller has not voted
-    let (current_vote) = Proposal.get_vote(proposalId, caller);
-    with_attr error_message("The caller has already voted.") {
+    // assert behalf has not voted
+    let (current_vote) = Proposal.get_vote(proposalId, onBehalf);
+    with_attr error_message("The member {onBehalf} has already voted.") {
         assert current_vote = 0;
     }
 
     // Set vote
-    Proposal.set_vote(id=proposalId, address=caller, vote=vote);
+    Proposal.set_vote(id=proposalId, address=onBehalf, vote=vote);
 
-    //TODO replace has voted by check wether user vote is null or not
     // TODO update member info by puting the id of the last proposal he voted yes (useful later for ragequits)
-    // TODO check wether the user is jaled or no
+    // TODO check wether the user is jailed or no
     // TODO check if the vote is one of the allowed value
     // TODO dans MOLOCH V2, le vote est mis à jour avec le nombre de shares du user et non pas en augmentant de 1
 

@@ -56,7 +56,7 @@ namespace Member {
     func assert_is_not_member{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(address: felt) -> () {
-        with_attr error_message("Address {address} is not a member") {
+        with_attr error_message("Address {address} is already a member") {
             let (res) = is_member(address);
             assert res = FALSE;
         }
@@ -140,10 +140,10 @@ namespace Member {
                                                     loot=member_.loot,
                                                     jailed=TRUE,
                                                     lastProposalYesVote=member_.lastProposalYesVote);
-        update(updated_member);
+        update_member(updated_member);
     }
 
-    func update{
+    func update_member{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(info: MemberInfo) -> () {
         alloc_locals;
@@ -153,6 +153,18 @@ namespace Member {
         }
         membersInfo.write(info.address, info);
         return ();
+    }
+
+    func assert_is_delegate{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(member_address: felt) -> (key: felt) {
+        alloc_locals;
+        let (local caller) = get_caller_address();
+        let (local member_) = Member.get_info(member_address);
+        with_attr error_message("Access: user {caller} is not delagate of {member_.delegatedKey}.") {
+            assert caller = member_.delegatedKey;
+        }
+        return (member_.delegatedKey,);
     }
 }
 
@@ -177,7 +189,7 @@ func addDelegatedKey{
         lastProposalYesVote = member_.lastProposalYesVote
     );
     // update member's info
-    Member.update(updated_member);
+    Member.update_member(updated_member);
     return (TRUE,);
 
 }
@@ -201,7 +213,7 @@ func revokeDelegatedKey{
         lastProposalYesVote = member_.lastProposalYesVote
     );
     // update member's info
-    Member.update(updated_member);
+    Member.update_member(updated_member);
     return (TRUE,);
 
 }

@@ -40,7 +40,7 @@ namespace Actions {
                                                     loot=member_.loot+member_.shares,
                                                     jailed=TRUE,
                                                     lastProposalYesVote=member_.lastProposalYesVote);
-        Member.update(updated_member);
+        Member.update_member(updated_member);
 
         // update the bank 
         return (TRUE,);
