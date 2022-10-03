@@ -40,7 +40,7 @@ namespace Onboard{
 // remove delegated key from parameters
 @external
 func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    address: felt, shares: felt, loot: felt,tributeOffered: Uint256, tributeAddress: felt, description: felt
+    address: felt, shares: felt, loot: felt,tributeOffered: Uint256, tributeAddress: felt,title: felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -55,16 +55,13 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     let type = 'Onboard';
     let submittedBy = caller;
     let (submittedAt) = get_block_timestamp();
-    let yesVotes = 0;
-    let noVotes = 0;
     let status = 1;
     let proposal: ProposalInfo = ProposalInfo(
         id=id,
+        title=title,
         type=type,
         submittedBy=submittedBy,
         submittedAt=submittedAt,
-        yesVotes=yesVotes,
-        noVotes=noVotes,
         status=status,
         description=description,
     );

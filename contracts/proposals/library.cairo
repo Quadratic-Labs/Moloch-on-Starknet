@@ -8,11 +8,10 @@ from roles import Roles
 
 struct ProposalInfo {
     id: felt,
+    title: felt,
     type: felt,
     submittedBy: felt,
     submittedAt: felt,
-    yesVotes: felt,
-    noVotes: felt,
     status: felt,
     description: felt,
 }
@@ -106,11 +105,10 @@ namespace Proposal {
         let (info: ProposalInfo) = get_info(id);
         let proposal: ProposalInfo = ProposalInfo(
             id=info.id,
+            title=info.title,
             type=info.type,
             submittedBy=info.submittedBy,
             submittedAt=info.submittedAt,
-            yesVotes=info.yesVotes,
-            noVotes=info.noVotes,
             status=status,
             description=info.description,
         );

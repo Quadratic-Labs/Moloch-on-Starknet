@@ -24,7 +24,9 @@ func should_accept{
     let (local params) = Proposal.get_params(info.type);
 
     // check quorum
-    local numVotes = info.yesVotes + info.noVotes;
+    // TODO retrieve numvotes from mapping
+    // local numVotes = info.yesVotes + info.noVotes;
+    local numVotes = 0;
 
     // TODO: must get total weight of eligible votes from proposalTypes to roles
     // mapping
@@ -36,7 +38,10 @@ func should_accept{
     }
 
     // check majority
-    let majority = is_le(params.majority * numVotes, info.yesVotes * 100);
+    //TODO replace info.yesVotes by the actual number of yes votes
+    // let majority = is_le(params.majority * numVotes, info.yesVotes * 100);
+    let majority = is_le(params.majority * numVotes, 0 * 100);
+
     if (majority == 0) {
         return (FALSE,);
     }

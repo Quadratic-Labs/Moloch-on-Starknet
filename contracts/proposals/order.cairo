@@ -40,7 +40,7 @@ namespace Order{
 
 @external
 func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tributeOffered: Uint256, tributeAddress: felt, paymentRequested: Uint256, paymentAddress: felt,description: felt) -> (success: felt) {
+    tributeOffered: Uint256, tributeAddress: felt, paymentRequested: Uint256, paymentAddress: felt,title: felt,description: felt) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
     // assert the caller is member
@@ -54,16 +54,13 @@ func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     // TODO assert enough tokens in the bank
     let submittedBy = caller;
     let (submittedAt) = get_block_timestamp();
-    let yesVotes = 0;
-    let noVotes = 0;
     let status = 1;
     let proposal: ProposalInfo = ProposalInfo(
         id=id,
+        title=title,
         type=type,
         submittedBy=submittedBy,
         submittedAt=submittedAt,
-        yesVotes=yesVotes,
-        noVotes=noVotes,
         status=status,
         description=description,
     );

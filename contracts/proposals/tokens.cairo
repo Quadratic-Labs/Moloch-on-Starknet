@@ -34,7 +34,7 @@ namespace Tokens{
 
 @external
 func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt, description: felt
+    tokenAddress: felt, title:felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -50,16 +50,13 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     let type = 'approveToken';
     let submittedBy = caller;
     let (submittedAt) = get_block_timestamp();
-    let yesVotes = 0;
-    let noVotes = 0;
     let status = 1;
     let proposal: ProposalInfo = ProposalInfo(
         id=id,
+        title=title,
         type=type,
         submittedBy=submittedBy,
         submittedAt=submittedAt,
-        yesVotes=yesVotes,
-        noVotes=noVotes,
         status=status,
         description=description,
     );
@@ -90,7 +87,7 @@ func adminApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 
 @external
 func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt, description: felt
+    tokenAddress: felt, title:felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -108,16 +105,13 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     let type = 'removeToken';
     let submittedBy = caller;
     let (submittedAt) = get_block_timestamp();
-    let yesVotes = 0;
-    let noVotes = 0;
     let status = 1;
     let proposal: ProposalInfo = ProposalInfo(
         id=id,
+        title=title,
         type=type,
         submittedBy=submittedBy,
         submittedAt=submittedAt,
-        yesVotes=yesVotes,
-        noVotes=noVotes,
         status=status,
         description=description,
     );
