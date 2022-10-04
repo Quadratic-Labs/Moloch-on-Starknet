@@ -1,37 +1,27 @@
 import pytest
 from dataclasses import dataclass, astuple
-
-# The testing library uses python's asyncio. So the following
-# decorator and the ``async`` keyword are needed.
-
-
-@dataclass
-class Member:
-    address: int
-    delegatedKey: int
-    shares: int
-    loot: int
-    # jailed: int not needed for now
-    # lastProposalYesVote: int not needed for now
+from . import utils
 
 
 @pytest.mark.asyncio
 async def test_not_admin(contract):
     # given caller is not admin, after submitting any user, should fail
     caller_address = 3  # not admin
-    member = Member(
-        address=123,
-        delegatedKey=123,
-        shares=10,
-        loot=10,
-    )
+    address = 123
+    shares = 10
+    loot = 10
+    tributeOffered = utils.to_uint(10)
+    tributeAddress = 123
+    title = utils.str_to_felt("Token to approve")
 
     with pytest.raises(Exception):
-        await contract.submitOnboard(
-            address=member.address,
-            delegatedKey=member.delegatedKey,
-            shares=member.shares,
-            loot=member.loot,
+        await contract.Onboard_submitOnboard_proxy(
+            address=address,
+            shares=shares,
+            loot=loot,
+            tributeOffered=tributeOffered,
+            tributeAddress=tributeAddress,
+            title=title,
             description=123456789,
         ).execute(caller_address=caller_address)
 
@@ -40,14 +30,20 @@ async def test_not_admin(contract):
 async def test_already_member(contract):
     # given the user is already a member, after submitting the user, should fail
     caller_address = 42  # admin
-
-    member = Member(address=3, delegatedKey=3, shares=10, loot=10)  # existing member
+    address = 3
+    shares = 10
+    loot = 10
+    tributeOffered = utils.to_uint(10)
+    tributeAddress = 123
+    title = utils.str_to_felt("Token to approve")
     with pytest.raises(Exception):
-        await contract.submitOnboard(
-            address=member.address,
-            delegatedKey=member.delegatedKey,
-            shares=member.shares,
-            loot=member.loot,
+        await contract.Onboard_submitOnboard_proxy(
+            address=address,
+            shares=shares,
+            loot=loot,
+            tributeOffered=tributeOffered,
+            tributeAddress=tributeAddress,
+            title=title,
             description=123456789,
         ).execute(caller_address=caller_address)
 
@@ -56,24 +52,25 @@ async def test_already_member(contract):
 async def test_submit_onboard(contract):
     # given the user is not a member and the caller is admin, should record the proposal accordingly
     caller_address = 42  # admin
-
-    member = Member(  # non existing member
-        address=123,
-        delegatedKey=123,
-        shares=10,
-        loot=10,
-    )
+    address = 123
+    shares = 10
+    loot = 10
+    tributeOffered = utils.to_uint(10)
+    tributeAddress = 123
+    title = utils.str_to_felt("Token to approve")
 
     number_before_submit = (
         await contract.Proposal_get_proposals_length_proxy().call(
             caller_address=caller_address
         )
     ).result.length
-    return_value = await contract.submitOnboard(
-        address=member.address,
-        delegatedKey=member.delegatedKey,
-        shares=member.shares,
-        loot=member.loot,
+    return_value = await contract.Onboard_submitOnboard_proxy(
+        address=address,
+        shares=shares,
+        loot=loot,
+        tributeOffered=tributeOffered,
+        tributeAddress=tributeAddress,
+        title=title,
         description=123456789,
     ).execute(caller_address=caller_address)
     assert return_value.result.success == 1

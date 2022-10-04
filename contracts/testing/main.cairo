@@ -41,3 +41,9 @@ from testing.bank import (
     Bank_bank_deposit_proxy,
     Bank_is_token_whitelisted_proxy
 )
+from testing.onboard import (
+    Onboard_submitOnboard_proxy
+)
+from testing.order import (
+    Order_submitOrder_proxy
+)

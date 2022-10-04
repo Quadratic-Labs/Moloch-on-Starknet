@@ -9,36 +9,10 @@ from members import Member, MemberInfo
 from proposals.library import Proposal, ProposalInfo
 from starkware.cairo.common.uint256 import Uint256
 from bank import Bank
-
-
-struct OnboardParams {
-    tributeOffered: Uint256,
-    tributeAddress: felt,
-    memberInfo: MemberInfo,
-}
-
-// TODO add tributeToken and tributeAddress
-@storage_var
-func onBoardParams(proposalId: felt) -> (params: OnboardParams) {
-}
-namespace Onboard{
-    func get_onBoardParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        id: felt
-    ) -> (params: OnboardParams) {
-        let (params: OnboardParams) = onBoardParams.read(id);
-        return (params,);
-    }
-
-    func set_onBoardParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        id: felt, params: OnboardParams
-    ) -> () {
-        onBoardParams.write(id, params);
-        return ();
-    }
-}
-
+from proposals.onboard import OnboardParams, Onboard
+// duplicate of submit onboard without bank transfer
 @external
-func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func Onboard_submitOnboard_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     address: felt, shares: felt, loot: felt,tributeOffered: Uint256, tributeAddress: felt,title: felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
@@ -79,11 +53,8 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
                                 memberInfo=memberInfo);
     Onboard.set_onBoardParams(id, params);
 
-    // TODO not sure it is the best way to bypass the voting period
     Proposal.force_proposal(id);
 
-    // collect tribute from proposer and store it in the Escrow until the proposal is processed
-    Bank.bank_deposit(tokenAddress = tributeAddress, amount = tributeOffered);
     // update bank accounting 
     Bank.increase_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered);
     Bank.increase_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered);

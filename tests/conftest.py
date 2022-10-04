@@ -107,11 +107,10 @@ class Member:
 @dataclass
 class Proposal:
     id: int
+    title: int
     type: int
     submittedBy: int
     submittedAt: int
-    yesVotes: int
-    noVotes: int
     status: int
     description: int
 
@@ -163,81 +162,73 @@ MEMBERS: list[Member] = [
 PROPOSALS: list[Proposal] = [
     Proposal(  # Submitted and vote + grace open
         id=0,
-        type=utils.str_to_felt("Onboard"),  # Onboard
+        title=utils.str_to_felt("titre"),
+        type=utils.str_to_felt("Signaling"),  # Onboard
         submittedBy=1,
         submittedAt=1,
-        yesVotes=0,
-        noVotes=0,
         status=1,  # SUBMITTED
         description=1,
     ),
     Proposal(  # ACCEPTED and vote closed
         id=1,
-        type=utils.str_to_felt("Onboard"),  # Onboard
+        title=utils.str_to_felt("titre"),
+        type=utils.str_to_felt("Signaling"),  # Onboard
         submittedBy=3,
         submittedAt=1,
-        yesVotes=3,
-        noVotes=2,
         status=2,  # ACCEPTED
         description=1,
     ),
     Proposal(  # Rejected and vote closed
         id=2,
-        type=utils.str_to_felt("Onboard"),  # Onboard
+        title=utils.str_to_felt("titre"),
+        type=utils.str_to_felt("Signaling"),  # Onboard
         submittedBy=1,
         submittedAt=1,
-        yesVotes=2,
-        noVotes=3,
         status=3,  # REJECTED
         description=1,
     ),
     Proposal(  # Submitted and vote open + grace closed
         id=3,
-        type=utils.str_to_felt("Onboard"),  # Onboard
+        title=utils.str_to_felt("titre"),
+        type=utils.str_to_felt("Signaling"),  # Onboard
         submittedBy=3,
         submittedAt=1,
-        yesVotes=0,
-        noVotes=0,
         status=1,  # SUBMITTED
         description=1,
     ),
     Proposal(  # Submitted and didn't reach majority
         id=4,
-        type=utils.str_to_felt("Onboard"),  # Onboard
+        title=utils.str_to_felt("titre"),
+        type=utils.str_to_felt("Signaling"),  # Onboard
         submittedBy=3,
         submittedAt=1,
-        yesVotes=2,
-        noVotes=5,
         status=1,  # SUBMITTED
         description=1,
     ),
     Proposal(  # Submitted and didn't reach quorom
         id=5,
-        type=utils.str_to_felt("Onboard"),  # Onboard
+        title=utils.str_to_felt("titre"),
+        type=utils.str_to_felt("Signaling"),  # Onboard
         submittedBy=3,
         submittedAt=1,
-        yesVotes=2,
-        noVotes=1,
         status=1,  # SUBMITTED
         description=1,
     ),
     Proposal(  # Submitted and reached qurom and majority
         id=6,
-        type=utils.str_to_felt("Onboard"),  # Onboard
+        title=utils.str_to_felt("titre"),
+        type=utils.str_to_felt("Signaling"),  # Onboard
         submittedBy=3,
         submittedAt=1,
-        yesVotes=4,
-        noVotes=3,
         status=1,  # SUBMITTED
         description=1,
     ),
     Proposal(  # Submitted and reached qurom and majority
         id=7,
-        type=utils.str_to_felt("Onboard"),  # Onboard
+        title=utils.str_to_felt("titre"),
+        type=utils.str_to_felt("Signaling"),  # Onboard
         submittedBy=3,
         submittedAt=1,
-        yesVotes=3,
-        noVotes=4,
         status=1,  # SUBMITTED
         description=1,
     ),
