@@ -7,9 +7,35 @@ from starkware.starknet.common.syscalls import get_caller_address, get_block_num
 
 from starkware.cairo.common.math import assert_lt
 
-from proposals.library import Proposal, ProposalInfo
-from members import Member
+from proposals.library import Proposal, ProposalInfo, proposalsVotes
+from members import Member, membersLength, membersAddresses
 
+
+namespace Tally{
+    func _get_total_votes{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(currentIndex: felt, proposalId: felt, voteType: felt, currentTotal: felt) -> (count: felt) {
+        let (member_list_length: felt) = membersLength.read();
+        if (currentIndex == member_list_length){
+            return (currentTotal,);
+        }
+        let (current_address: felt) = membersAddresses.read(currentIndex);
+        let (vote: felt) = proposalsVotes.read(proposalId, current_address);
+        if (vote == voteType){
+            return _get_total_votes(currentIndex+1, proposalId, voteType, currentTotal+1);
+        }else{
+            return _get_total_votes(currentIndex+1, proposalId, voteType,currentTotal);
+        }
+    }
+
+    func get_total_votes{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(proposalId: felt, voteType: felt) -> (count: felt) {
+        return _get_total_votes(0, proposalId, voteType, 0);
+    }
+
+    
+}
 
 // should accept returns if a proposal should be accepted or rejected based
 // on current votes by applying the DAO's acceptance rules

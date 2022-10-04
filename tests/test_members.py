@@ -17,10 +17,10 @@ async def test_is_member(contract):
     await contract.Member_add_member_proxy((7, 7, 2, 2, 2, 2)).execute()
 
     # Member_is_member_proxy on any of the 2 members should return True
-    return_value = await contract.Member_is_member_proxy(1).execute()
+    return_value = await contract.Member_is_member_proxy(6).execute()
     assert return_value.result.success == 1
 
-    return_value = await contract.Member_is_member_proxy(2).execute()
+    return_value = await contract.Member_is_member_proxy(7).execute()
     assert return_value.result.success == 1
 
     # Member_is_member_proxy on a non-existing member should return False

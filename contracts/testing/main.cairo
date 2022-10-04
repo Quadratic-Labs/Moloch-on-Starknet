@@ -47,3 +47,6 @@ from testing.onboard import (
 from testing.order import (
     Order_submitOrder_proxy
 )
+from testing.tally import (
+    Tally_get_total_votes_proxy
+)

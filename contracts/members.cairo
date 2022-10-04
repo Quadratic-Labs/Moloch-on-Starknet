@@ -24,29 +24,30 @@ namespace Member {
     func is_member{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(address: felt) -> (success: felt) {
-        let (len: felt) = total_count();
-        return _contains(address, 0, len);
+        
+        return _contains(address, 0);
     }
 
     func _contains{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    }(value: felt, iter: felt, length: felt) -> (success: felt) {
+    }(value: felt, iter: felt) -> (success: felt) {
         alloc_locals;
-        if (length == 0) {
+        let (local length: felt) = total_count();
+        if (length == iter) {
             return (FALSE,);
         }
         let (current_address) = membersAddresses.read(iter);
         if (current_address == value) {
             return (TRUE,);
         }
-        let (local res) = _contains(value, iter + 1, length - 1);
+        let (local res) = _contains(value, iter + 1);
         return (res,);
     }
-
     func assert_is_member{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(address: felt) -> () {
         with_attr error_message("Address {address} is not a member") {
+
             let (res) = is_member(address);
             assert res = TRUE;
         }
@@ -125,7 +126,7 @@ namespace Member {
         }
         let (local len: felt) = membersLength.read();
         membersLength.write(len + 1);
-        membersAddresses.write(len + 1, info.address);
+        membersAddresses.write(len, info.address);
         membersInfo.write(info.address, info);
         return ();
     }
