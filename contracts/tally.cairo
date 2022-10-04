@@ -57,7 +57,7 @@ func did_pass{
 
     // TODO: must get total weight of eligible votes from proposalTypes to roles
     // mapping
-    let eligible = 10;
+    let (eligible) = Member.get_total_shares();
 
     let quorum = is_le(params.quorum * eligible, numVotes * 100);
     if (quorum == 0) {

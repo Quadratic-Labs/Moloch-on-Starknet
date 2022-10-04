@@ -84,16 +84,6 @@ async def starknet():
     # starknet_devnet.state.state = starknet_devnet.state.State()
 
 
-@pytest.fixture(scope="session")
-async def empty_contract(starknet, test_contract_file):
-    contracts_path = Path(__file__).parent.parent / "contracts"
-    return await starknet.deploy(
-        source=str(test_contract_file.absolute()),
-        cairo_path=[contracts_path.absolute()],
-        constructor_calldata=[50, 60, 10, 10],
-    )
-
-
 @dataclass
 class Member:
     address: int
@@ -233,6 +223,17 @@ PROPOSALS: list[Proposal] = [
         description=1,
     ),
 ]
+
+
+@pytest.fixture
+async def empty_contract(starknet, test_contract_file):
+    contracts_path = Path(__file__).parent.parent / "contracts"
+    return await starknet.deploy(
+        source=str(test_contract_file.absolute()),
+        cairo_path=[contracts_path.absolute()],
+        constructor_calldata=[50, 60, 10, 10],
+        disable_hint_validation=True,
+    )
 
 
 @pytest.fixture

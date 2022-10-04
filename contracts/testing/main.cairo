@@ -10,7 +10,9 @@ from testing.members import (
     Member_get_info_proxy,
     Member_total_count_proxy,
     Member_add_member_proxy,
-    Member_update_member_proxy
+    Member_update_member_proxy,
+    Member_get_total_shares_proxy,
+    Member_get_total_loot_proxy
 )
 
 from testing.proposals import (

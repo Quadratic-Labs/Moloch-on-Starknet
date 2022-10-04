@@ -81,3 +81,17 @@ func Member_update_member_proxy{
 }(info: MemberInfo) -> () {
     return Member.update_member(info);
 }
+
+@external
+func Member_get_total_shares_proxy{
+    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}() -> (count: felt) {
+    return Member.get_total_shares();
+}
+
+@external
+func Member_get_total_loot_proxy{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }() -> (count: felt) {
+        return Member.get_total_loot();
+    }

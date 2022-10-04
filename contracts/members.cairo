@@ -167,6 +167,48 @@ namespace Member {
         }
         return (member_.delegatedKey,);
     }
+
+
+    func _get_total_shares{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(currentIndex: felt, currentTotal: felt) -> (count: felt) {
+        let (member_list_length: felt) = membersLength.read();
+        if (currentIndex == member_list_length){
+            return (currentTotal,);
+        }
+        let (current_address: felt) = membersAddresses.read(currentIndex);
+        let (member_info) = Member.get_info(current_address);
+        let new_total: felt = currentTotal + member_info.shares;
+        return _get_total_shares(currentIndex+1, new_total);
+    }
+
+    func get_total_shares{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }() -> (count: felt) {
+        return _get_total_shares(0, 0);
+    }
+
+
+    func _get_total_loot{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(currentIndex: felt, currentTotal: felt) -> (count: felt) {
+        let (member_list_length: felt) = membersLength.read();
+        if (currentIndex == member_list_length){
+            return (currentTotal,);
+        }
+        let (current_address: felt) = membersAddresses.read(currentIndex);
+        let (member_info) = Member.get_info(current_address);
+        let new_total: felt = currentTotal + member_info.loot;
+        return _get_total_loot(currentIndex+1, new_total);
+    }
+
+    func get_total_loot{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }() -> (count: felt) {
+        return _get_total_loot(0, 0);
+    }
+
+
 }
 
 
