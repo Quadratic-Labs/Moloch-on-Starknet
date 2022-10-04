@@ -10,7 +10,9 @@ async def test_get_total_votes(contract):
     total_yes_votes = 10
     total_no_votes = 42
     proposalId = 8
-
+    # give random sahres to members just to check if the weight is taken into account
+    shares_for_yes_voters = 879  # random shares to yes voters
+    shares_for_no_voters = 423
     # create a proposal for the purpose of tests
     proposal = (
         proposalId,  # id
@@ -41,7 +43,14 @@ async def test_get_total_votes(contract):
         onBehalf = caller_address
         # create the member
         await contract.Member_add_member_proxy(
-            (caller_address, caller_address, 1, 1, 1, 1)
+            (
+                caller_address,  # address
+                caller_address,  # delegatedKey
+                shares_for_yes_voters,  # shares
+                1,  # loot
+                1,  # jailed
+                1,  # lastProposalYesVote
+            )
         ).execute()
         # vote yes for the proposal
         await contract.submitVote(
@@ -54,7 +63,14 @@ async def test_get_total_votes(contract):
         onBehalf = caller_address
         # create the member
         await contract.Member_add_member_proxy(
-            (caller_address, caller_address, 1, 1, 1, 1)
+            (
+                caller_address,  # address
+                caller_address,  # delegatedKey
+                shares_for_no_voters,  # shares
+                1,  # loot
+                1,  # jailed
+                1,  # lastProposalYesVote
+            )
         ).execute()
         # vote no for the proposal
         await contract.submitVote(
@@ -65,9 +81,9 @@ async def test_get_total_votes(contract):
     return_value = await contract.Tally_get_total_votes_proxy(
         proposalId=proposalId, voteType=YESVOTE
     ).execute()
-    assert return_value.result.count == total_yes_votes
+    assert return_value.result.count == total_yes_votes * shares_for_yes_voters
 
     return_value = await contract.Tally_get_total_votes_proxy(
         proposalId=proposalId, voteType=NOVOTE
     ).execute()
-    assert return_value.result.count == total_no_votes
+    assert return_value.result.count == total_no_votes * shares_for_no_voters

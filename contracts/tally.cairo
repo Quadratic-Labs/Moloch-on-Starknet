@@ -22,7 +22,9 @@ namespace Tally{
         let (current_address: felt) = membersAddresses.read(currentIndex);
         let (vote: felt) = proposalsVotes.read(proposalId, current_address);
         if (vote == voteType){
-            return _get_total_votes(currentIndex+1, proposalId, voteType, currentTotal+1);
+            let (member_info) = Member.get_info(current_address);
+            let new_total: felt = currentTotal + member_info.shares;
+            return _get_total_votes(currentIndex+1, proposalId, voteType, new_total);
         }else{
             return _get_total_votes(currentIndex+1, proposalId, voteType,currentTotal);
         }
@@ -49,9 +51,9 @@ func did_pass{
     let (local params) = Proposal.get_params(info.type);
 
     // check quorum
-    // TODO retrieve numvotes from mapping
-    // local numVotes = info.yesVotes + info.noVotes;
-    local numVotes = 0;
+    let (local yesVotes) = Tally.get_total_votes(proposalId, Proposal.YESVOTE);
+    let (local noVotes) = Tally.get_total_votes(proposalId, Proposal.NOVOTE);
+    local numVotes = noVotes + yesVotes;
 
     // TODO: must get total weight of eligible votes from proposalTypes to roles
     // mapping
@@ -63,9 +65,7 @@ func did_pass{
     }
 
     // check majority
-    //TODO replace info.yesVotes by the actual number of yes votes
-    // let majority = is_le(params.majority * numVotes, info.yesVotes * 100);
-    let majority = is_le(params.majority * numVotes, 0 * 100);
+    let majority = is_le(params.majority * numVotes, yesVotes * 100);
 
     if (majority == 0) {
         return (FALSE,);
