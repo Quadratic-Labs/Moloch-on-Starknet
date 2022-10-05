@@ -6,7 +6,6 @@ YESVOTE = utils.str_to_felt("yes")
 NOVOTE = utils.str_to_felt("no")
 
 
-@pytest.mark.asyncio
 async def create_votes(
     empty_contract,
     proposalId,
@@ -25,56 +24,52 @@ async def create_votes(
         1,  # description
     )
     await empty_contract.Proposal_add_proposal_proxy(proposal).execute()
-    total_no_votes = 15
     # create members that votes and votes for the tests
     for i in range(total_yes_votes):
         caller_address = i + 5555  # add 5555 to avoid already used adress for members
-        onBehalf = caller_address
         # create the member
         await empty_contract.Member_add_member_proxy(
             (
                 caller_address,  # address
                 caller_address,  # delegatedKey
-                2,  # shares
+                1,  # shares
                 1,  # loot
                 1,  # jailed
                 1,  # lastProposalYesVote
             )
         ).execute()
         # vote yes for the proposal
-        await empty_contract.submitVote(
-            proposalId=proposalId, vote=YESVOTE, onBehalf=onBehalf
+        await empty_contract.Proposal_set_vote_proxy(
+            id=proposalId, address=caller_address, vote=YESVOTE
         ).execute(caller_address=caller_address)
 
     for i in range(total_no_votes):
         caller_address = i + 6666  # add 6666 to avoid already used adress for members
-        onBehalf = caller_address
         # create the member
         await empty_contract.Member_add_member_proxy(
             (
                 caller_address,  # address
                 caller_address,  # delegatedKey
-                2,  # shares
+                1,  # shares
                 1,  # loot
                 1,  # jailed
                 1,  # lastProposalYesVote
             )
         ).execute()
         # vote no for the proposal
-        await empty_contract.submitVote(
-            proposalId=proposalId, vote=NOVOTE, onBehalf=onBehalf
+        await empty_contract.Proposal_set_vote_proxy(
+            id=proposalId, address=caller_address, vote=NOVOTE
         ).execute(caller_address=caller_address)
 
     for i in range(total_non_voting_members):
         # voting 1 on an existing proposal should succeed
-        caller_address = i + 6666  # add 6666 to avoid already used adress for members
-        onBehalf = caller_address
+        caller_address = i + 7777  # add 7777 to avoid already used adress for members
         # create the member
         await empty_contract.Member_add_member_proxy(
             (
                 caller_address,  # address
                 caller_address,  # delegatedKey
-                2,  # shares
+                1,  # shares
                 1,  # loot
                 1,  # jailed
                 1,  # lastProposalYesVote
@@ -135,12 +130,12 @@ async def test_did_not_reach_majority(empty_contract):
     proposalId = 45  # Submitted and didn't reach majority
 
     # create a proposal that reached quorom but not majority
-    create_votes(
+    await create_votes(
         empty_contract=empty_contract,
         proposalId=proposalId,
         caller_address=caller_address,
-        total_yes_votes=2,
-        total_no_votes=10,
+        total_yes_votes=4,
+        total_no_votes=5,
         total_non_voting_members=0,
     )
 
@@ -153,8 +148,17 @@ async def test_did_not_reach_majority(empty_contract):
 @pytest.mark.asyncio
 async def test_did_not_reach_quorum(empty_contract):
     # given votes has not reached quorum, when invoking should_accept or Tally__tally_proxy, should return False
-    # create a proposal for the purpose of the tests its majority is 50 and the quorom is 80
+    caller_address = 42  # admin
+    proposalId = 98  # Submitted and didn't reach majority
 
+    await create_votes(
+        empty_contract=empty_contract,
+        proposalId=proposalId,
+        caller_address=caller_address,
+        total_yes_votes=2,
+        total_no_votes=2,
+        total_non_voting_members=5,
+    )
     return_value = await empty_contract.Tally__tally_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
@@ -165,8 +169,16 @@ async def test_did_not_reach_quorum(empty_contract):
 async def test_accepted(empty_contract):
     # given votes has both majority and quorum, when invoking should_accept or Tally__tally_proxy, should return True
     caller_address = 42  # admin
-    proposalId = 6  # Submitted and reached quorom and majority
+    proposalId = 454  # Submitted and didn't reach majority
 
+    await create_votes(
+        empty_contract=empty_contract,
+        proposalId=proposalId,
+        caller_address=caller_address,
+        total_yes_votes=5,
+        total_no_votes=2,
+        total_non_voting_members=0,
+    )
     proposal_before_apply = await empty_contract.Proposal_get_info_proxy(
         id=proposalId
     ).execute()
@@ -190,7 +202,16 @@ async def test_accepted(empty_contract):
 async def test_rejected(empty_contract):
     # given votes has both majority and quorum, when invoking should_accept or Tally__tally_proxy, should return True
     caller_address = 42  # admin
-    proposalId = 7  # Submitted and reached quorom and majority
+    proposalId = 454  # Submitted and didn't reach majority
+
+    await create_votes(
+        empty_contract=empty_contract,
+        proposalId=proposalId,
+        caller_address=caller_address,
+        total_yes_votes=2,
+        total_no_votes=5,
+        total_non_voting_members=0,
+    )
 
     proposal_before_apply = await empty_contract.Proposal_get_info_proxy(
         id=proposalId

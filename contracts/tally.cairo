@@ -54,7 +54,6 @@ namespace Tally{
         let (local yesVotes) = Tally.get_total_votes(proposalId, Proposal.YESVOTE);
         let (local noVotes) = Tally.get_total_votes(proposalId, Proposal.NOVOTE);
         local numVotes = noVotes + yesVotes;
-
         // TODO: must get total weight of eligible votes from proposalTypes to roles
         // mapping
         let (eligible) = Member.get_total_shares();
