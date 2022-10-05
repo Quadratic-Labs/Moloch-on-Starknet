@@ -78,7 +78,8 @@ namespace Member {
     func is_jailed{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(address: felt) -> (res: felt) {
-        return (0,);
+        let (info) = get_info(address);
+        return (info.jailed,);
     }
 
     func assert_not_jailed{

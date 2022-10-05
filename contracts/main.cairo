@@ -18,7 +18,7 @@ from ragequit import ragequit
 from roles import Roles, grant_role, revoke_role, delegate_admin_role, adminRoles, membersRoles
 from voting import submitVote
 from bank import Bank, adminDeposit
-
+from actions import executeProposal
 
 @constructor
 func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -32,7 +32,7 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     Proposal.set_params('ApproveToken', params);
     Proposal.set_params('RemoveToken', params);
     Proposal.set_params('Order', params);
-    local signaling_params: ProposalParams = ProposalParams(majority=50, quorum=80, votingDuration=0, graceDuration=0);
+    local signaling_params: ProposalParams = ProposalParams(majority=50, quorum=80, votingDuration=0, graceDuration=5);
     Proposal.set_params('Signaling', signaling_params);
 
     // add roles setup

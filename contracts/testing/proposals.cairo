@@ -49,6 +49,16 @@ syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }
 
 @external
+func Proposal_get_proposal_status_proxy{
+syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(proposalId: felt) -> (status: felt) {
+    return Proposal.get_proposal_status(proposalId);
+}
+
+
+
+
+@external
 func Proposal_update_proposal_proxy{
 syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(id: felt, info: ProposalInfo) -> () {

@@ -26,7 +26,8 @@ from testing.proposals import (
     Proposal_get_proposals_length_proxy,
     Proposal_get_vote_proxy,
     Proposal_set_vote_proxy,
-    Proposal_force_proposal_proxy
+    Proposal_force_proposal_proxy,
+    Proposal_get_proposal_status_proxy
 )
 
 from testing.roles import (
@@ -50,4 +51,10 @@ from testing.order import (
 from testing.tally import (
     Tally_get_total_votes_proxy,
     Tally__tally_proxy
+)
+from testing.tokens import (
+    Tokens_set_tokenParams_proxy
+)
+from testing.guildkick import (
+    Guildkick_set_guildKickParams_proxy
 )

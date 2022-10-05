@@ -90,11 +90,11 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     // Executes the proposal's actions if preconditions are satisfied
     // Modify Proposal status which is used by the front
     alloc_locals;
+    // launch the tally
+    Tally._tally(proposalId);
     let (local proposal: ProposalInfo) = Proposal.get_info(proposalId);
     let (local params) = Proposal.get_params(proposal.type);
 
-    // launch the tally
-    Tally._tally(proposal.id);
 
     // if the proposal status is REJECTED refund the submitter and change status to EXECUTED
     if (proposal.status == Proposal.REJECTED){

@@ -75,6 +75,13 @@ namespace Proposal {
         return (proposal,);
     }
 
+    func get_proposal_status{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(id: felt) -> (
+        status: felt
+    ) {
+        let (proposal: ProposalInfo) = proposals.read(id);
+        return (proposal.status,);
+    }
+    
     func search_position_by_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt, current_position: felt, length: felt
     ) -> (position: felt) {
@@ -130,6 +137,7 @@ namespace Proposal {
             assert_nn(id);
         }
         proposals.write(id, info);
+
         return ();
     }
 

@@ -112,6 +112,7 @@ namespace Tally{
         }
 
         Proposal.update_status(info.id, Proposal.ACCEPTED);
+
         return (TRUE,);
     }
 }

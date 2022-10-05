@@ -16,7 +16,7 @@ async def create_votes(
 ):
     proposal = (
         proposalId,  # id
-        utils.str_to_felt("titre"),  # type # 22357892214649444 = Onboard
+        utils.str_to_felt("titre"),
         utils.str_to_felt("Signaling"),  # type
         3,  # submittedBy
         -20,  # submittedAt
@@ -100,7 +100,7 @@ async def test_non_existing_proposal(empty_contract):
 
 
 @pytest.mark.asyncio
-async def test_grace_period_not_ended(empty_contract):
+async def test_voting_period_not_ended(empty_contract):
     # create a proposal for the purpose of the tests
 
     proposal = (
