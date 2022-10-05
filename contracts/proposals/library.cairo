@@ -51,21 +51,26 @@ namespace Proposal {
         return ();
     }
 
-    func assert_within_bounds{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    func assert_proposal_exists{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt
     ) -> () {
-        let (len: felt) = proposalsLength.read();
+        let (length: felt) = proposalsLength.read();
+        let (position) = search_position_by_id(id=id, current_position=0, length=length);
         with_attr error_message("Proposal {id} does not exist") {
-            assert_nn(id);
-            assert_lt(id, len);
+            assert_nn(position);
         }
         return ();
+    }
+    func get_proposal_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(index: felt) -> (
+        proposalId: felt
+    ) {
+        let (proposalId: felt) = proposalsIndexes.read(index);
+        return (proposalId,);
     }
 
     func get_info{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(id: felt) -> (
         proposal: ProposalInfo
     ) {
-        assert_within_bounds(id);
         let (proposal: ProposalInfo) = proposals.read(id);
         return (proposal,);
     }
@@ -94,7 +99,8 @@ namespace Proposal {
     ) -> () {
         alloc_locals;
         let (local len: felt) = proposalsLength.read();
-        proposals.write(len, info);
+        proposalsIndexes.write(len, info.id);
+        proposals.write(info.id, info);
         proposalsLength.write(len + 1);
         return ();
     }
@@ -116,25 +122,14 @@ namespace Proposal {
         return ();
     }
 
-    func get_proposal_by_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        id: felt
-    ) -> (proposal: ProposalInfo) {
-        let (length) = proposalsLength.read();
-        let (position) = search_position_by_id(id, 0, length);
-        let (info: ProposalInfo) = get_info(position);
-        return (info,);
-    }
-
     func update_proposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt, info: ProposalInfo
     ) -> () {
-        let (length) = proposalsLength.read();
-        let (position) = search_position_by_id(id, 0, length);
         // assert the proposal exists
         with_attr error_message("The proposal with id={id} not found.") {
-            assert_nn(position);
+            assert_nn(id);
         }
-        proposals.write(position, info);
+        proposals.write(id, info);
         return ();
     }
 
@@ -147,7 +142,7 @@ namespace Proposal {
     func get_vote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt, address: felt
     ) -> (vote: felt) {
-        assert_within_bounds(id);
+        assert_proposal_exists(id);
         let (vote: felt) = proposalsVotes.read(id, address);
         return (vote,);
     }
@@ -176,6 +171,10 @@ func proposalParams(proposalKind: felt) -> (params: ProposalParams) {
 // List of proposals
 @storage_var
 func proposalsLength() -> (length: felt) {
+}
+
+@storage_var
+func proposalsIndexes(index: felt) -> (proposalId: felt) {
 }
 
 @storage_var

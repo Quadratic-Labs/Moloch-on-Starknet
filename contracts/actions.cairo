@@ -65,7 +65,7 @@ namespace Actions {
     func execute_order{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
         alloc_locals;
         let (local params: OrderParams) = Order.get_orderParams(proposalId);
-        let (local info: ProposalInfo) = Proposal.get_proposal_by_id(proposalId);
+        let (local info: ProposalInfo) = Proposal.get_info(proposalId);
         let (local bank_address: felt) = get_contract_address();
         // assert enough payment token in the bank
         Bank.assert_sufficient_balance(tokenAddress=params.paymentAddress, amount=params.paymentRequested);
@@ -90,7 +90,7 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     // Executes the proposal's actions if preconditions are satisfied
     // Modify Proposal status which is used by the front
     alloc_locals;
-    let (local proposal: ProposalInfo) = Proposal.get_proposal_by_id(proposalId);
+    let (local proposal: ProposalInfo) = Proposal.get_info(proposalId);
     let (local params) = Proposal.get_params(proposal.type);
 
     // launch the tally

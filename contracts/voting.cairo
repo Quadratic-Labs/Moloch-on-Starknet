@@ -20,7 +20,7 @@ func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
     Member.assert_is_delegate(onBehalf);
 
     // check if the proposal exists and get its info
-    let (local proposal: ProposalInfo) = Proposal.get_proposal_by_id(proposalId);
+    let (local proposal: ProposalInfo) = Proposal.get_info(proposalId);
     let (local params: ProposalParams) = Proposal.get_params(proposal.type);
 
     let (local today_timestamp) = get_block_number();

@@ -82,7 +82,7 @@ namespace Tally{
         // Requires voting and grace period have ended
         // Modify Proposal status which is used by the front
         alloc_locals;
-        let (local info: ProposalInfo) = Proposal.get_proposal_by_id(proposalId);
+        let (local info: ProposalInfo) = Proposal.get_info(proposalId);
         let (local params) = Proposal.get_params(info.type);
         let (local caller) = get_caller_address();
 
@@ -99,9 +99,6 @@ namespace Tally{
 
         let (local today_timestamp) = get_block_number();
 
-        %{
-            print("submittedAt = ", ids.info.submittedAt, "votingDuration", ids.params.votingDuration, "today_timestamp", ids.today_timestamp)
-        %}
         // assert the voting period ended
         with_attr error_message("The proposal has not ended voting period.") {
             assert_lt(

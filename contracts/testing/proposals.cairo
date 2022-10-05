@@ -18,19 +18,7 @@ syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     return Proposal.set_params(kind,params);
 }
 
-@external
-func Proposal_assert_within_bounds_proxy{
-syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(id: felt) -> () {
-    return Proposal.assert_within_bounds(id);
-}
 
-@external
-func Proposal_get_info_proxy{
-syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(id: felt) -> (proposal: ProposalInfo) {
-    return Proposal.get_info(id);
-}
 
 @external
 func Proposal_search_position_by_id_proxy{
@@ -54,10 +42,10 @@ syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }
 
 @external
-func Proposal_get_proposal_by_id_proxy{
+func Proposal_get_info_proxy{
 syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(id: felt) -> (proposal: ProposalInfo) {
-    return Proposal.get_proposal_by_id(id);
+    return Proposal.get_info(id);
 }
 
 @external

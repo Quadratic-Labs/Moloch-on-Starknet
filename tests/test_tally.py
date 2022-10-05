@@ -167,7 +167,7 @@ async def test_accepted(empty_contract):
     caller_address = 42  # admin
     proposalId = 6  # Submitted and reached quorom and majority
 
-    proposal_before_apply = await empty_contract.Proposal_get_proposal_by_id_proxy(
+    proposal_before_apply = await empty_contract.Proposal_get_info_proxy(
         id=proposalId
     ).execute()
     # check if the status of the proposal is indeed "submitted"
@@ -179,7 +179,7 @@ async def test_accepted(empty_contract):
     # check if the proposal was accepted
     assert return_value.result.accepted == 1
 
-    proposal_after_apply = await empty_contract.Proposal_get_proposal_by_id_proxy(
+    proposal_after_apply = await empty_contract.Proposal_get_info_proxy(
         id=proposalId
     ).execute()
     # check if the status of the proposal changed to "accepted"
@@ -192,7 +192,7 @@ async def test_rejected(empty_contract):
     caller_address = 42  # admin
     proposalId = 7  # Submitted and reached quorom and majority
 
-    proposal_before_apply = await empty_contract.Proposal_get_proposal_by_id_proxy(
+    proposal_before_apply = await empty_contract.Proposal_get_info_proxy(
         id=proposalId
     ).execute()
     # check if the status of the proposal is indeed "submitted"
@@ -204,7 +204,7 @@ async def test_rejected(empty_contract):
     # check if the proposal was accepted
     assert return_value.result.accepted == 0
 
-    proposal_after_apply = await empty_contract.Proposal_get_proposal_by_id_proxy(
+    proposal_after_apply = await empty_contract.Proposal_get_info_proxy(
         id=proposalId
     ).execute()
     # check if the status of the proposal changed to "rejected"

@@ -18,12 +18,10 @@ from testing.members import (
 from testing.proposals import (
     Proposal_get_params_proxy,
     Proposal_set_params_proxy,
-    Proposal_assert_within_bounds_proxy,
     Proposal_get_info_proxy,
     Proposal_search_position_by_id_proxy,
     Proposal_add_proposal_proxy,
     Proposal_update_status_proxy,
-    Proposal_get_proposal_by_id_proxy,
     Proposal_update_proposal_proxy,
     Proposal_get_proposals_length_proxy,
     Proposal_get_vote_proxy,
