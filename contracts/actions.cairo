@@ -12,7 +12,7 @@ from proposals.order import Order, OrderParams
 from proposals.tokens import Tokens, TokenParams
 from proposals.library import Proposal, ProposalInfo
 from bank import Bank
-from tally import _tally
+from tally import Tally
 // TODO later: Automate actions.
 // Might need to call other contracts
 // Might need its subdirectory
@@ -94,7 +94,7 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     let (local params) = Proposal.get_params(proposal.type);
 
     // launch the tally
-    _tally(proposal.id);
+    Tally._tally(proposal.id);
 
     // if the proposal status is REJECTED refund the submitter and change status to EXECUTED
     if (proposal.status == Proposal.REJECTED){

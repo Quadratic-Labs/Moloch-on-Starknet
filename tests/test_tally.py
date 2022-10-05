@@ -2,95 +2,184 @@ import pytest
 from datetime import datetime
 from . import utils
 
+YESVOTE = utils.str_to_felt("yes")
+NOVOTE = utils.str_to_felt("no")
+
 
 @pytest.mark.asyncio
-async def test_not_member(contract):
-    # given caller is not a member, when invoking _tally, should fail
+async def create_votes(
+    empty_contract,
+    proposalId,
+    caller_address,
+    total_yes_votes,
+    total_no_votes,
+    total_non_voting_members,
+):
+    proposal = (
+        proposalId,  # id
+        utils.str_to_felt("titre"),  # type # 22357892214649444 = Onboard
+        utils.str_to_felt("Signaling"),  # type
+        3,  # submittedBy
+        -20,  # submittedAt
+        1,  # status # 1 = SUBMITTED
+        1,  # description
+    )
+    await empty_contract.Proposal_add_proposal_proxy(proposal).execute()
+    total_no_votes = 15
+    # create members that votes and votes for the tests
+    for i in range(total_yes_votes):
+        caller_address = i + 5555  # add 5555 to avoid already used adress for members
+        onBehalf = caller_address
+        # create the member
+        await empty_contract.Member_add_member_proxy(
+            (
+                caller_address,  # address
+                caller_address,  # delegatedKey
+                2,  # shares
+                1,  # loot
+                1,  # jailed
+                1,  # lastProposalYesVote
+            )
+        ).execute()
+        # vote yes for the proposal
+        await empty_contract.submitVote(
+            proposalId=proposalId, vote=YESVOTE, onBehalf=onBehalf
+        ).execute(caller_address=caller_address)
+
+    for i in range(total_no_votes):
+        caller_address = i + 6666  # add 6666 to avoid already used adress for members
+        onBehalf = caller_address
+        # create the member
+        await empty_contract.Member_add_member_proxy(
+            (
+                caller_address,  # address
+                caller_address,  # delegatedKey
+                2,  # shares
+                1,  # loot
+                1,  # jailed
+                1,  # lastProposalYesVote
+            )
+        ).execute()
+        # vote no for the proposal
+        await empty_contract.submitVote(
+            proposalId=proposalId, vote=NOVOTE, onBehalf=onBehalf
+        ).execute(caller_address=caller_address)
+
+    for i in range(total_non_voting_members):
+        # voting 1 on an existing proposal should succeed
+        caller_address = i + 6666  # add 6666 to avoid already used adress for members
+        onBehalf = caller_address
+        # create the member
+        await empty_contract.Member_add_member_proxy(
+            (
+                caller_address,  # address
+                caller_address,  # delegatedKey
+                2,  # shares
+                1,  # loot
+                1,  # jailed
+                1,  # lastProposalYesVote
+            )
+        ).execute()
+
+
+@pytest.mark.asyncio
+async def test_not_member(empty_contract):
+    # given caller is not a member, when invoking Tally__tally_proxy, should fail
     caller_address = 404  # not a member
     proposalId = 0
     with pytest.raises(Exception):
-        await contract._tally(proposalId=proposalId).execute(
+        await empty_contract.Tally__tally_proxy(proposalId=proposalId).execute(
             caller_address=caller_address
         )
 
 
 @pytest.mark.asyncio
-async def test_non_existing_proposal(contract):
-    # given proposal does not exists, when invoking _tally or should_accept, should fail
+async def test_non_existing_proposal(empty_contract):
+    # given proposal does not exists, when invoking Tally__tally_proxy or should_accept, should fail
     caller_address = 42
     proposalId = 404  # non existing proposal
     with pytest.raises(Exception):
-        await contract._tally(proposalId=proposalId).execute(
+        await empty_contract.Tally__tally_proxy(proposalId=proposalId).execute(
             caller_address=caller_address
         )
 
 
 @pytest.mark.asyncio
-async def test_grace_period_not_ended(contract):
+async def test_grace_period_not_ended(empty_contract):
     # create a proposal for the purpose of the tests
 
     proposal = (
         9,  # id
-        utils.str_to_felt("Onboard"),  # type # 22357892214649444 = Onboard
+        utils.str_to_felt("title"),  # title
+        utils.str_to_felt("Signaling"),  # type
         3,  # submittedBy
-        int(datetime.timestamp(datetime.now())),  # submittedAt
-        3,  # yesVotes
-        4,  # noVotes
+        50,  # submittedAt
         1,  # status # 1 = SUBMITTED
         1,  # description
     )
-    await contract.Proposal_add_proposal_proxy(proposal).execute()
+    await empty_contract.Proposal_add_proposal_proxy(proposal).execute()
 
-    # given proposal has not ended grace period, when invoking _tally, should fail
+    # given proposal has not ended grace period, when invoking Tally__tally_proxy, should fail
     caller_address = 42
     proposalId = 9  # proposal with grace period not ended ends on Sep 01 2022 00:00:00
     with pytest.raises(Exception):
-        await contract._tally(proposalId=proposalId).execute(
+        await empty_contract.Tally__tally_proxy(proposalId=proposalId).execute(
             caller_address=caller_address
         )
 
 
 @pytest.mark.asyncio
-async def test_did_not_reach_majority(contract):
-    # given votes has not reached majority, when invoking should_accept or _tally, should return False
+async def test_did_not_reach_majority(empty_contract):
+    # given votes has not reached majority, when invoking should_accept or Tally__tally_proxy, should return False
     caller_address = 42  # admin
-    proposalId = 4  # Submitted and didn't reach majority
-    return_value = await contract._tally(proposalId=proposalId).execute(
-        caller_address=caller_address
+    proposalId = 45  # Submitted and didn't reach majority
+
+    # create a proposal that reached quorom but not majority
+    create_votes(
+        empty_contract=empty_contract,
+        proposalId=proposalId,
+        caller_address=caller_address,
+        total_yes_votes=2,
+        total_no_votes=10,
+        total_non_voting_members=0,
     )
+
+    return_value = await empty_contract.Tally__tally_proxy(
+        proposalId=proposalId
+    ).execute(caller_address=caller_address)
     assert return_value.result.accepted == 0
 
 
 @pytest.mark.asyncio
-async def test_did_not_reach_quorum(contract):
-    # given votes has not reached quorum, when invoking should_accept or _tally, should return False
-    caller_address = 42  # admin
-    proposalId = 5  # Submitted and didn't reach quorom
-    return_value = await contract._tally(proposalId=proposalId).execute(
-        caller_address=caller_address
-    )
+async def test_did_not_reach_quorum(empty_contract):
+    # given votes has not reached quorum, when invoking should_accept or Tally__tally_proxy, should return False
+    # create a proposal for the purpose of the tests its majority is 50 and the quorom is 80
+
+    return_value = await empty_contract.Tally__tally_proxy(
+        proposalId=proposalId
+    ).execute(caller_address=caller_address)
     assert return_value.result.accepted == 0
 
 
 @pytest.mark.asyncio
-async def test_accepted(contract):
-    # given votes has both majority and quorum, when invoking should_accept or _tally, should return True
+async def test_accepted(empty_contract):
+    # given votes has both majority and quorum, when invoking should_accept or Tally__tally_proxy, should return True
     caller_address = 42  # admin
     proposalId = 6  # Submitted and reached quorom and majority
 
-    proposal_before_apply = await contract.Proposal_get_proposal_by_id_proxy(
+    proposal_before_apply = await empty_contract.Proposal_get_proposal_by_id_proxy(
         id=proposalId
     ).execute()
     # check if the status of the proposal is indeed "submitted"
     assert proposal_before_apply.result.proposal.status == 1
 
-    return_value = await contract._tally(proposalId=proposalId).execute(
-        caller_address=caller_address
-    )
+    return_value = await empty_contract.Tally__tally_proxy(
+        proposalId=proposalId
+    ).execute(caller_address=caller_address)
     # check if the proposal was accepted
     assert return_value.result.accepted == 1
 
-    proposal_after_apply = await contract.Proposal_get_proposal_by_id_proxy(
+    proposal_after_apply = await empty_contract.Proposal_get_proposal_by_id_proxy(
         id=proposalId
     ).execute()
     # check if the status of the proposal changed to "accepted"
@@ -98,24 +187,24 @@ async def test_accepted(contract):
 
 
 @pytest.mark.asyncio
-async def test_rejected(contract):
-    # given votes has both majority and quorum, when invoking should_accept or _tally, should return True
+async def test_rejected(empty_contract):
+    # given votes has both majority and quorum, when invoking should_accept or Tally__tally_proxy, should return True
     caller_address = 42  # admin
     proposalId = 7  # Submitted and reached quorom and majority
 
-    proposal_before_apply = await contract.Proposal_get_proposal_by_id_proxy(
+    proposal_before_apply = await empty_contract.Proposal_get_proposal_by_id_proxy(
         id=proposalId
     ).execute()
     # check if the status of the proposal is indeed "submitted"
     assert proposal_before_apply.result.proposal.status == 1
 
-    return_value = await contract._tally(proposalId=proposalId).execute(
-        caller_address=caller_address
-    )
+    return_value = await empty_contract.Tally__tally_proxy(
+        proposalId=proposalId
+    ).execute(caller_address=caller_address)
     # check if the proposal was accepted
     assert return_value.result.accepted == 0
 
-    proposal_after_apply = await contract.Proposal_get_proposal_by_id_proxy(
+    proposal_after_apply = await empty_contract.Proposal_get_proposal_by_id_proxy(
         id=proposalId
     ).execute()
     # check if the status of the proposal changed to "rejected"

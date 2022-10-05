@@ -32,7 +32,8 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     Proposal.set_params('ApproveToken', params);
     Proposal.set_params('RemoveToken', params);
     Proposal.set_params('Order', params);
-    Proposal.set_params('Signaling', params);
+    local signaling_params: ProposalParams = ProposalParams(majority=50, quorum=80, votingDuration=0, graceDuration=0);
+    Proposal.set_params('Signaling', signaling_params);
 
     // add roles setup
     adminRoles.write('admin', 'admin');
