@@ -10,7 +10,7 @@ from proposals.library import Proposal, ProposalInfo
 from bank import Bank
 
 @event
-func SwapProposalAdded(Id:felt, tribute_address:felt, tribute_offered:Uint256, payment_address:felt, payment_requested:Uint256) {
+func SwapProposalAdded(id:felt, tributeAddress:felt, tributeOffered:Uint256, paymentAddress:felt, paymentRequested:Uint256) {
 }
 
 struct OrderParams {
@@ -75,7 +75,7 @@ func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
                                         paymentRequested=paymentRequested,
                                         paymentAddress=paymentAddress);
     Order.set_orderParams(id, params);
-    SwapProposalAdded.emit(Id=id, tribute_address=tributeAddress, tribute_offered=tributeOffered, payment_address=paymentAddress, payment_requested=paymentRequested);
+    SwapProposalAdded.emit(id=id, tributeAddress=tributeAddress, tributeOffered=tributeOffered, paymentAddress=paymentAddress, paymentRequested=paymentRequested);
     // collect tribute from proposer and store it in the Escrow until the proposal is processed
     Bank.bank_deposit(tokenAddress = tributeAddress, amount = tributeOffered);
     // update bank accounting 

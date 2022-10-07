@@ -12,19 +12,19 @@ from openzeppelin.security.safemath.library import SafeUint256
 from roles import Roles
 
 @event
-func IncreaseUserTokenBalance(Member_address: felt, Token_address: felt, amount : Uint256) {
+func IncreaseUserTokenBalance(memberAddress: felt, tokenAddress: felt, amount : Uint256) {
 }
 
 @event
-func DecreaseUserTokenBalance(Member_address: felt, Token_address: felt, amount : Uint256) {
+func DecreaseUserTokenBalance(memberAddress: felt, tokenAddress: felt, amount : Uint256) {
 }
 
 @event
-func TokenWhitelisted(Token_address: felt) {
+func TokenWhitelisted(tokenAddress: felt) {
 }
 
 @event
-func TokenUnWhitelisted(Token_address: felt) {
+func TokenUnWhitelisted(tokenAddress: felt) {
 }
 
 
@@ -88,7 +88,7 @@ namespace Bank{
         let (current_balance: Uint256) = get_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress);
         let (new_balance: Uint256) = SafeUint256.add(current_balance, amount);
         set_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress, amount=new_balance);
-        IncreaseUserTokenBalance.emit(Member_address=userAddress, Token_address=tokenAddress, amount=amount);
+        IncreaseUserTokenBalance.emit(memberAddress=userAddress, tokenAddress=tokenAddress, amount=amount);
         return ();
     }    
     
@@ -98,7 +98,7 @@ namespace Bank{
             let (current_balance: Uint256) = get_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress);
         let (new_balance: Uint256) = SafeUint256.sub_le(current_balance, amount);
         set_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress, amount=new_balance);
-        DecreaseUserTokenBalance.emit(Member_address=userAddress, Token_address=tokenAddress, amount=amount);
+        DecreaseUserTokenBalance.emit(memberAddress=userAddress, tokenAddress=tokenAddress, amount=amount);
         return ();
     }
 
@@ -175,7 +175,7 @@ namespace Bank{
     ) {
         assert_token_not_whitelisted(tokenAddress);
         whitelistedTokens.write(tokenAddress, TRUE);
-        TokenWhitelisted.emit(Token_address=tokenAddress);
+        TokenWhitelisted.emit(tokenAddress=tokenAddress);
         return ();
     }
 
@@ -184,7 +184,7 @@ namespace Bank{
     ) {
         assert_token_whitelisted(tokenAddress);
         whitelistedTokens.write(tokenAddress, FALSE);
-        TokenUnWhitelisted.emit(Token_address=tokenAddress);
+        TokenUnWhitelisted.emit(tokenAddress=tokenAddress);
 
         return ();
     }

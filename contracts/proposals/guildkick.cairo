@@ -9,7 +9,7 @@ from proposals.library import Proposal, ProposalInfo
 
 
 @event
-func GuildKickProposalAdded(Id:felt,Member_address:felt) {
+func GuildKickProposalAdded(id:felt,memberAddress:felt) {
 }
 
 
@@ -71,7 +71,7 @@ func submitGuildKick{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     // register params
     let params: GuildKickParams= GuildKickParams(memberAddress=memberAddress);
     Guildkick.set_guildKickParams(id, params);
-    GuildKickProposalAdded.emit(Id=id, Member_address=memberAddress);
+    GuildKickProposalAdded.emit(id=id, memberAddress=memberAddress);
 
     return (TRUE,);
 }

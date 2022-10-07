@@ -7,11 +7,11 @@ from starkware.starknet.common.syscalls import get_caller_address
 from bank import Bank
 
 @event
-func MemberAdded(member_address: felt, shares: felt, loot : felt) {
+func MemberAdded(memberAddress: felt, shares: felt, loot : felt) {
 }
 
 @event
-func MemberUpdated(member_address: felt, delegatedKey: felt, shares: felt, loot : felt, jailed: felt, lastProposalYesVote: felt) {
+func MemberUpdated(memberAddress: felt, delegatedKey: felt, shares: felt, loot : felt, jailed: felt, lastProposalYesVote: felt) {
 }
 
 
@@ -138,7 +138,7 @@ namespace Member {
         membersAddresses.write(len, info.address);
         membersInfo.write(info.address, info);
         //emit event
-        MemberAdded.emit(member_address=info.address, shares=info.shares, loot=info.loot);
+        MemberAdded.emit(memberAddress=info.address, shares=info.shares, loot=info.loot);
         return ();
     }
     func jail_member{
@@ -164,16 +164,16 @@ namespace Member {
             assert is_in = TRUE;
         }
         membersInfo.write(info.address, info);
-        MemberUpdated.emit(member_address=info.address, delegatedKey=info.delegatedKey, shares=info.shares, loot=info.loot, jailed=info.jailed, lastProposalYesVote=info.lastProposalYesVote);
+        MemberUpdated.emit(memberAddress=info.address, delegatedKey=info.delegatedKey, shares=info.shares, loot=info.loot, jailed=info.jailed, lastProposalYesVote=info.lastProposalYesVote);
         return ();
     }
 
     func assert_is_delegate{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    }(member_address: felt) -> (key: felt) {
+    }(memberAddress: felt) -> (key: felt) {
         alloc_locals;
         let (local caller) = get_caller_address();
-        let (local member_) = Member.get_info(member_address);
+        let (local member_) = Member.get_info(memberAddress);
         with_attr error_message("Access: user {caller} is not delagate of {member_.delegatedKey}.") {
             assert caller = member_.delegatedKey;
         }

@@ -11,7 +11,7 @@ from starkware.cairo.common.uint256 import Uint256
 from bank import Bank
 
 @event
-func OnboardProposalAdded(Id:felt,Address:felt,Shares :felt,Loot:felt, tributeOffered:Uint256, tributeAddress:felt) {
+func OnboardProposalAdded(id:felt, address:felt, shares :felt, loot:felt, tributeOffered:Uint256, tributeAddress:felt) {
 }
 
 
@@ -21,7 +21,6 @@ struct OnboardParams {
     memberInfo: MemberInfo,
 }
 
-// TODO add tributeToken and tributeAddress
 @storage_var
 func onBoardParams(proposalId: felt) -> (params: OnboardParams) {
 }
@@ -82,7 +81,7 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
                                 tributeAddress=tributeAddress,
                                 memberInfo=memberInfo);
     Onboard.set_onBoardParams(id, params);
-    OnboardProposalAdded.emit(Id=id, Address=address, Shares=shares, Loot=loot, tributeOffered=tributeOffered, tributeAddress=tributeAddress);
+    OnboardProposalAdded.emit(id=id, address=address, shares=shares, loot=loot, tributeOffered=tributeOffered, tributeAddress=tributeAddress);
 
     // TODO not sure it is the best way to bypass the voting period
     Proposal.force_proposal(id);

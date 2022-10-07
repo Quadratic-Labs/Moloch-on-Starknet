@@ -7,15 +7,15 @@ from starkware.starknet.common.syscalls import get_caller_address
 from roles import Roles
 
 @event
-func ProposalAdded(Id: felt, Title: felt, Description: felt, Type: felt, Submitted_by: felt, Submitted_at: felt) {
+func ProposalAdded(id: felt, title: felt, description: felt, type: felt, submittedBy: felt, submittedAt: felt) {
 }
 
 @event
-func ProposalStatusUpdated(Id: felt, Status: felt) {
+func ProposalStatusUpdated(id: felt, status: felt) {
 }
 
 @event
-func ProposalParamsUpdated(Type: felt, Majority: felt, Quorum: felt, Voting_duration: felt, Grace_duration: felt) {
+func ProposalParamsUpdated(type: felt, majority: felt, quorum: felt, votingDuration: felt, graceDuration: felt) {
 }
 
 struct ProposalInfo {
@@ -62,7 +62,7 @@ namespace Proposal {
         kind: felt, params: ProposalParams
     ) -> () {
         proposalParams.write(kind, params);
-        ProposalParamsUpdated.emit(Type=kind, Majority=params.majority, Quorum=params.quorum, Voting_duration=params.votingDuration, Grace_duration=params.graceDuration);
+        ProposalParamsUpdated.emit(type=kind, majority=params.majority, quorum=params.quorum, votingDuration=params.votingDuration, graceDuration=params.graceDuration);
         return ();
     }
 
@@ -124,7 +124,7 @@ namespace Proposal {
         proposalsIndexes.write(len, info.id);
         proposals.write(info.id, info);
         proposalsLength.write(len + 1);
-        ProposalAdded.emit(Id=info.id, Title=info.title, Description=info.description, Type=info.type, Submitted_by=info.submittedBy, Submitted_at=info.submittedAt);
+        ProposalAdded.emit(id=info.id, title=info.title, description=info.description, type=info.type, submittedBy=info.submittedBy, submittedAt=info.submittedAt);
         return ();
     }
 
@@ -142,7 +142,7 @@ namespace Proposal {
             description=info.description,
         );
         Proposal.update_proposal(info.id, proposal);
-        ProposalStatusUpdated.emit(Id=id, Status=status);
+        ProposalStatusUpdated.emit(id=id, status=status);
         return ();
     }
 
