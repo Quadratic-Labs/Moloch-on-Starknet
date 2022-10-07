@@ -113,9 +113,8 @@ namespace Bank{
     func assert_sufficient_balance{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         tokenAddress: felt, amount: Uint256
     ) -> () {
-        let (bank_address: felt) = get_contract_address();
 
-        let (balance: Uint256) = get_userTokenBalances(userAddress=bank_address, tokenAddress=tokenAddress);
+        let (balance: Uint256) = get_userTokenBalances(userAddress=GUILD, tokenAddress=tokenAddress);
         let (is_le) = uint256_le(amount, balance);
         with_attr error_message("Requesting more tokens as payment than the available guild bank balance") {
             assert is_le = TRUE;

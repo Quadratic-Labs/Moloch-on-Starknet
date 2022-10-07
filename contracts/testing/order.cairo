@@ -52,3 +52,10 @@ func Order_submitOrder_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
     Bank.increase_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered);
     return (TRUE,);
 }
+
+@external
+func Order_set_orderParams_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    id: felt, params: OrderParams
+) -> () {
+    return Order.set_orderParams(id,params);
+}

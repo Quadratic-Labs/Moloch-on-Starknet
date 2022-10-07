@@ -40,13 +40,17 @@ from testing.bank import (
     Bank_assert_token_not_whitelisted_proxy,
     Bank_assert_token_whitelisted_proxy,
     Bank_bank_deposit_proxy,
-    Bank_is_token_whitelisted_proxy
+    Bank_is_token_whitelisted_proxy,
+    Bank_increase_userTokenBalances_proxy,
+    Bank_decrease_userTokenBalances_proxy
 )
 from testing.onboard import (
-    Onboard_submitOnboard_proxy
+    Onboard_submitOnboard_proxy,
+    Onboard_set_onBoardParams_proxy
 )
 from testing.order import (
-    Order_submitOrder_proxy
+    Order_submitOrder_proxy,
+    Order_set_orderParams_proxy
 )
 from testing.tally import (
     Tally_get_total_votes_proxy,
@@ -57,4 +61,7 @@ from testing.tokens import (
 )
 from testing.guildkick import (
     Guildkick_set_guildKickParams_proxy
+)
+from testing.actions import (
+    Actions_executeProposal_proxy
 )

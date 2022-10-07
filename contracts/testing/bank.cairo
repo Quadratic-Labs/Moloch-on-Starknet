@@ -32,3 +32,19 @@ func Bank_is_token_whitelisted_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuilt
 ) -> (res: felt){
     return Bank.is_token_whitelisted(tokenAddress);
 }
+
+
+@external
+func Bank_increase_userTokenBalances_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    userAddress: felt, tokenAddress: felt, amount: Uint256    
+) -> () {
+
+    return Bank.increase_userTokenBalances(userAddress, tokenAddress, amount);
+}    
+
+@external
+func Bank_decrease_userTokenBalances_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    userAddress: felt, tokenAddress: felt, amount: Uint256    
+) -> () {
+    return Bank.decrease_userTokenBalances(userAddress, tokenAddress, amount);
+}

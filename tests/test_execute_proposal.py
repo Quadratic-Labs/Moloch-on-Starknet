@@ -229,3 +229,108 @@ async def test_execute_GuildKick_proposal(empty_contract):
         params.memberAddress
     ).execute()
     assert return_value.result.res == 1
+
+
+@pytest.mark.asyncio
+async def test_execute_onboard_proposal(empty_contract):
+
+    caller_address = 42
+    proposalId = 16546
+    total_yes_votes = 10
+    await create_votes(
+        empty_contract,
+        proposalId,
+        "Onboard",
+        caller_address,
+        total_yes_votes,
+    )
+    # add additional params depending on the proposal type
+    tributeOffered = utils.to_uint(10)
+    tributeAddress = 123
+
+    address = 123
+    delegatedKey = address
+    shares = 10
+    loot = 10
+    jailed = 0
+    lastProposalYesVote = 0
+    memberInfo = (address, delegatedKey, shares, loot, jailed, lastProposalYesVote)
+    params = (tributeOffered, tributeAddress, memberInfo)
+    await empty_contract.Onboard_set_onBoardParams_proxy(proposalId, params).execute()
+
+    # store the number of member in the dao before the execute
+    ret_val = await empty_contract.Member_total_count_proxy().execute()
+    number_before = ret_val.result.length
+
+    # in order the execute onboard, the ESCROW needs to be increased by at least the tribute offered
+    await empty_contract.Bank_increase_userTokenBalances_proxy(
+        0xBBB, tributeAddress, tributeOffered
+    ).execute()
+
+    return_value = await empty_contract.executeProposal(proposalId=proposalId).execute(
+        caller_address=caller_address
+    )
+    assert return_value.result.success == 1
+
+    # check if the status of the proposal changed to EXECUTED (=5)
+    return_value = await empty_contract.Proposal_get_proposal_status_proxy(
+        proposalId=proposalId
+    ).execute(caller_address=caller_address)
+    assert return_value.result.status == 5
+
+    # store the number of member in the dao before the execute
+    ret_val = await empty_contract.Member_total_count_proxy().execute()
+    number_after = ret_val.result.length
+
+    # assert that the number increased
+    assert number_after == number_before + 1
+
+
+@pytest.mark.asyncio
+async def test_execute_swap_proposal(empty_contract):
+
+    caller_address = 42
+    proposalId = 156
+    total_yes_votes = 10
+    await create_votes(
+        empty_contract,
+        proposalId,
+        "Order",
+        caller_address,
+        total_yes_votes,
+    )
+    # add additional params depending on the proposal type
+    tributeOffered = utils.to_uint(10)
+    tributeAddress = 123
+    paymentRequested = utils.to_uint(100)
+    paymentAddress = 12
+    params = (tributeOffered, tributeAddress, paymentRequested, paymentAddress)
+    await empty_contract.Order_set_orderParams_proxy(proposalId, params).execute()
+
+    # in order the execute order, the ESCROW needs to be increased by at least the tributeOffered
+    # and the GUILD and TOTAL need to be increased by paymentRequested
+    GUILD = 0xAAA
+    ESCROW = 0xBBB
+    TOTAL = 0xCCC
+    await empty_contract.Bank_increase_userTokenBalances_proxy(
+        ESCROW, tributeAddress, tributeOffered
+    ).execute()
+
+    await empty_contract.Bank_increase_userTokenBalances_proxy(
+        GUILD, paymentAddress, paymentRequested
+    ).execute()
+
+    await empty_contract.Bank_increase_userTokenBalances_proxy(
+        TOTAL, paymentAddress, paymentRequested
+    ).execute()
+
+    return_value = await empty_contract.Actions_executeProposal_proxy(
+        proposalId=proposalId
+    ).execute(caller_address=caller_address)
+    assert return_value.result.success == 1
+
+    # check if the status of the proposal changed to EXECUTED (=5)
+    return_value = await empty_contract.Proposal_get_proposal_status_proxy(
+        proposalId=proposalId
+    ).execute(caller_address=caller_address)
+    assert return_value.result.status == 5

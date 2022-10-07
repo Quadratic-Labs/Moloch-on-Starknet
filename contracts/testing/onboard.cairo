@@ -60,3 +60,10 @@ func Onboard_submitOnboard_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
     Bank.increase_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered);
     return (TRUE,);
 }
+
+@external
+func Onboard_set_onBoardParams_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    id: felt, params: OnboardParams
+) -> () {
+    return Onboard.set_onBoardParams(id, params);
+}
