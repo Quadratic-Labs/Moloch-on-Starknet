@@ -6,6 +6,18 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_caller_address
 from roles import Roles
 
+@event
+func ProposalAdded(Id: felt, Title: felt, Description: felt, Type: felt, Submitted_by: felt, Submitted_at: felt) {
+}
+
+@event
+func ProposalStatusUpdated(Id: felt, Status: felt) {
+}
+
+@event
+func ProposalParamsUpdated(Type: felt, Majority: felt, Quorum: felt, Voting_duration: felt, Grace_duration: felt) {
+}
+
 struct ProposalInfo {
     id: felt,
     title: felt,
@@ -15,6 +27,8 @@ struct ProposalInfo {
     status: felt,
     description: felt,
 }
+
+
 
 // params apply to all proposals of the same kind
 struct ProposalParams {
@@ -48,6 +62,7 @@ namespace Proposal {
         kind: felt, params: ProposalParams
     ) -> () {
         proposalParams.write(kind, params);
+        ProposalParamsUpdated.emit(Type=kind, Majority=params.majority, Quorum=params.quorum, Voting_duration=params.votingDuration, Grace_duration=params.graceDuration);
         return ();
     }
 
@@ -109,6 +124,7 @@ namespace Proposal {
         proposalsIndexes.write(len, info.id);
         proposals.write(info.id, info);
         proposalsLength.write(len + 1);
+        ProposalAdded.emit(Id=info.id, Title=info.title, Description=info.description, Type=info.type, Submitted_by=info.submittedBy, Submitted_at=info.submittedAt);
         return ();
     }
 
@@ -126,6 +142,7 @@ namespace Proposal {
             description=info.description,
         );
         Proposal.update_proposal(info.id, proposal);
+        ProposalStatusUpdated.emit(Id=id, Status=status);
         return ();
     }
 

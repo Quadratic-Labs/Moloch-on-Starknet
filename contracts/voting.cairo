@@ -7,6 +7,11 @@ from starkware.cairo.common.math import assert_lt
 from members import Member
 from proposals.library import Proposal, ProposalInfo, ProposalParams
 
+@event
+func VoteSubmitted(caller: felt, proposalId: felt, vote: felt, onBehalf: felt) {
+}
+
+
 @external
 func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     proposalId: felt, vote: felt, onBehalf: felt
@@ -43,8 +48,7 @@ func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
     // TODO update member info by puting the id of the last proposal he voted yes (useful later for ragequits)
     // TODO check wether the user is jailed or no
     // TODO check if the vote is one of the allowed value
-    // TODO dans MOLOCH V2, le vote est mis à jour avec le nombre de shares du user et non pas en augmentant de 1
-
+    VoteSubmitted.emit(caller=caller, proposalId=proposalId, vote=vote, onBehalf=onBehalf);
     return (TRUE,);
 }
 

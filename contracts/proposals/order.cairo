@@ -9,6 +9,9 @@ from roles import Roles
 from proposals.library import Proposal, ProposalInfo
 from bank import Bank
 
+@event
+func SwapProposalAdded(Id:felt, tribute_address:felt, tribute_offered:Uint256, payment_address:felt, payment_requested:Uint256) {
+}
 
 struct OrderParams {
     tributeOffered: Uint256,
@@ -70,9 +73,9 @@ func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     let params: OrderParams= OrderParams(tributeOffered=tributeOffered,
                                         tributeAddress=tributeAddress,
                                         paymentRequested=paymentRequested,
-                                        paymentAddress=paymentAddress,);
+                                        paymentAddress=paymentAddress);
     Order.set_orderParams(id, params);
-
+    SwapProposalAdded.emit(Id=id, tribute_address=tributeAddress, tribute_offered=tributeOffered, payment_address=paymentAddress, payment_requested=paymentRequested);
     // collect tribute from proposer and store it in the Escrow until the proposal is processed
     Bank.bank_deposit(tokenAddress = tributeAddress, amount = tributeOffered);
     // update bank accounting 

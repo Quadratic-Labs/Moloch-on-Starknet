@@ -7,6 +7,13 @@ from members import Member
 from roles import Roles
 from proposals.library import Proposal, ProposalInfo
 
+
+@event
+func GuildKickProposalAdded(Id:felt,Member_address:felt) {
+}
+
+
+
 struct GuildKickParams {
     memberAddress: felt,
 }
@@ -64,5 +71,7 @@ func submitGuildKick{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     // register params
     let params: GuildKickParams= GuildKickParams(memberAddress=memberAddress);
     Guildkick.set_guildKickParams(id, params);
+    GuildKickProposalAdded.emit(Id=id, Member_address=memberAddress);
+
     return (TRUE,);
 }

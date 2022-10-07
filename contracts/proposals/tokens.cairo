@@ -12,6 +12,17 @@ struct TokenParams {
     tokenName:felt,
 }
 
+
+
+@event
+func WhitelisteProposalAdded(Id:felt,Token_Name:felt,Token_Address:felt) {
+}
+
+@event
+func UnWhitelisteProposalAdded(Id:felt,Token_Name:felt,Token_Address:felt) {
+}
+
+
 @storage_var
 func tokenParams(proposalId: felt) -> (params: TokenParams) {
 }
@@ -66,6 +77,7 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     // register params
     let params: TokenParams= TokenParams(tokenAddress=tokenAddress, tokenName=tokenName);
     Tokens.set_tokenParams(id, params);
+    WhitelisteProposalAdded.emit(Id=id, Token_Name=tokenName,Token_Address=tokenAddress);
     return (TRUE,);
 }
 
@@ -121,6 +133,7 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     // register params
     let params: TokenParams= TokenParams(tokenAddress=tokenAddress, tokenName=tokenName);
     Tokens.set_tokenParams(id, params);
+    UnWhitelisteProposalAdded.emit(Id=id, Token_Name=tokenName,Token_Address=tokenAddress);
     return (TRUE,);
 }
 

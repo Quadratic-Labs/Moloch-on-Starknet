@@ -6,6 +6,14 @@ from starkware.cairo.common.math import assert_nn, assert_lt
 from starkware.starknet.common.syscalls import get_caller_address
 from bank import Bank
 
+@event
+func MemberAdded(member_address: felt, shares: felt, loot : felt) {
+}
+
+@event
+func MemberUpdated(member_address: felt, delegatedKey: felt, shares: felt, loot : felt, jailed: felt, lastProposalYesVote: felt) {
+}
+
 
 // member's Info must be felt-like (no pointer) as it is put in storage
 struct MemberInfo {
@@ -129,6 +137,8 @@ namespace Member {
         membersLength.write(len + 1);
         membersAddresses.write(len, info.address);
         membersInfo.write(info.address, info);
+        //emit event
+        MemberAdded.emit(member_address=info.address, shares=info.shares, loot=info.loot);
         return ();
     }
     func jail_member{
@@ -154,6 +164,7 @@ namespace Member {
             assert is_in = TRUE;
         }
         membersInfo.write(info.address, info);
+        MemberUpdated.emit(member_address=info.address, delegatedKey=info.delegatedKey, shares=info.shares, loot=info.loot, jailed=info.jailed, lastProposalYesVote=info.lastProposalYesVote);
         return ();
     }
 
