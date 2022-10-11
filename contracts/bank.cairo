@@ -70,10 +70,9 @@ func adminDeposit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
 }
 
 namespace Bank{
-    const GUILD = 0xaaa;
-    const ESCROW = 0xbbb;
-    const TOTAL = 0xccc;
-    const LOOTADRESS = 0xddd;
+    const GUILD = 0xAAA;
+    const ESCROW = 0xBBB;
+    const TOTAL = 0xCCC;
 
 
     func get_userTokenBalances{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -104,7 +103,7 @@ namespace Bank{
     func decrease_userTokenBalances{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         userAddress: felt, tokenAddress: felt, amount: Uint256    
     ) -> () {
-            let (current_balance: Uint256) = get_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress);
+        let (current_balance: Uint256) = get_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress);
         let (new_balance: Uint256) = SafeUint256.sub_le(current_balance, amount);
         set_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress, amount=new_balance);
         DecreaseUserTokenBalance.emit(memberAddress=userAddress, tokenAddress=tokenAddress, amount=amount);
@@ -187,6 +186,7 @@ namespace Bank{
         let (local length) = whitelistedTokensLength.read();
         whitelistedTokensIndexes.write(length,tokenAddress); 
         whitelistedTokens.write(tokenAddress, TRUE);
+        whitelistedTokensLength.write(length+1); 
         TokenWhitelisted.emit(tokenAddress=tokenAddress);
         return ();
     }
@@ -205,17 +205,16 @@ namespace Bank{
         balance: Uint256 , memberSharesAndLoot: felt, totalSharesAndLoot: felt
     ) -> (amount: Uint256) {
         alloc_locals;
-        let (memberSharesAndLoot_high, memberSharesAndLoot_low) = split_felt(memberSharesAndLoot);
+        let (local memberSharesAndLoot_high, local memberSharesAndLoot_low) = split_felt(memberSharesAndLoot);
         local memberSharesAndLoot_uint256: Uint256 = Uint256(memberSharesAndLoot_low, memberSharesAndLoot_high);
-        let (totalSharesAndLoot_high, totalSharesAndLoot_low) = split_felt(totalSharesAndLoot);
-        let totalSharesAndLoot_uint256 = Uint256(totalSharesAndLoot_low, totalSharesAndLoot_high);
+        let (local totalSharesAndLoot_high, local totalSharesAndLoot_low) = split_felt(totalSharesAndLoot);
+        local totalSharesAndLoot_uint256: Uint256 = Uint256(totalSharesAndLoot_low, totalSharesAndLoot_high);
         let (are_equals:felt) = uint256_eq(balance, Uint256(0, 0));
         if (are_equals == 1){ 
             return (Uint256(0, 0),); 
         }
-
-        let (prod: Uint256) = SafeUint256.mul(balance, memberSharesAndLoot_uint256);
-        let (quotient: Uint256, remainder: Uint256) = SafeUint256.div_rem(prod, totalSharesAndLoot_uint256); 
+        let (local prod: Uint256) = SafeUint256.mul(balance, memberSharesAndLoot_uint256);
+        let (local quotient: Uint256, remainder: Uint256) = SafeUint256.div_rem(prod, totalSharesAndLoot_uint256); 
         return (quotient,);
     }
 
@@ -232,12 +231,11 @@ namespace Bank{
         // get the balance of the current token in the guild
         let (balance: Uint256) = get_userTokenBalances(userAddress=GUILD, tokenAddress=current_token);
         
-        let (protata: Uint256) = _prorata(balance=balance, memberSharesAndLoot=memberSharesAndLoot, totalSharesAndLoot=totalSharesAndLoot);
+        let (prorata: Uint256) = _prorata(balance=balance, memberSharesAndLoot=memberSharesAndLoot, totalSharesAndLoot=totalSharesAndLoot);
 
-        increase_userTokenBalances(userAddress=memberAddress, tokenAddress=current_token, amount=protata);
-        decrease_userTokenBalances(userAddress=GUILD, tokenAddress=current_token, amount=protata);
-        decrease_userTokenBalances(userAddress=TOTAL, tokenAddress=current_token, amount=protata);
-
+        increase_userTokenBalances(userAddress=memberAddress, tokenAddress=current_token, amount=prorata);
+        decrease_userTokenBalances(userAddress=GUILD, tokenAddress=current_token, amount=prorata);
+        decrease_userTokenBalances(userAddress=TOTAL, tokenAddress=current_token, amount=prorata);
         return _update_guild_quit(memberAddress, memberSharesAndLoot, totalSharesAndLoot, current_position+1);
     }
 

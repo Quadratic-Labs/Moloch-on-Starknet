@@ -6,6 +6,20 @@ from starkware.cairo.common.uint256 import Uint256
 from bank import Bank
 
 @external
+func Bank_get_userTokenBalances_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        userAddress: felt, tokenAddress: felt
+    ) -> (amount: Uint256) {
+        return Bank.get_userTokenBalances(userAddress, tokenAddress);
+    }
+
+@external
+func Bank_set_userTokenBalances_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        userAddress: felt, tokenAddress: felt, amount: Uint256    
+    ) -> () {
+        return Bank.set_userTokenBalances(userAddress, tokenAddress, amount);
+    }
+
+@external
 func Bank_assert_token_whitelisted_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         tokenAddress: felt
     ) {
@@ -47,4 +61,11 @@ func Bank_decrease_userTokenBalances_proxy{syscall_ptr: felt*, pedersen_ptr: Has
     userAddress: felt, tokenAddress: felt, amount: Uint256    
 ) -> () {
     return Bank.decrease_userTokenBalances(userAddress, tokenAddress, amount);
+}
+
+@external
+func Bank_add_token_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    tokenAddress: felt
+) {
+    return Bank.add_token(tokenAddress);
 }

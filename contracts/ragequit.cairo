@@ -14,6 +14,13 @@ func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}()
     let (local caller) = get_caller_address();
     // check if the user is a member
     Member.assert_is_member(caller);
+    
+    // get the total shares and loot before udpating the member
+    let (totalShares: felt) = Member.get_total_shares();
+    let (totalLoot: felt) = Member.get_total_loot();
+    let totalSharesAndLoot = totalShares + totalLoot;
+
+
     let (member_: MemberInfo) = Member.get_info(caller);
     let member_updated: MemberInfo = MemberInfo(
         address=caller,
@@ -28,9 +35,6 @@ func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}()
     
     // update the bank
     let memberSharesAndLoot = member_.shares + member_.loot;
-    let (totalShares: felt) = Member.get_total_shares();
-    let (totalLoot: felt) = Member.get_total_loot();
-    let totalSharesAndLoot = totalShares + totalLoot;
     Bank.update_guild_quit(memberAddress=caller, memberSharesAndLoot=memberSharesAndLoot, totalSharesAndLoot=totalSharesAndLoot);
     return (TRUE,);
 }

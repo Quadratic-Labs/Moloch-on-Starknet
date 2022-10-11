@@ -42,7 +42,10 @@ from testing.bank import (
     Bank_bank_deposit_proxy,
     Bank_is_token_whitelisted_proxy,
     Bank_increase_userTokenBalances_proxy,
-    Bank_decrease_userTokenBalances_proxy
+    Bank_decrease_userTokenBalances_proxy,
+    Bank_get_userTokenBalances_proxy,
+    Bank_set_userTokenBalances_proxy,
+    Bank_add_token_proxy
 )
 from testing.onboard import (
     Onboard_submitOnboard_proxy,
