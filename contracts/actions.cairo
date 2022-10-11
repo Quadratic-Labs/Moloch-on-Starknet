@@ -41,8 +41,6 @@ namespace Actions {
                                                     jailed=TRUE,
                                                     lastProposalYesVote=member_.lastProposalYesVote);
         Member.update_member(updated_member);
-
-        // update the bank 
         return (TRUE,);
     }
     

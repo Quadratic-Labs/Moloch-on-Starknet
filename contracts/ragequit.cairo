@@ -9,36 +9,28 @@ from members import Member, MemberInfo
 from bank import Bank
 
 @external
-func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    shares: felt, loot: felt
-) -> (success: felt) {
+func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
     // check if the user is a member
     Member.assert_is_member(caller);
     let (member_: MemberInfo) = Member.get_info(caller);
-
-    // assert enough shares
-    with_attr error_message("Not enough shares") {
-        assert_le(shares, member_.shares);
-    }
-
-    // assert enough loot
-    with_attr error_message("Not enough loot") {
-        assert_le(loot, member_.loot);
-    }
-
     let member_updated: MemberInfo = MemberInfo(
         address=caller,
         delegatedKey=member_.delegatedKey,
-        shares=member_.shares - shares,
-        loot=member_.loot - loot,
+        shares=0,
+        loot=0,
         jailed=member_.jailed,
         lastProposalYesVote=member_.lastProposalYesVote,
     );
     // execute the transaction
     Member.update_member(member_updated);
-
-    //TODO update the bank
+    
+    // update the bank
+    let memberSharesAndLoot = member_.shares + member_.loot;
+    let (totalShares: felt) = Member.get_total_shares();
+    let (totalLoot: felt) = Member.get_total_loot();
+    let totalSharesAndLoot = totalShares + totalLoot;
+    Bank.update_guild_quit(memberAddress=caller, memberSharesAndLoot=memberSharesAndLoot, totalSharesAndLoot=totalSharesAndLoot);
     return (TRUE,);
 }

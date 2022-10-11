@@ -4,11 +4,10 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_lt
 from starkware.starknet.common.syscalls import get_contract_address, get_caller_address
-from starkware.cairo.common.uint256 import Uint256, uint256_le
+from starkware.cairo.common.uint256 import Uint256, uint256_le, uint256_eq
 from openzeppelin.token.erc20.IERC20 import IERC20
 from openzeppelin.security.safemath.library import SafeUint256
-
-
+from starkware.cairo.common.math import split_felt
 from roles import Roles
 
 @event
@@ -36,6 +35,16 @@ func userTokenBalances(userAddress: felt, tokenAddress: felt) -> (amount: Uint25
 @storage_var
 func whitelistedTokens(tokenAddress: felt) -> (whitelisted: felt) {
 }
+
+@storage_var
+func whitelistedTokensIndexes(index: felt) -> (tokenAddress: felt) {
+}
+
+@storage_var
+func whitelistedTokensLength() -> (lenght: felt) {
+}
+
+
 
 @external
 func adminDeposit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -173,7 +182,10 @@ namespace Bank{
     func add_token{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         tokenAddress: felt
     ) {
+        alloc_locals;
         assert_token_not_whitelisted(tokenAddress);
+        let (local length) = whitelistedTokensLength.read();
+        whitelistedTokensIndexes.write(length,tokenAddress); 
         whitelistedTokens.write(tokenAddress, TRUE);
         TokenWhitelisted.emit(tokenAddress=tokenAddress);
         return ();
@@ -187,5 +199,51 @@ namespace Bank{
         TokenUnWhitelisted.emit(tokenAddress=tokenAddress);
 
         return ();
+    }
+
+    func _prorata{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        balance: Uint256 , memberSharesAndLoot: felt, totalSharesAndLoot: felt
+    ) -> (amount: Uint256) {
+        alloc_locals;
+        let (memberSharesAndLoot_high, memberSharesAndLoot_low) = split_felt(memberSharesAndLoot);
+        local memberSharesAndLoot_uint256: Uint256 = Uint256(memberSharesAndLoot_low, memberSharesAndLoot_high);
+        let (totalSharesAndLoot_high, totalSharesAndLoot_low) = split_felt(totalSharesAndLoot);
+        let totalSharesAndLoot_uint256 = Uint256(totalSharesAndLoot_low, totalSharesAndLoot_high);
+        let (are_equals:felt) = uint256_eq(balance, Uint256(0, 0));
+        if (are_equals == 1){ 
+            return (Uint256(0, 0),); 
+        }
+
+        let (prod: Uint256) = SafeUint256.mul(balance, memberSharesAndLoot_uint256);
+        let (quotient: Uint256, remainder: Uint256) = SafeUint256.div_rem(prod, totalSharesAndLoot_uint256); 
+        return (quotient,);
+    }
+
+
+    func _update_guild_quit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        memberAddress: felt, memberSharesAndLoot: felt, totalSharesAndLoot: felt, current_position: felt
+    ) ->() {
+        alloc_locals;
+        let (length: felt) = whitelistedTokensLength.read();
+        if (current_position == length){
+            return ();
+        }
+        let (current_token: felt) = whitelistedTokensIndexes.read(current_position);
+        // get the balance of the current token in the guild
+        let (balance: Uint256) = get_userTokenBalances(userAddress=GUILD, tokenAddress=current_token);
+        
+        let (protata: Uint256) = _prorata(balance=balance, memberSharesAndLoot=memberSharesAndLoot, totalSharesAndLoot=totalSharesAndLoot);
+
+        increase_userTokenBalances(userAddress=memberAddress, tokenAddress=current_token, amount=protata);
+        decrease_userTokenBalances(userAddress=GUILD, tokenAddress=current_token, amount=protata);
+        decrease_userTokenBalances(userAddress=TOTAL, tokenAddress=current_token, amount=protata);
+
+        return _update_guild_quit(memberAddress, memberSharesAndLoot, totalSharesAndLoot, current_position+1);
+    }
+
+    func update_guild_quit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        memberAddress: felt, memberSharesAndLoot: felt, totalSharesAndLoot: felt
+    ){
+        return _update_guild_quit(memberAddress, memberSharesAndLoot, totalSharesAndLoot, current_position=0);
     }
 }
