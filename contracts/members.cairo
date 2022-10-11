@@ -225,7 +225,7 @@ namespace Member {
 
 
 @external
-func addDelegatedKey{
+func delegateVote{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(delegatedKey: felt) -> (success: felt) {
     alloc_locals;
@@ -249,7 +249,7 @@ func addDelegatedKey{
 
 }
 @external
-func revokeDelegatedKey{
+func revokeDelegate{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }() -> (success: felt) {
     alloc_locals;

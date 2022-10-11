@@ -102,7 +102,7 @@ async def test_vote_for_yourself_when_delegated(contract):
     onBehalf = 42
     # add delegate key
     delegated_key = 1
-    await contract.addDelegatedKey(delegated_key).execute(caller_address=caller_address)
+    await contract.delegateVote(delegated_key).execute(caller_address=caller_address)
     # vote for yourself when having a delegate key should fail
     with pytest.raises(Exception):
         await contract.submitVote(
@@ -132,7 +132,7 @@ async def test_vote_on_behalf(contract):
     # adding delegate key
     # add delegate key
     delegated_key = 42
-    await contract.addDelegatedKey(delegated_key).execute(caller_address=1)
+    await contract.delegateVote(delegated_key).execute(caller_address=1)
 
     return_value = await contract.submitVote(
         proposalId=proposalId, vote=YESVOTE, onBehalf=onBehalf

@@ -7,7 +7,7 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from actions import Actions
-from members import Member, MemberInfo, addDelegatedKey,revokeDelegatedKey
+from members import Member, MemberInfo, delegateVote, revokeDelegate
 from proposals.library import Proposal, ProposalParams
 from proposals.onboard import submitOnboard
 from proposals.signaling import submitSignaling

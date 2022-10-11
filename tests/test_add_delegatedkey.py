@@ -6,7 +6,7 @@ async def test_caller_not_member(contract):
     delegated_key = 323
     caller_address = 404  # not existing member
     with pytest.raises(Exception):
-        await contract.addDelegatedKey(delegated_key).execute(
+        await contract.delegateVote(delegated_key).execute(
             caller_address=caller_address
         )
 
@@ -22,7 +22,7 @@ async def test_add_delegate_key(contract):
     assert delegated_key_before_call.result.member_[1] == caller_address
 
     # add the delegated key
-    return_value = await contract.addDelegatedKey(delegated_key).execute(
+    return_value = await contract.delegateVote(delegated_key).execute(
         caller_address=caller_address
     )
     assert return_value.result.success == 1
