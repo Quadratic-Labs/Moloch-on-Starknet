@@ -4,7 +4,6 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_nn, assert_lt
 from starkware.starknet.common.syscalls import get_caller_address
-from bank import Bank
 
 @event
 func MemberAdded(memberAddress: felt, shares: felt, loot : felt) {

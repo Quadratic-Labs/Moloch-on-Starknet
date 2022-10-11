@@ -66,7 +66,7 @@ namespace Actions {
         let (local info: ProposalInfo) = Proposal.get_info(proposalId);
         let (local bank_address: felt) = get_contract_address();
         // assert enough payment token in the bank
-        Bank.assert_sufficient_balance(tokenAddress=params.paymentAddress, amount=params.paymentRequested);
+        Bank.assert_sufficient_balance(userAddress=Bank.GUILD, tokenAddress=params.paymentAddress, amount=params.paymentRequested);
 
 
         // execute the payment

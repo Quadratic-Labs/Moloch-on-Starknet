@@ -20,7 +20,7 @@ func Actions_execute_order_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
         let (local info: ProposalInfo) = Proposal.get_info(proposalId);
         let (local bank_address: felt) = get_contract_address();
         // assert enough payment token in the bank
-        Bank.assert_sufficient_balance(tokenAddress=params.paymentAddress, amount=params.paymentRequested);
+        Bank.assert_sufficient_balance(userAddress=Bank.GUILD, tokenAddress=params.paymentAddress, amount=params.paymentRequested);
 
 
         // update the accounting for the payment

@@ -9,7 +9,7 @@ from openzeppelin.token.erc20.IERC20 import IERC20
 from openzeppelin.security.safemath.library import SafeUint256
 from starkware.cairo.common.math import split_felt
 from roles import Roles
-
+from members import Member
 @event
 func IncreaseUserTokenBalance(memberAddress: felt, tokenAddress: felt, amount : Uint256) {
 }
@@ -66,6 +66,25 @@ func adminDeposit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
         tempvar range_check_ptr = range_check_ptr;
     }
     Bank.bank_deposit(tokenAddress, amount);
+    return (TRUE,);
+}
+
+@external
+func withdraw{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    tokenAddress: felt, amount: Uint256
+)->(success: felt) {
+    alloc_locals;
+    let (local caller: felt) = get_caller_address();
+    // assert the caller is member
+    Member.assert_is_member(caller);
+    // assert enough balance
+    Bank.assert_sufficient_balance(userAddress=caller, tokenAddress=tokenAddress, amount=amount);
+    // transfer money
+    let (bank_address: felt) = get_contract_address();
+    // TODO double check with Thomas if the below line is correct
+    IERC20.transferFrom(contract_address=tokenAddress,sender=bank_address, recipient=caller, amount=amount);
+    // update accounting
+    Bank.decrease_userTokenBalances(userAddress=caller, tokenAddress=tokenAddress, amount=amount);
     return (TRUE,);
 }
 
@@ -136,12 +155,12 @@ namespace Bank{
     }
 
     func assert_sufficient_balance{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        tokenAddress: felt, amount: Uint256
+        userAddress: felt, tokenAddress: felt, amount: Uint256
     ) -> () {
 
-        let (balance: Uint256) = get_userTokenBalances(userAddress=GUILD, tokenAddress=tokenAddress);
+        let (balance: Uint256) = get_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress);
         let (is_le) = uint256_le(amount, balance);
-        with_attr error_message("Requesting more tokens as payment than the available guild bank balance") {
+        with_attr error_message("Requesting more tokens available") {
             assert is_le = TRUE;
         }
         return ();

@@ -17,7 +17,7 @@ from proposals.tokens import submitApproveToken, submitRemoveToken, adminApprove
 from ragequit import ragequit
 from roles import Roles, grant_role, revoke_role, delegate_admin_role, adminRoles, membersRoles
 from voting import submitVote
-from bank import Bank, adminDeposit
+from bank import Bank, adminDeposit, withdraw
 from actions import executeProposal
 
 @constructor
