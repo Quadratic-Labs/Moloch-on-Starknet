@@ -231,6 +231,8 @@ func delegateVote{
     // assert the caller is member
     let (local caller) = get_caller_address();
     Member.assert_is_member(caller);
+    // assert the delegatedKey belong to a member
+    Member.assert_is_member(delegatedKey);
     // get member's info
     let (local member_) = Member.get_info(caller);
     // create updated member
