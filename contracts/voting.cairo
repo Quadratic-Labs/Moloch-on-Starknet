@@ -47,10 +47,11 @@ func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
 
     // Set vote
     Proposal.set_vote(id=proposalId, address=onBehalf, vote=vote);
-
-    // TODO update member info by puting the id of the last proposal he voted yes (useful later for ragequits)
-    // TODO check if the vote is one of the allowed value
     VoteSubmitted.emit(caller=caller, proposalId=proposalId, vote=vote, onBehalf=onBehalf);
+    if (vote == TRUE){
+        Member.update_last_proposal_yes_vote(memberAddress=onBehalf, proposal_id=proposalId);
+        return (TRUE,);
+    }
     return (TRUE,);
 }
 

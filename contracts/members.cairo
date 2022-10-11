@@ -167,6 +167,22 @@ namespace Member {
         return ();
     }
 
+    func update_last_proposal_yes_vote{
+            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }(memberAddress: felt, proposal_id: felt){
+        let (member_) = get_info(memberAddress);
+        let updated_member: MemberInfo = MemberInfo(
+        address = memberAddress,
+        delegatedKey = member_.delegatedKey,
+        shares = member_.shares,
+        loot = member_.loot,
+        jailed = member_.jailed,
+        lastProposalYesVote = proposal_id
+            );
+
+        update_member(updated_member); 
+        return();
+    }
     func assert_is_delegate{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(memberAddress: felt) -> (key: felt) {
