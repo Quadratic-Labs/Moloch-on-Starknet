@@ -53,8 +53,11 @@ func submitOrder{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     // record the proposal
     let (id) = Proposal.get_proposals_length();
     let type = 'Order';
-    // TODO assert the token is whitelisted
-    // TODO assert enough tokens in the bank
+    // assert the token is whitelisted
+    with_attr error_message("Tribute token must be whitelisted") {
+        Bank.assert_token_whitelisted(tributeAddress);
+    }
+
     let submittedBy = caller;
     let (submittedAt) = get_block_number();
     let status = 1;

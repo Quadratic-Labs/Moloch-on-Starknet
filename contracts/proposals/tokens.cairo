@@ -110,8 +110,6 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     Roles.require_role('admin');
     // assert the token is whitelisted
     Bank.assert_token_whitelisted(tokenAddress);
-    // check the token is ERC20 or ERC721.
-    // TODO to complete
 
     // record the proposal
     let (id) = Proposal.get_proposals_length();
@@ -149,8 +147,6 @@ func adminRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_chec
     Roles.require_role('admin');
     // assert the token is whitelisted
     Bank.assert_token_whitelisted(tokenAddress);
-    // check the token is ERC20 or ERC721.
-    // TODO to complete
 
     // remove token
     Bank.remove_token(tokenAddress);

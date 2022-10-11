@@ -50,24 +50,6 @@ async def test_already_whitelisted(contract):
         ).execute(caller_address=caller_address)
 
 
-@pytest.mark.xfail
-@pytest.mark.asyncio
-async def test_not_ERCs(contract):
-    # given the token is not an ERC20 or ERC721, when invoking submitApproveToken for that token's address, should fail
-    # TODO complete this test
-    caller_address = 42  # admin
-    token_address = 1
-    title = utils.str_to_felt("Token to approve")
-    tokenName = utils.str_to_felt("Quadratic-Token")
-    with pytest.raises(Exception):
-        await contract.submitApproveToken(
-            tokenAddress=token_address,
-            title=title,
-            tokenName=tokenName,
-            description=123456789,
-        ).execute(caller_address=caller_address)
-
-
 @pytest.mark.asyncio
 async def test_submit_token(contract):
     # given the above passed, when invoking submitApproveToken, should add proposal and succeed
