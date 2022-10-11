@@ -15,6 +15,8 @@ func submitSignaling{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     let (local caller) = get_caller_address();
     // assert the caller is member
     Member.assert_is_member(caller);
+    // assert the caller is not jailed
+    Member.assert_not_jailed(caller);
     // assert the caller has correct roles
     Roles.require_role('govern');
     // record the proposal

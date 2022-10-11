@@ -52,6 +52,8 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     let (local caller) = get_caller_address();
     // assert the caller is member
     Member.assert_is_member(caller);
+    // assert the caller is not jailed
+    Member.assert_not_jailed(caller);
     // assert the caller is admin
     Roles.require_role('admin');
     // assert the token is not already whitelisted
@@ -106,6 +108,8 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
     let (local caller) = get_caller_address();
     // assert the caller is member
     Member.assert_is_member(caller);
+    // assert the caller is not jailed
+    Member.assert_not_jailed(caller);
     // assert the caller is admin
     Roles.require_role('admin');
     // assert the token is whitelisted

@@ -48,6 +48,8 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     let (local caller) = get_caller_address();
     // assert the caller is member
     Member.assert_is_member(caller);
+    // assert the caller is not jailed
+    Member.assert_not_jailed(caller);
     // assert the caller is admin
     Roles.require_role('admin');
     // assert the submitted user is not a memeber

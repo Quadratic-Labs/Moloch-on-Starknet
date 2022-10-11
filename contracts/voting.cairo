@@ -24,6 +24,9 @@ func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
     // assert the caller is authorized to vote on behalf of "behalf"
     Member.assert_is_delegate(onBehalf);
 
+    // assert the caller and the behalf are not jailed
+    Member.assert_not_jailed(caller);
+    Member.assert_not_jailed(onBehalf);
     // check if the proposal exists and get its info
     let (local proposal: ProposalInfo) = Proposal.get_info(proposalId);
     let (local params: ProposalParams) = Proposal.get_params(proposal.type);
@@ -46,7 +49,6 @@ func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
     Proposal.set_vote(id=proposalId, address=onBehalf, vote=vote);
 
     // TODO update member info by puting the id of the last proposal he voted yes (useful later for ragequits)
-    // TODO check wether the user is jailed or no
     // TODO check if the vote is one of the allowed value
     VoteSubmitted.emit(caller=caller, proposalId=proposalId, vote=vote, onBehalf=onBehalf);
     return (TRUE,);

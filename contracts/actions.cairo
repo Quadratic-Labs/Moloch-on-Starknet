@@ -3,7 +3,7 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_block_number
 from starkware.cairo.common.math import assert_lt
-from starkware.starknet.common.syscalls import get_contract_address
+from starkware.starknet.common.syscalls import get_contract_address, get_caller_address
 from starkware.cairo.common.uint256 import Uint256
 from proposals.guildkick import Guildkick, GuildKickParams
 from proposals.onboard import Onboard, OnboardParams
@@ -13,9 +13,6 @@ from proposals.tokens import Tokens, TokenParams
 from proposals.library import Proposal, ProposalInfo
 from bank import Bank
 from tally import Tally
-// TODO later: Automate actions.
-// Might need to call other contracts
-// Might need its subdirectory
 
 namespace Actions {
 
@@ -92,7 +89,13 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     Tally._tally(proposalId);
     let (local proposal: ProposalInfo) = Proposal.get_info(proposalId);
     let (local params) = Proposal.get_params(proposal.type);
+    
+    // assert the caller is member
+    let (local caller) = get_caller_address();
+    Member.assert_is_member(caller);
 
+    // assert the caller is not jailed
+    Member.assert_not_jailed(caller);
 
     // if the proposal status is REJECTED refund the submitter and change status to EXECUTED
     if (proposal.status == Proposal.REJECTED){
