@@ -83,6 +83,10 @@ namespace Tally{
         let (local info: ProposalInfo) = Proposal.get_info(proposalId);
         let (local params) = Proposal.get_params(info.type);
         let (local caller) = get_caller_address();
+        // if the proposal status is FORCED, ignore the tally
+        if (info.status == Proposal.FORCED){
+            return (TRUE,);
+        }
 
         // assert proposal status is submitted
         with_attr error_message("Tally needs a proposal with SUBMITTED as status") {
