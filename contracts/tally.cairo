@@ -26,7 +26,7 @@ namespace Tally{
             let new_total: felt = currentTotal + member_info.shares;
             return _get_total_votes(currentIndex+1, proposalId, voteType, new_total);
         }else{
-            return _get_total_votes(currentIndex+1, proposalId, voteType,currentTotal);
+            return _get_total_votes(currentIndex+1, proposalId, voteType, currentTotal);
         }
     }
 

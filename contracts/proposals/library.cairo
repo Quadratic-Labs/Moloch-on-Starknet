@@ -76,12 +76,6 @@ namespace Proposal {
         }
         return ();
     }
-    func get_proposal_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(index: felt) -> (
-        proposalId: felt
-    ) {
-        let (proposalId: felt) = proposalsIndexes.read(index);
-        return (proposalId,);
-    }
 
     func get_info{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(id: felt) -> (
         proposal: ProposalInfo
@@ -121,7 +115,6 @@ namespace Proposal {
     ) -> () {
         alloc_locals;
         let (local len: felt) = proposalsLength.read();
-        proposalsIndexes.write(len, info.id);
         proposals.write(info.id, info);
         proposalsLength.write(len + 1);
         ProposalAdded.emit(id=info.id, title=info.title, description=info.description, type=info.type, submittedBy=info.submittedBy, submittedAt=info.submittedAt);
@@ -196,10 +189,6 @@ func proposalParams(proposalKind: felt) -> (params: ProposalParams) {
 // List of proposals
 @storage_var
 func proposalsLength() -> (length: felt) {
-}
-
-@storage_var
-func proposalsIndexes(index: felt) -> (proposalId: felt) {
 }
 
 @storage_var
