@@ -101,14 +101,6 @@ namespace Member {
 
     // Getters-Setters
 
-    func get_address{
-            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    }(id: felt) -> (address: felt) {
-        assert_within_bounds(id);
-        let (address: felt) = membersAddresses.read(id);
-        return (address,);
-    }
-
     func get_info{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(address: felt) -> (member_: MemberInfo) {

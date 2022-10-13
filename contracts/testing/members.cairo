@@ -47,12 +47,6 @@ func Member_assert_not_jailed_proxy{
     return Member.assert_not_jailed(address);
 }
 
-@external
-func Member_get_address_proxy{
-        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(id: felt) -> (address: felt) {
-    return Member.get_address(id);
-}
 
 @external
 func Member_get_info_proxy{
