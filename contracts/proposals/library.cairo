@@ -176,7 +176,7 @@ namespace Proposal {
         proposalId: felt
     ) -> () {
         Roles.require_role('admin');
-        update_status(proposalId, Proposal.ACCEPTED);
+        update_status(proposalId, Proposal.FORCED);
         return ();
     }
 
