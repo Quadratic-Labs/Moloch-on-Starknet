@@ -48,7 +48,7 @@ async def test_get_total_votes(contract):
                 caller_address,  # delegatedKey
                 shares_for_yes_voters,  # shares
                 1,  # loot
-                1,  # jailed
+                0,  # jailed
                 1,  # lastProposalYesVote
             )
         ).execute()
@@ -68,7 +68,7 @@ async def test_get_total_votes(contract):
                 caller_address,  # delegatedKey
                 shares_for_no_voters,  # shares
                 1,  # loot
-                1,  # jailed
+                0,  # jailed
                 1,  # lastProposalYesVote
             )
         ).execute()

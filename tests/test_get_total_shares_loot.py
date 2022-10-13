@@ -28,7 +28,7 @@ async def test_get_total_shares_and_loot(empty_contract):
                 caller_address,  # delegatedKey
                 shares,  # shares
                 loot,  # loot
-                1,  # jailed
+                0,  # jailed
                 1,  # lastProposalYesVote
             )
         ).execute()
