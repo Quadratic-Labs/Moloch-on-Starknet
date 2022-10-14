@@ -1,4 +1,5 @@
 import pytest
+import asyncio
 
 from dataclasses import dataclass, astuple
 import os
@@ -10,6 +11,8 @@ import starknet_devnet.state
 import starknet_devnet.server
 from starknet_devnet.starknet_wrapper import StarknetWrapper
 from starknet_devnet.devnet_config import DevnetConfig
+from starknet_py.compile.compiler import Compiler
+from starkware.starknet.testing.starknet import get_contract_class
 
 from . import utils
 
@@ -44,9 +47,17 @@ from . import utils
 # Private key: 0x17fc695a07a0ca6e0822e8f36c031199
 #
 
+# We have to override the default event_loop to be able to write async fixtures with a session scope
+# TODO: think about using a different event_loop instead of overriding as suggested by the asyncio-pytest docs
+@pytest.fixture(scope="session")
+def event_loop():
+    policy = asyncio.get_event_loop_policy()
+    loop = policy.new_event_loop()
+    yield loop
+    loop.close()
+
+
 # The path to the contract source code.
-
-
 @pytest.fixture(scope="session")
 def test_contract_file():
     rootdir = Path(__file__).parent.parent
@@ -225,28 +236,35 @@ PROPOSALS: list[Proposal] = [
 ]
 
 
-@pytest.fixture
-async def empty_contract(starknet, test_contract_file):
+@pytest.fixture(scope="session")
+async def test_contract_class(test_contract_file: Path):
     contracts_path = Path(__file__).parent.parent / "contracts"
-    return await starknet.deploy(
+    return get_contract_class(
         source=str(test_contract_file.absolute()),
-        cairo_path=[contracts_path.absolute()],
+        # cairo_path=[str(test_contract_file.parent.absolute())],
+        cairo_path=[str(contracts_path.absolute())],
+        disable_hint_validation=True,
+    )
+
+
+@pytest.fixture
+async def empty_contract(starknet, test_contract_class):
+    return await starknet.deploy(
+        contract_class=test_contract_class,
         constructor_calldata=[50, 60, 10, 10],
         disable_hint_validation=True,
     )
 
 
 @pytest.fixture
-async def contract(starknet, test_contract_file):
+async def contract(starknet, test_contract_class):
     majority = 50
     quorum = 60
     grace_duration = 10
     voting_duration = 10
 
-    contracts_path = Path(__file__).parent.parent / "contracts"
     contract = await starknet.deploy(
-        source=str(test_contract_file.absolute()),
-        cairo_path=[contracts_path.absolute()],
+        contract_class=test_contract_class,
         constructor_calldata=[majority, quorum, grace_duration, voting_duration],
         disable_hint_validation=True,
     )
