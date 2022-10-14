@@ -75,7 +75,7 @@ def test_contract_file():
     os.remove(output_file.absolute())
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 async def starknet():
     # Create a new Starknet class that simulates the StarkNet
     # system.
