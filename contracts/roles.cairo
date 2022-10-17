@@ -111,3 +111,11 @@ func delegate_admin_role{
     RoleAdminChanged.emit(role, previous_admin_role, admin_role);
     return ();
 }
+
+@view
+func get_admin_role{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(role: felt) -> (admin: felt) {
+    let (admin: felt) = adminRoles.read(role);
+    return (admin,);
+}
