@@ -81,7 +81,6 @@ func withdraw{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     Bank.assert_sufficient_balance(userAddress=caller, tokenAddress=tokenAddress, amount=amount);
     // transfer money
     let (bank_address: felt) = get_contract_address();
-    // TODO double check with Thomas if the below line is correct
     IERC20.transferFrom(contract_address=tokenAddress,sender=bank_address, recipient=caller, amount=amount);
     // update accounting
     Bank.decrease_userTokenBalances(userAddress=caller, tokenAddress=tokenAddress, amount=amount);
@@ -138,7 +137,6 @@ namespace Bank{
         // transfert token
         let (local bank_address: felt) = get_contract_address();
         let (local caller: felt) = get_caller_address();
-        //TODO double check with Thomas if the below line is correct
         IERC20.transferFrom(contract_address=tokenAddress,sender=caller, recipient=bank_address, amount=amount);
         return (TRUE,);
     }
@@ -149,7 +147,6 @@ namespace Bank{
         alloc_locals;
         // transfert token
         let (local bank_address: felt) = get_contract_address();
-        //TODO double check with Thomas if the below line is correct
         IERC20.transferFrom(contract_address=tokenAddress, sender=bank_address, recipient=recipient, amount=amount);
         return (TRUE,);
     }

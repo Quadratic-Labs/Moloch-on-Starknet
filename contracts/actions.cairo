@@ -85,8 +85,19 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     // Executes the proposal's actions if preconditions are satisfied
     // Modify Proposal status which is used by the front
     alloc_locals;
-    // launch the tally
-    Tally._tally(proposalId);
+    // launch the tally if the proposal status is SUBMITTED
+    let (local proposal_before_tally: ProposalInfo) = Proposal.get_info(proposalId);
+    if (proposal_before_tally.status == Proposal.SUBMITTED){
+        Tally._tally(proposalId);
+        // tempvar to avoid revoked references
+        tempvar syscall_ptr = syscall_ptr;
+        tempvar pedersen_ptr = pedersen_ptr;
+        tempvar range_check_ptr = range_check_ptr;
+    }else{
+        tempvar syscall_ptr = syscall_ptr;
+        tempvar pedersen_ptr = pedersen_ptr;
+        tempvar range_check_ptr = range_check_ptr;
+    }
     let (local proposal: ProposalInfo) = Proposal.get_info(proposalId);
     let (local params) = Proposal.get_params(proposal.type);
     

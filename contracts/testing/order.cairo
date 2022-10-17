@@ -22,8 +22,6 @@ func Order_submitOrder_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
     // record the proposal
     let (id) = Proposal.get_proposals_length();
     let type = 'Order';
-    // TODO assert the token is whitelisted
-    // TODO assert enough tokens in the bank
     let submittedBy = caller;
     let (submittedAt) = get_block_number();
     let status = 1;
