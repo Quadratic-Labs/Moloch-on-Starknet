@@ -81,7 +81,7 @@ func withdraw{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     Bank.assert_sufficient_balance(userAddress=caller, tokenAddress=tokenAddress, amount=amount);
     // transfer money
     let (bank_address: felt) = get_contract_address();
-    IERC20.transferFrom(contract_address=tokenAddress,sender=bank_address, recipient=caller, amount=amount);
+    IERC20.transfer(contract_address=tokenAddress,recipient=caller, amount=amount);
     // update accounting
     Bank.decrease_userTokenBalances(userAddress=caller, tokenAddress=tokenAddress, amount=amount);
     return (TRUE,);
@@ -137,7 +137,12 @@ namespace Bank{
         // transfert token
         let (local bank_address: felt) = get_contract_address();
         let (local caller: felt) = get_caller_address();
-        IERC20.transferFrom(contract_address=tokenAddress,sender=caller, recipient=bank_address, amount=amount);
+        let (allowance) = IERC20.allowance(contract_address=tokenAddress, owner=caller, spender=bank_address);
+        let (is_le) = uint256_le(amount, allowance);
+        with_attr error_message("Insufficient allowance, requested {amount}, available {allowance}") {
+            assert is_le = TRUE;
+        }
+        IERC20.transferFrom(contract_address=tokenAddress, sender=caller, recipient=bank_address, amount=amount);
         return (TRUE,);
     }
 
@@ -147,7 +152,7 @@ namespace Bank{
         alloc_locals;
         // transfert token
         let (local bank_address: felt) = get_contract_address();
-        IERC20.transferFrom(contract_address=tokenAddress, sender=bank_address, recipient=recipient, amount=amount);
+        IERC20.transfer(contract_address=tokenAddress, recipient=recipient, amount=amount);
         return (TRUE,);
     }
 
@@ -157,7 +162,7 @@ namespace Bank{
 
         let (balance: Uint256) = get_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress);
         let (is_le) = uint256_le(amount, balance);
-        with_attr error_message("Requesting more tokens available") {
+        with_attr error_message("Requesting more tokens than available") {
             assert is_le = TRUE;
         }
         return ();
