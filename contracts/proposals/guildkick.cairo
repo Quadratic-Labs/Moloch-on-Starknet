@@ -9,7 +9,7 @@ from proposals.library import Proposal, ProposalInfo
 
 
 @event
-func GuildKickProposalAdded(id:felt,memberAddress:felt) {
+func GuildKickProposalAdded(id:felt, memberAddress:felt) {
 }
 
 

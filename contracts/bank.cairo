@@ -11,11 +11,11 @@ from starkware.cairo.common.math import split_felt
 from roles import Roles
 from members import Member
 @event
-func IncreaseUserTokenBalance(memberAddress: felt, tokenAddress: felt, amount : Uint256) {
+func UserTokenBalanceIncreased(memberAddress: felt, tokenAddress: felt, amount : Uint256) {
 }
 
 @event
-func DecreaseUserTokenBalance(memberAddress: felt, tokenAddress: felt, amount : Uint256) {
+func UserTokenBalanceDecreased(memberAddress: felt, tokenAddress: felt, amount : Uint256) {
 }
 
 @event
@@ -114,7 +114,7 @@ namespace Bank{
         let (current_balance: Uint256) = get_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress);
         let (new_balance: Uint256) = SafeUint256.add(current_balance, amount);
         set_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress, amount=new_balance);
-        IncreaseUserTokenBalance.emit(memberAddress=userAddress, tokenAddress=tokenAddress, amount=amount);
+        UserTokenBalanceIncreased.emit(memberAddress=userAddress, tokenAddress=tokenAddress, amount=amount);
         return ();
     }    
     
@@ -124,7 +124,7 @@ namespace Bank{
         let (current_balance: Uint256) = get_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress);
         let (new_balance: Uint256) = SafeUint256.sub_le(current_balance, amount);
         set_userTokenBalances(userAddress=userAddress, tokenAddress=tokenAddress, amount=new_balance);
-        DecreaseUserTokenBalance.emit(memberAddress=userAddress, tokenAddress=tokenAddress, amount=amount);
+        UserTokenBalanceDecreased.emit(memberAddress=userAddress, tokenAddress=tokenAddress, amount=amount);
         return ();
     }
 

@@ -11,7 +11,7 @@ from starkware.cairo.common.uint256 import Uint256
 from bank import Bank
 
 @event
-func OnboardProposalAdded(id:felt, address:felt, shares :felt, loot:felt, tributeOffered:Uint256, tributeAddress:felt) {
+func OnboardProposalAdded(id:felt, applicantAddress:felt, shares :felt, loot:felt, tributeOffered:Uint256, tributeAddress:felt) {
 }
 
 
@@ -83,7 +83,7 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
                                 tributeAddress=tributeAddress,
                                 memberInfo=memberInfo);
     Onboard.set_onBoardParams(id, params);
-    OnboardProposalAdded.emit(id=id, address=address, shares=shares, loot=loot, tributeOffered=tributeOffered, tributeAddress=tributeAddress);
+    OnboardProposalAdded.emit(id=id, applicantAddress=address, shares=shares, loot=loot, tributeOffered=tributeOffered, tributeAddress=tributeAddress);
 
     // veto the proposal, 
     // TODO in future version make sure to execute the below line only if the caller is admin

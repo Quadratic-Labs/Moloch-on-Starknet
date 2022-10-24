@@ -8,7 +8,7 @@ from members import Member
 from proposals.library import Proposal, ProposalInfo, ProposalParams
 
 @event
-func VoteSubmitted(caller: felt, proposalId: felt, vote: felt, onBehalf: felt) {
+func VoteSubmitted(callerAddress: felt, proposalId: felt, vote: felt, onBehalfAddress: felt) {
 }
 
 
@@ -47,7 +47,7 @@ func submitVote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
 
     // Set vote
     Proposal.set_vote(id=proposalId, address=onBehalf, vote=vote);
-    VoteSubmitted.emit(caller=caller, proposalId=proposalId, vote=vote, onBehalf=onBehalf);
+    VoteSubmitted.emit(callerAddress=caller, proposalId=proposalId, vote=vote, onBehalfAddress=onBehalf);
     if (vote == TRUE){
         Member.update_last_proposal_yes_vote(memberAddress=onBehalf, proposal_id=proposalId);
         return (TRUE,);
