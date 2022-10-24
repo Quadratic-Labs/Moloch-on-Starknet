@@ -12,7 +12,7 @@ async def test_caller_not_member(contract):
     title = utils.str_to_felt("Swap order")
 
     with pytest.raises(Exception):
-        await contract.Order_submitOrder_proxy(
+        await contract.Swap_submitSwap_proxy(
             tributeOffered=tributeOffered,
             tributeAddress=tributeAddress,
             paymentRequested=paymentRequested,
@@ -32,7 +32,7 @@ async def test_caller_not_govern(contract):
     title = utils.str_to_felt("Swap order")
 
     with pytest.raises(Exception):
-        await contract.Order_submitOrder_proxy(
+        await contract.Swap_submitSwap_proxy(
             tributeOffered=tributeOffered,
             tributeAddress=tributeAddress,
             paymentRequested=paymentRequested,
@@ -43,7 +43,7 @@ async def test_caller_not_govern(contract):
 
 
 @pytest.mark.asyncio
-async def test_Order_submitOrder_proxy(contract):
+async def test_Swap_submitSwap_proxy(contract):
     caller_address = 3  # existing and govern member
     tributeOffered = utils.to_uint(5)
     tributeAddress = 123
@@ -57,7 +57,7 @@ async def test_Order_submitOrder_proxy(contract):
         )
     ).result.length
 
-    return_value = await contract.Order_submitOrder_proxy(
+    return_value = await contract.Swap_submitSwap_proxy(
         tributeOffered=tributeOffered,
         tributeAddress=tributeAddress,
         paymentRequested=paymentRequested,

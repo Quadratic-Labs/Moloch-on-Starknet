@@ -12,7 +12,7 @@ from proposals.library import Proposal, ProposalParams
 from proposals.onboard import submitOnboard
 from proposals.signaling import submitSignaling
 from proposals.guildkick import submitGuildKick
-from proposals.order import submitOrder
+from proposals.swap import submitSwap
 from proposals.tokens import submitApproveToken, submitRemoveToken, adminApproveToken, adminRemoveToken
 from ragequit import ragequit
 from roles import Roles, grant_role, revoke_role, delegate_admin_role, adminRoles, membersRoles, get_admin_role
@@ -31,7 +31,7 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     Proposal.set_params('GuildKick', params);
     Proposal.set_params('ApproveToken', params);
     Proposal.set_params('RemoveToken', params);
-    Proposal.set_params('Order', params);
+    Proposal.set_params('Swap', params);
     local signaling_params: ProposalParams = ProposalParams(majority=50, quorum=80, votingDuration=0, graceDuration=5);
     Proposal.set_params('Signaling', signaling_params);
 

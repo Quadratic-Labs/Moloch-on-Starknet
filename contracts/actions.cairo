@@ -8,7 +8,7 @@ from starkware.cairo.common.uint256 import Uint256
 from proposals.guildkick import Guildkick, GuildKickParams
 from proposals.onboard import Onboard, OnboardParams
 from members import Member, MemberInfo
-from proposals.order import Order, OrderParams
+from proposals.swap import Swap, SwapParams
 from proposals.tokens import Tokens, TokenParams
 from proposals.library import Proposal, ProposalInfo
 from bank import Bank
@@ -57,9 +57,9 @@ namespace Actions {
         return (TRUE,);
     }
 
-    func execute_order{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
+    func execute_swap{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
         alloc_locals;
-        let (local params: OrderParams) = Order.get_orderParams(proposalId);
+        let (local params: SwapParams) = Swap.get_swapParams(proposalId);
         let (local info: ProposalInfo) = Proposal.get_info(proposalId);
         let (local bank_address: felt) = get_contract_address();
         // assert enough payment token in the bank
@@ -120,13 +120,13 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
             Bank.decrease_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=onboard_params.tributeAddress, amount=onboard_params.tributeOffered);
             return (TRUE,);
         }
-        if (proposal.type == 'Order'){
-            let (local order_params: OrderParams) = Order.get_orderParams(proposalId);
+        if (proposal.type == 'Swap'){
+            let (local swap_params: SwapParams) = Swap.get_swapParams(proposalId);
             // refund the submitter 
-            Bank.bank_payment(recipient = proposal.submittedBy, tokenAddress = order_params.tributeAddress, amount = order_params.tributeOffered);
+            Bank.bank_payment(recipient = proposal.submittedBy, tokenAddress = swap_params.tributeAddress, amount = swap_params.tributeOffered);
             // update bank accounting 
-            Bank.decrease_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=order_params.tributeAddress, amount=order_params.tributeOffered);
-            Bank.decrease_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=order_params.tributeAddress, amount=order_params.tributeOffered);
+            Bank.decrease_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=swap_params.tributeAddress, amount=swap_params.tributeOffered);
+            Bank.decrease_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=swap_params.tributeAddress, amount=swap_params.tributeOffered);
             return (TRUE,);
         }
         return (TRUE,);
@@ -172,8 +172,8 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
         Proposal.update_status(proposalId,Proposal.EXECUTED);
         return (TRUE,);
     }
-    if (proposal.type == 'Order'){
-        Actions.execute_order(proposalId);
+    if (proposal.type == 'Swap'){
+        Actions.execute_swap(proposalId);
         Proposal.update_status(proposalId,Proposal.EXECUTED);
         return (TRUE,);
     }

@@ -51,9 +51,9 @@ from testing.onboard import (
     Onboard_submitOnboard_proxy,
     Onboard_set_onBoardParams_proxy
 )
-from testing.order import (
-    Order_submitOrder_proxy,
-    Order_set_orderParams_proxy
+from testing.swap import (
+    Swap_submitSwap_proxy,
+    Swap_set_swapParams_proxy
 )
 from testing.tally import (
     Tally_get_total_votes_proxy,

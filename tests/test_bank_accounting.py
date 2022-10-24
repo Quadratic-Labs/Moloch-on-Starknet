@@ -288,7 +288,7 @@ async def test_accounting_when_swap(empty_contract):
     await create_votes(
         empty_contract,
         proposalId,
-        "Order",
+        "Swap",
         caller_address,
         total_yes_votes,
     )
@@ -298,9 +298,9 @@ async def test_accounting_when_swap(empty_contract):
     paymentRequested = utils.to_uint(10)
     paymentAddress = 200
     params = (tributeOffered, tributeAddress, paymentRequested, paymentAddress)
-    await empty_contract.Order_set_orderParams_proxy(proposalId, params).execute()
+    await empty_contract.Swap_set_swapParams_proxy(proposalId, params).execute()
 
-    # in order the execute order, the ESCROW needs to be increased by at least the tributeOffered
+    # in order the execute swap, the ESCROW needs to be increased by at least the tributeOffered
     # and the GUILD and TOTAL need to be increased by paymentRequested
     await empty_contract.Bank_increase_userTokenBalances_proxy(
         ESCROW, tributeAddress, tributeOffered

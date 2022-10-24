@@ -7,16 +7,16 @@ from starkware.starknet.common.syscalls import get_block_number
 from starkware.cairo.common.math import assert_lt
 from starkware.starknet.common.syscalls import get_contract_address
 from starkware.cairo.common.uint256 import Uint256
-from proposals.order import Order, OrderParams
+from proposals.swap import Swap, SwapParams
 from proposals.library import Proposal, ProposalInfo
 from bank import Bank
 from tally import Tally
 
 
-// same as execute order without the actual bank payment
-func Actions_execute_order_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
+// same as execute swap without the actual bank payment
+func Actions_execute_swap_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
         alloc_locals;
-        let (local params: OrderParams) = Order.get_orderParams(proposalId);
+        let (local params: SwapParams) = Swap.get_swapParams(proposalId);
         let (local info: ProposalInfo) = Proposal.get_info(proposalId);
         let (local bank_address: felt) = get_contract_address();
         // assert enough payment token in the bank
@@ -50,13 +50,13 @@ func Actions_executeProposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     // if the proposal status is REJECTED refund the submitter and change status to EXECUTED
     if (proposal.status == Proposal.REJECTED){
         Proposal.update_status(proposalId,Proposal.EXECUTED);
-        if (proposal.type == 'Order'){
-            let (local order_params: OrderParams) = Order.get_orderParams(proposalId);
+        if (proposal.type == 'Swap'){
+            let (local swap_params: SwapParams) = Swap.get_swapParams(proposalId);
             // refund the submitter 
-            Bank.bank_payment(recipient = proposal.submittedBy, tokenAddress = order_params.tributeAddress, amount = order_params.tributeOffered);
+            Bank.bank_payment(recipient = proposal.submittedBy, tokenAddress = swap_params.tributeAddress, amount = swap_params.tributeOffered);
             // update bank accounting 
-            Bank.decrease_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=order_params.tributeAddress, amount=order_params.tributeOffered);
-            Bank.decrease_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=order_params.tributeAddress, amount=order_params.tributeOffered);
+            Bank.decrease_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=swap_params.tributeAddress, amount=swap_params.tributeOffered);
+            Bank.decrease_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=swap_params.tributeAddress, amount=swap_params.tributeOffered);
             return (TRUE,);
         }
         return (TRUE,);
@@ -82,8 +82,8 @@ func Actions_executeProposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
         }
     }
     // execute action
-    if (proposal.type == 'Order'){
-        Actions_execute_order_proxy(proposalId);
+    if (proposal.type == 'Swap'){
+        Actions_execute_swap_proxy(proposalId);
         Proposal.update_status(proposalId,Proposal.EXECUTED);
         return (TRUE,);
     }

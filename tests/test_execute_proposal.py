@@ -295,7 +295,7 @@ async def test_execute_swap_proposal(empty_contract):
     await create_votes(
         empty_contract,
         proposalId,
-        "Order",
+        "Swap",
         caller_address,
         total_yes_votes,
     )
@@ -305,9 +305,9 @@ async def test_execute_swap_proposal(empty_contract):
     paymentRequested = utils.to_uint(100)
     paymentAddress = 12
     params = (tributeOffered, tributeAddress, paymentRequested, paymentAddress)
-    await empty_contract.Order_set_orderParams_proxy(proposalId, params).execute()
+    await empty_contract.Swap_set_swapParams_proxy(proposalId, params).execute()
 
-    # in order the execute order, the ESCROW needs to be increased by at least the tributeOffered
+    # in order to execute swap, the ESCROW needs to be increased by at least the tributeOffered
     # and the GUILD and TOTAL need to be increased by paymentRequested
     GUILD = 0xAAA
     ESCROW = 0xBBB
