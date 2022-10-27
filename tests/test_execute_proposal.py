@@ -35,6 +35,7 @@ async def create_votes(
                 1,  # loot
                 1,  # jailed
                 1,  # lastProposalYesVote
+                0,  # onBoarddedAt
             )
         ).execute()
         # vote yes for the proposal
@@ -70,6 +71,7 @@ async def test_grace_period_not_ended(empty_contract):
                 1,  # loot
                 1,  # jailed
                 1,  # lastProposalYesVote
+                0,  # onBoarddedAt
             )
         ).execute()
         # vote yes for the proposal

@@ -29,6 +29,8 @@ func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}()
         loot=0,
         jailed=member_.jailed,
         lastProposalYesVote=member_.lastProposalYesVote,
+        onBoarddedAt = member_.onBoarddedAt
+
     );
     // execute the transaction
     Member.update_member(member_updated);

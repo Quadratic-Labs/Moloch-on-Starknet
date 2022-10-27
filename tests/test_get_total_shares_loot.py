@@ -30,6 +30,7 @@ async def test_get_total_shares_and_loot(empty_contract):
                 loot,  # loot
                 0,  # jailed
                 1,  # lastProposalYesVote
+                0,  # onBoarddedAt
             )
         ).execute()
 

@@ -19,7 +19,16 @@ namespace Actions {
     func execute_onboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
         alloc_locals;
         let (local params: OnboardParams) = Onboard.get_onBoardParams(proposalId);
-        Member.add_member(params.memberInfo);
+
+        let (onBoarddedAt) = get_block_number();
+        let member_: MemberInfo = MemberInfo(address=params.address,
+                                            delegatedKey=params.address,
+                                            shares=params.shares,
+                                            loot=params.loot,
+                                            jailed=0,
+                                            lastProposalYesVote=0,
+                                            onBoarddedAt=onBoarddedAt);
+        Member.add_member(member_);
         // update the accounting for the tribute
         Bank.decrease_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=params.tributeAddress, amount=params.tributeOffered);
         Bank.increase_userTokenBalances(userAddress= Bank.GUILD, tokenAddress=params.tributeAddress, amount=params.tributeOffered);
@@ -36,7 +45,8 @@ namespace Actions {
                                                     shares=0,
                                                     loot=member_.loot+member_.shares,
                                                     jailed=TRUE,
-                                                    lastProposalYesVote=member_.lastProposalYesVote);
+                                                    lastProposalYesVote=member_.lastProposalYesVote,
+                                                    onBoarddedAt=member_.onBoarddedAt);
         Member.update_member(updated_member);
         return (TRUE,);
     }
@@ -137,6 +147,7 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
         assert should_pass = 0;
     }
     
+    // TODO monter cette partie plus haut
     // assert the grace period ended
     let (local today_timestamp) = get_block_number();
     with_attr error_message("The proposal has not ended grace period.") {

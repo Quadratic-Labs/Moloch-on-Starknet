@@ -13,8 +13,8 @@ async def test_is_member(contract):
     assert return_value.result.success == 0
 
     # adding two fake members
-    await contract.Member_add_member_proxy((6, 6, 1, 1, 1, 1)).execute()
-    await contract.Member_add_member_proxy((7, 7, 2, 2, 2, 2)).execute()
+    await contract.Member_add_member_proxy((6, 6, 1, 1, 1, 1, 0)).execute()
+    await contract.Member_add_member_proxy((7, 7, 2, 2, 2, 2, 0)).execute()
 
     # Member_is_member_proxy on any of the 2 members should return True
     return_value = await contract.Member_is_member_proxy(6).execute()

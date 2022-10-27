@@ -38,6 +38,7 @@ async def create_votes(
                 1,  # loot
                 1,  # jailed
                 1,  # lastProposalYesVote
+                0,  # onBoarddedAt
             )
         ).execute()
         # vote yes for the proposal
@@ -210,6 +211,7 @@ async def test_accounting_when_ragequit(empty_contract):
             100,  # loot (50 loot already in the total due to the admin from main)
             0,  # jailed
             1,  # lastProposalYesVote
+            0,  # onBoarddedAt
         )
     ).execute()
     return_value = await empty_contract.ragequit().execute(

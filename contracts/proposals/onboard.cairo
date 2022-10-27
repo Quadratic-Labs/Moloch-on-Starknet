@@ -16,9 +16,11 @@ func OnboardProposalAdded(id:felt, applicantAddress:felt, shares :felt, loot:fel
 
 
 struct OnboardParams {
+    address: felt,
+    shares: felt,
+    loot: felt,
     tributeOffered: Uint256,
     tributeAddress: felt,
-    memberInfo: MemberInfo,
 }
 
 @storage_var
@@ -72,16 +74,13 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
 
     Proposal.add_proposal(proposal);
     // register params
-    let memberInfo = MemberInfo(address=address, 
-                                        delegatedKey=address, 
-                                        shares=shares, 
-                                        loot=loot, 
-                                        jailed=0, 
-                                        lastProposalYesVote=0
-                                        );
-    let params: OnboardParams = OnboardParams(tributeOffered=tributeOffered,
+    let params: OnboardParams = OnboardParams(
+                                address=address, 
+                                shares=shares,
+                                loot=loot, 
+                                tributeOffered=tributeOffered,
                                 tributeAddress=tributeAddress,
-                                memberInfo=memberInfo);
+                                );
     Onboard.set_onBoardParams(id, params);
     OnboardProposalAdded.emit(id=id, applicantAddress=address, shares=shares, loot=loot, tributeOffered=tributeOffered, tributeAddress=tributeAddress);
 

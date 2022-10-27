@@ -22,6 +22,7 @@ struct MemberInfo {
     loot: felt,
     jailed: felt,
     lastProposalYesVote: felt,
+    onBoarddedAt: felt,
 }
 
 namespace Member {
@@ -169,7 +170,8 @@ namespace Member {
         shares = member_.shares,
         loot = member_.loot,
         jailed = member_.jailed,
-        lastProposalYesVote = proposal_id
+        lastProposalYesVote = proposal_id,
+        onBoarddedAt = member_.onBoarddedAt
             );
 
         update_member(updated_member); 
@@ -250,7 +252,8 @@ func delegateVote{
         shares = member_.shares,
         loot = member_.loot,
         jailed = member_.jailed,
-        lastProposalYesVote = member_.lastProposalYesVote
+        lastProposalYesVote = member_.lastProposalYesVote,
+        onBoarddedAt = member_.onBoarddedAt
     );
     // update member's info
     Member.update_member(updated_member);
@@ -274,7 +277,9 @@ func revokeDelegate{
         shares = member_.shares,
         loot = member_.loot,
         jailed = member_.jailed,
-        lastProposalYesVote = member_.lastProposalYesVote
+        lastProposalYesVote = member_.lastProposalYesVote,
+        onBoarddedAt = member_.onBoarddedAt
+
     );
     // update member's info
     Member.update_member(updated_member);

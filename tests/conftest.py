@@ -103,6 +103,7 @@ class Member:
     loot: int
     jailed: int
     lastProposalYesVote: int
+    onBoarddedAt: int
 
 
 @dataclass
@@ -124,6 +125,7 @@ MEMBERS: list[Member] = [
         loot=5,
         jailed=0,
         lastProposalYesVote=1,
+        onBoarddedAt=0,
     ),
     Member(
         address=2,
@@ -132,6 +134,7 @@ MEMBERS: list[Member] = [
         loot=5,
         jailed=0,
         lastProposalYesVote=1,
+        onBoarddedAt=0,
     ),
     Member(
         address=3,
@@ -140,6 +143,7 @@ MEMBERS: list[Member] = [
         loot=5,
         jailed=0,
         lastProposalYesVote=1,
+        onBoarddedAt=0,
     ),
     Member(
         address=4,
@@ -148,6 +152,7 @@ MEMBERS: list[Member] = [
         loot=0,
         jailed=1,
         lastProposalYesVote=1,
+        onBoarddedAt=0,
     ),
     Member(
         address=5,
@@ -156,6 +161,7 @@ MEMBERS: list[Member] = [
         loot=5,
         jailed=0,
         lastProposalYesVote=1,
+        onBoarddedAt=0,
     ),
 ]
 

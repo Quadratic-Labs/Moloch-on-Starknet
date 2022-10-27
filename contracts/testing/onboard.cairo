@@ -19,6 +19,8 @@ func Onboard_submitOnboard_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
     let (local caller) = get_caller_address();
     // assert the caller is member
     Member.assert_is_member(caller);
+    // assert the caller is not jailed
+    Member.assert_not_jailed(caller);
     // assert the caller is admin
     Roles.require_role('admin');
     // assert the submitted user is not a memeber
@@ -41,20 +43,20 @@ func Onboard_submitOnboard_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
 
     Proposal.add_proposal(proposal);
     // register params
-    let memberInfo = MemberInfo(address=address, 
-                                        delegatedKey=address, 
-                                        shares=shares, 
-                                        loot=loot, 
-                                        jailed=0, 
-                                        lastProposalYesVote=0
-                                        );
-    let params: OnboardParams = OnboardParams(tributeOffered=tributeOffered,
+    let params: OnboardParams = OnboardParams(
+                                address=address, 
+                                shares=shares,
+                                loot=loot, 
+                                tributeOffered=tributeOffered,
                                 tributeAddress=tributeAddress,
-                                memberInfo=memberInfo);
+                                );
     Onboard.set_onBoardParams(id, params);
 
+    // veto the proposal, 
+    // TODO in future version make sure to execute the below line only if the caller is admin
     Proposal.force_proposal(id);
 
+    // collect tribute from proposer and store it in the Escrow until the proposal is processed
     // update bank accounting 
     Bank.increase_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered);
     Bank.increase_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered);
