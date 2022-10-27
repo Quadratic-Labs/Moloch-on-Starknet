@@ -9,24 +9,21 @@ from proposals.library import Proposal, ProposalInfo
 from bank import Bank
 struct TokenParams {
     tokenAddress: felt,
-    tokenName:felt,
-}
-
-
-
-@event
-func WhitelistProposalAdded(id:felt,tokenName:felt,tokenAddress:felt) {
+    tokenName: felt,
 }
 
 @event
-func UnWhitelistProposalAdded(id:felt,tokenName:felt,tokenAddress:felt) {
+func WhitelistProposalAdded(id: felt, tokenName: felt, tokenAddress: felt) {
 }
 
+@event
+func UnWhitelistProposalAdded(id: felt, tokenName: felt, tokenAddress: felt) {
+}
 
 @storage_var
 func tokenParams(proposalId: felt) -> (params: TokenParams) {
 }
-namespace Tokens{
+namespace Tokens {
     func get_tokenParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt
     ) -> (params: TokenParams) {
@@ -42,11 +39,9 @@ namespace Tokens{
     }
 }
 
-
-
 @external
 func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt,tokenName: felt, title:felt, description: felt
+    tokenAddress: felt, tokenName: felt, title: felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -77,9 +72,9 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
 
     Proposal.add_proposal(proposal);
     // register params
-    let params: TokenParams= TokenParams(tokenAddress=tokenAddress, tokenName=tokenName);
+    let params: TokenParams = TokenParams(tokenAddress=tokenAddress, tokenName=tokenName);
     Tokens.set_tokenParams(id, params);
-    WhitelistProposalAdded.emit(id=id, tokenName=tokenName,tokenAddress=tokenAddress);
+    WhitelistProposalAdded.emit(id=id, tokenName=tokenName, tokenAddress=tokenAddress);
     return (TRUE,);
 }
 
@@ -102,7 +97,7 @@ func adminApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 
 @external
 func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt, tokenName: felt,title:felt, description: felt
+    tokenAddress: felt, tokenName: felt, title: felt, description: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -133,9 +128,9 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 
     Proposal.add_proposal(proposal);
     // register params
-    let params: TokenParams= TokenParams(tokenAddress=tokenAddress, tokenName=tokenName);
+    let params: TokenParams = TokenParams(tokenAddress=tokenAddress, tokenName=tokenName);
     Tokens.set_tokenParams(id, params);
-    UnWhitelistProposalAdded.emit(id=id, tokenName=tokenName,tokenAddress=tokenAddress);
+    UnWhitelistProposalAdded.emit(id=id, tokenName=tokenName, tokenAddress=tokenAddress);
     return (TRUE,);
 }
 
@@ -156,5 +151,3 @@ func adminRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_chec
     Bank.remove_token(tokenAddress);
     return (TRUE,);
 }
-
-

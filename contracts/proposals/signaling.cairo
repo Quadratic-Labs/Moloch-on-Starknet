@@ -8,9 +8,9 @@ from roles import Roles
 from proposals.library import Proposal, ProposalInfo
 
 @external
-func submitSignaling{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(title: felt,description: felt) -> (
-    success: felt
-) {
+func submitSignaling{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    title: felt, description: felt
+) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
     // assert the caller is member

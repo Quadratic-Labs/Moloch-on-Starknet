@@ -25,6 +25,8 @@ func Roles_has_role_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
 }
 
 @external
-func Roles_require_role_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(role: felt) {
+func Roles_require_role_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    role: felt
+) {
     return Roles.require_role(role);
 }

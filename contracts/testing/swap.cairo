@@ -12,7 +12,13 @@ from proposals.swap import Swap, SwapParams
 // duplicate of submit swap without bank transfer
 @external
 func Swap_submitSwap_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tributeOffered: Uint256, tributeAddress: felt, paymentRequested: Uint256, paymentAddress: felt,title: felt,description: felt) -> (success: felt) {
+    tributeOffered: Uint256,
+    tributeAddress: felt,
+    paymentRequested: Uint256,
+    paymentAddress: felt,
+    title: felt,
+    description: felt,
+) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
     // assert the caller is member
@@ -37,17 +43,23 @@ func Swap_submitSwap_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range
 
     Proposal.add_proposal(proposal);
     // register params
-    let params: SwapParams= SwapParams(tributeOffered=tributeOffered,
-                                        tributeAddress=tributeAddress,
-                                        paymentRequested=paymentRequested,
-                                        paymentAddress=paymentAddress,);
+    let params: SwapParams = SwapParams(
+        tributeOffered=tributeOffered,
+        tributeAddress=tributeAddress,
+        paymentRequested=paymentRequested,
+        paymentAddress=paymentAddress,
+    );
     Swap.set_swapParams(id, params);
 
     // collect tribute from proposer and store it in the Escrow until the proposal is processed
     // Bank.bank_deposit(tokenAddress = tributeAddress, amount = tributeOffered);
-    // update bank accounting 
-    Bank.increase_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered);
-    Bank.increase_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered);
+    // update bank accounting
+    Bank.increase_userTokenBalances(
+        userAddress=Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered
+    );
+    Bank.increase_userTokenBalances(
+        userAddress=Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered
+    );
     return (TRUE,);
 }
 
@@ -55,5 +67,5 @@ func Swap_submitSwap_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range
 func Swap_set_swapParams_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     id: felt, params: SwapParams
 ) -> () {
-    return Swap.set_swapParams(id,params);
+    return Swap.set_swapParams(id, params);
 }

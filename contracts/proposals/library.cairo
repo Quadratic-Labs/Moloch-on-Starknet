@@ -7,7 +7,9 @@ from starkware.starknet.common.syscalls import get_caller_address
 from roles import Roles
 
 @event
-func ProposalAdded(id: felt, title: felt, description: felt, type: felt, submittedBy: felt, submittedAt: felt) {
+func ProposalAdded(
+    id: felt, title: felt, description: felt, type: felt, submittedBy: felt, submittedAt: felt
+) {
 }
 
 @event
@@ -15,7 +17,9 @@ func ProposalStatusUpdated(id: felt, status: felt) {
 }
 
 @event
-func ProposalParamsUpdated(type: felt, majority: felt, quorum: felt, votingDuration: felt, graceDuration: felt) {
+func ProposalParamsUpdated(
+    type: felt, majority: felt, quorum: felt, votingDuration: felt, graceDuration: felt
+) {
 }
 
 struct ProposalInfo {
@@ -28,8 +32,6 @@ struct ProposalInfo {
     description: felt,
 }
 
-
-
 // params apply to all proposals of the same kind
 struct ProposalParams {
     majority: felt,
@@ -41,7 +43,7 @@ namespace Proposal {
     const SUBMITTED = 1;
     const ACCEPTED = 2;  // Can proceed to execution if any actions
     const REJECTED = 3;
-    const FORCED = 7; // Sent directly to grace period by admin
+    const FORCED = 7;  // Sent directly to grace period by admin
     // The remaining states are final
     const ABORTED = 4;  // Did not go completely through voting
     const EXECUTED = 5;  // Execution is finalised and successful
@@ -62,7 +64,13 @@ namespace Proposal {
         kind: felt, params: ProposalParams
     ) -> () {
         proposalParams.write(kind, params);
-        ProposalParamsUpdated.emit(type=kind, majority=params.majority, quorum=params.quorum, votingDuration=params.votingDuration, graceDuration=params.graceDuration);
+        ProposalParamsUpdated.emit(
+            type=kind,
+            majority=params.majority,
+            quorum=params.quorum,
+            votingDuration=params.votingDuration,
+            graceDuration=params.graceDuration,
+        );
         return ();
     }
 
@@ -84,13 +92,13 @@ namespace Proposal {
         return (proposal,);
     }
 
-    func get_proposal_status{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(id: felt) -> (
-        status: felt
-    ) {
+    func get_proposal_status{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        id: felt
+    ) -> (status: felt) {
         let (proposal: ProposalInfo) = proposals.read(id);
         return (proposal.status,);
     }
-    
+
     func search_position_by_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt, current_position: felt, length: felt
     ) -> (position: felt) {
@@ -117,7 +125,14 @@ namespace Proposal {
         let (local len: felt) = proposalsLength.read();
         proposals.write(info.id, info);
         proposalsLength.write(len + 1);
-        ProposalAdded.emit(id=info.id, title=info.title, description=info.description, type=info.type, submittedBy=info.submittedBy, submittedAt=info.submittedAt);
+        ProposalAdded.emit(
+            id=info.id,
+            title=info.title,
+            description=info.description,
+            type=info.type,
+            submittedBy=info.submittedBy,
+            submittedAt=info.submittedAt,
+        );
         return ();
     }
 
@@ -179,7 +194,6 @@ namespace Proposal {
         update_status(proposalId, Proposal.FORCED);
         return ();
     }
-
 }
 
 @storage_var
@@ -199,5 +213,3 @@ func proposals(id: felt) -> (proposal: ProposalInfo) {
 @storage_var
 func proposalsVotes(proposalId: felt, memberAddress: felt) -> (vote: felt) {
 }
-
-

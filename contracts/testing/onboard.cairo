@@ -13,7 +13,13 @@ from proposals.onboard import OnboardParams, Onboard
 // duplicate of submit onboard without bank transfer
 @external
 func Onboard_submitOnboard_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    address: felt, shares: felt, loot: felt,tributeOffered: Uint256, tributeAddress: felt,title: felt, description: felt
+    address: felt,
+    shares: felt,
+    loot: felt,
+    tributeOffered: Uint256,
+    tributeAddress: felt,
+    title: felt,
+    description: felt,
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -44,28 +50,32 @@ func Onboard_submitOnboard_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
     Proposal.add_proposal(proposal);
     // register params
     let params: OnboardParams = OnboardParams(
-                                address=address, 
-                                shares=shares,
-                                loot=loot, 
-                                tributeOffered=tributeOffered,
-                                tributeAddress=tributeAddress,
-                                );
+        address=address,
+        shares=shares,
+        loot=loot,
+        tributeOffered=tributeOffered,
+        tributeAddress=tributeAddress,
+    );
     Onboard.set_onBoardParams(id, params);
 
-    // veto the proposal, 
+    // veto the proposal,
     // TODO in future version make sure to execute the below line only if the caller is admin
     Proposal.force_proposal(id);
 
     // collect tribute from proposer and store it in the Escrow until the proposal is processed
-    // update bank accounting 
-    Bank.increase_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered);
-    Bank.increase_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered);
+    // update bank accounting
+    Bank.increase_userTokenBalances(
+        userAddress=Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered
+    );
+    Bank.increase_userTokenBalances(
+        userAddress=Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered
+    );
     return (TRUE,);
 }
 
 @external
-func Onboard_set_onBoardParams_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    id: felt, params: OnboardParams
-) -> () {
+func Onboard_set_onBoardParams_proxy{
+    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(id: felt, params: OnboardParams) -> () {
     return Onboard.set_onBoardParams(id, params);
 }

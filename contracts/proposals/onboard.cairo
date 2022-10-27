@@ -11,9 +11,15 @@ from starkware.cairo.common.uint256 import Uint256
 from bank import Bank
 
 @event
-func OnboardProposalAdded(id:felt, applicantAddress:felt, shares :felt, loot:felt, tributeOffered:Uint256, tributeAddress:felt) {
+func OnboardProposalAdded(
+    id: felt,
+    applicantAddress: felt,
+    shares: felt,
+    loot: felt,
+    tributeOffered: Uint256,
+    tributeAddress: felt,
+) {
 }
-
 
 struct OnboardParams {
     address: felt,
@@ -26,7 +32,7 @@ struct OnboardParams {
 @storage_var
 func onBoardParams(proposalId: felt) -> (params: OnboardParams) {
 }
-namespace Onboard{
+namespace Onboard {
     func get_onBoardParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt
     ) -> (params: OnboardParams) {
@@ -44,7 +50,13 @@ namespace Onboard{
 
 @external
 func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    address: felt, shares: felt, loot: felt,tributeOffered: Uint256, tributeAddress: felt,title: felt, description: felt
+    address: felt,
+    shares: felt,
+    loot: felt,
+    tributeOffered: Uint256,
+    tributeAddress: felt,
+    title: felt,
+    description: felt,
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -75,23 +87,34 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     Proposal.add_proposal(proposal);
     // register params
     let params: OnboardParams = OnboardParams(
-                                address=address, 
-                                shares=shares,
-                                loot=loot, 
-                                tributeOffered=tributeOffered,
-                                tributeAddress=tributeAddress,
-                                );
+        address=address,
+        shares=shares,
+        loot=loot,
+        tributeOffered=tributeOffered,
+        tributeAddress=tributeAddress,
+    );
     Onboard.set_onBoardParams(id, params);
-    OnboardProposalAdded.emit(id=id, applicantAddress=address, shares=shares, loot=loot, tributeOffered=tributeOffered, tributeAddress=tributeAddress);
+    OnboardProposalAdded.emit(
+        id=id,
+        applicantAddress=address,
+        shares=shares,
+        loot=loot,
+        tributeOffered=tributeOffered,
+        tributeAddress=tributeAddress,
+    );
 
-    // veto the proposal, 
+    // veto the proposal,
     // TODO in future version make sure to execute the below line only if the caller is admin
     Proposal.force_proposal(id);
 
     // collect tribute from proposer and store it in the Escrow until the proposal is processed
-    Bank.bank_deposit(tokenAddress = tributeAddress, amount = tributeOffered);
-    // update bank accounting 
-    Bank.increase_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered);
-    Bank.increase_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered);
+    Bank.bank_deposit(tokenAddress=tributeAddress, amount=tributeOffered);
+    // update bank accounting
+    Bank.increase_userTokenBalances(
+        userAddress=Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered
+    );
+    Bank.increase_userTokenBalances(
+        userAddress=Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered
+    );
     return (TRUE,);
 }

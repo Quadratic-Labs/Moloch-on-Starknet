@@ -10,7 +10,13 @@ from proposals.library import Proposal, ProposalInfo
 from bank import Bank
 
 @event
-func SwapProposalAdded(id:felt, tributeAddress:felt, tributeOffered:Uint256, paymentAddress:felt, paymentRequested:Uint256) {
+func SwapProposalAdded(
+    id: felt,
+    tributeAddress: felt,
+    tributeOffered: Uint256,
+    paymentAddress: felt,
+    paymentRequested: Uint256,
+) {
 }
 
 struct SwapParams {
@@ -24,7 +30,7 @@ struct SwapParams {
 func swapParams(proposalId: felt) -> (params: SwapParams) {
 }
 
-namespace Swap{
+namespace Swap {
     func get_swapParams{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt
     ) -> (params: SwapParams) {
@@ -40,10 +46,15 @@ namespace Swap{
     }
 }
 
-
 @external
 func submitSwap{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tributeOffered: Uint256, tributeAddress: felt, paymentRequested: Uint256, paymentAddress: felt,title: felt,description: felt) -> (success: felt) {
+    tributeOffered: Uint256,
+    tributeAddress: felt,
+    paymentRequested: Uint256,
+    paymentAddress: felt,
+    title: felt,
+    description: felt,
+) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
     // assert the caller is member
@@ -75,16 +86,28 @@ func submitSwap{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}
 
     Proposal.add_proposal(proposal);
     // register params
-    let params: SwapParams= SwapParams(tributeOffered=tributeOffered,
-                                        tributeAddress=tributeAddress,
-                                        paymentRequested=paymentRequested,
-                                        paymentAddress=paymentAddress);
+    let params: SwapParams = SwapParams(
+        tributeOffered=tributeOffered,
+        tributeAddress=tributeAddress,
+        paymentRequested=paymentRequested,
+        paymentAddress=paymentAddress,
+    );
     Swap.set_swapParams(id, params);
-    SwapProposalAdded.emit(id=id, tributeAddress=tributeAddress, tributeOffered=tributeOffered, paymentAddress=paymentAddress, paymentRequested=paymentRequested);
+    SwapProposalAdded.emit(
+        id=id,
+        tributeAddress=tributeAddress,
+        tributeOffered=tributeOffered,
+        paymentAddress=paymentAddress,
+        paymentRequested=paymentRequested,
+    );
     // collect tribute from proposer and store it in the Escrow until the proposal is processed
-    Bank.bank_deposit(tokenAddress = tributeAddress, amount = tributeOffered);
-    // update bank accounting 
-    Bank.increase_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered);
-    Bank.increase_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered);
+    Bank.bank_deposit(tokenAddress=tributeAddress, amount=tributeOffered);
+    // update bank accounting
+    Bank.increase_userTokenBalances(
+        userAddress=Bank.ESCROW, tokenAddress=tributeAddress, amount=tributeOffered
+    );
+    Bank.increase_userTokenBalances(
+        userAddress=Bank.TOTAL, tokenAddress=tributeAddress, amount=tributeOffered
+    );
     return (TRUE,);
 }
