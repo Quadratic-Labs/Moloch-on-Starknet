@@ -251,13 +251,10 @@ async def test_execute_onboard_proposal(empty_contract):
     tributeAddress = 123
 
     address = 123
-    delegatedKey = address
     shares = 10
     loot = 10
-    jailed = 0
-    lastProposalYesVote = 0
-    memberInfo = (address, delegatedKey, shares, loot, jailed, lastProposalYesVote)
-    params = (tributeOffered, tributeAddress, memberInfo)
+    params = (address, shares, loot, tributeOffered, tributeAddress)
+
     await empty_contract.Onboard_set_onBoardParams_proxy(proposalId, params).execute()
 
     # store the number of member in the dao before the execute

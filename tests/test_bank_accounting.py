@@ -120,13 +120,9 @@ async def test_accounting_when_onboard(empty_contract):
     tributeAddress = 100
 
     address = 100
-    delegatedKey = address
     shares = 10
     loot = 10
-    jailed = 0
-    lastProposalYesVote = 0
-    memberInfo = (address, delegatedKey, shares, loot, jailed, lastProposalYesVote)
-    params = (tributeOffered, tributeAddress, memberInfo)
+    params = (address, shares, loot, tributeOffered, tributeAddress)
     await empty_contract.Onboard_set_onBoardParams_proxy(proposalId, params).execute()
 
     # in order the execute onboard, the ESCROW needs to be increased by at least the tribute offered
