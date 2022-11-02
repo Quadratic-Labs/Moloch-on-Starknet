@@ -19,7 +19,7 @@ func Onboard_submitOnboard_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
     tributeOffered: Uint256,
     tributeAddress: felt,
     title: felt,
-    description: felt,
+    link: felt,
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -44,7 +44,7 @@ func Onboard_submitOnboard_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
         submittedBy=submittedBy,
         submittedAt=submittedAt,
         status=status,
-        description=description,
+        link=link,
     );
 
     Proposal.add_proposal(proposal);

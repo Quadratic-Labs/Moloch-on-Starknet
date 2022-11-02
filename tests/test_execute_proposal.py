@@ -20,7 +20,7 @@ async def create_votes(
         3,  # submittedBy
         -200,  # submittedAt
         1,  # status # 1 = SUBMITTED
-        1,  # description
+        1,  # link
     )
     await empty_contract.Proposal_add_proposal_proxy(proposal).execute()
     # create members that votes and votes for the tests
@@ -56,7 +56,7 @@ async def test_grace_period_not_ended(empty_contract):
         3,  # submittedBy
         -1,  # submittedAt put to -1 to bypass votingperiod guards
         1,  # status # 1 = SUBMITTED
-        1,  # description
+        1,  # link
     )
     await empty_contract.Proposal_add_proposal_proxy(proposal).execute()
     # vote yes on the proposal to make it pass

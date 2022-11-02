@@ -14,7 +14,7 @@ async def test_not_member(contract):
             tokenAddress=token_address,
             title=title,
             tokenName=tokenName,
-            description=123456789,
+            link=123456789,
         ).execute(caller_address=caller_address)
 
 
@@ -30,7 +30,7 @@ async def test_not_admin(contract):
             tokenAddress=token_address,
             title=title,
             tokenName=tokenName,
-            description=123456789,
+            link=123456789,
         ).execute(caller_address=caller_address)
 
 
@@ -46,7 +46,7 @@ async def test_not_whitelisted(contract):
             tokenAddress=token_address,
             title=title,
             tokenName=tokenName,
-            description=123456789,
+            link=123456789,
         ).execute(caller_address=caller_address)
 
 
@@ -66,7 +66,7 @@ async def test_submit_token(contract):
         tokenAddress=token_address,
         title=title,
         tokenName=tokenName,
-        description=123456789,
+        link=123456789,
     ).execute(caller_address=caller_address)
     assert return_value.result.success == 1
 

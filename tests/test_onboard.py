@@ -22,7 +22,7 @@ async def test_not_admin(contract):
             tributeOffered=tributeOffered,
             tributeAddress=tributeAddress,
             title=title,
-            description=123456789,
+            link=123456789,
         ).execute(caller_address=caller_address)
 
 
@@ -44,7 +44,7 @@ async def test_already_member(contract):
             tributeOffered=tributeOffered,
             tributeAddress=tributeAddress,
             title=title,
-            description=123456789,
+            link=123456789,
         ).execute(caller_address=caller_address)
 
 
@@ -71,7 +71,7 @@ async def test_submit_onboard(contract):
         tributeOffered=tributeOffered,
         tributeAddress=tributeAddress,
         title=title,
-        description=123456789,
+        link=123456789,
     ).execute(caller_address=caller_address)
     assert return_value.result.success == 1
 

@@ -114,7 +114,7 @@ class Proposal:
     submittedBy: int
     submittedAt: int
     status: int
-    description: int
+    link: int
 
 
 MEMBERS: list[Member] = [
@@ -174,7 +174,7 @@ PROPOSALS: list[Proposal] = [
         submittedBy=1,
         submittedAt=1,
         status=1,  # SUBMITTED
-        description=1,
+        link=1,
     ),
     Proposal(  # ACCEPTED and vote closed
         id=1,
@@ -183,7 +183,7 @@ PROPOSALS: list[Proposal] = [
         submittedBy=3,
         submittedAt=1,
         status=2,  # ACCEPTED
-        description=1,
+        link=1,
     ),
     Proposal(  # Rejected and vote closed
         id=2,
@@ -192,7 +192,7 @@ PROPOSALS: list[Proposal] = [
         submittedBy=1,
         submittedAt=1,
         status=3,  # REJECTED
-        description=1,
+        link=1,
     ),
     Proposal(  # Submitted and vote open + grace closed
         id=3,
@@ -201,7 +201,7 @@ PROPOSALS: list[Proposal] = [
         submittedBy=3,
         submittedAt=1,
         status=1,  # SUBMITTED
-        description=1,
+        link=1,
     ),
     Proposal(  # Submitted and didn't reach majority
         id=4,
@@ -210,7 +210,7 @@ PROPOSALS: list[Proposal] = [
         submittedBy=3,
         submittedAt=-20,  # put submitted at to -20 to make the test on voting a grace period pass
         status=1,  # SUBMITTED
-        description=1,
+        link=1,
     ),
     Proposal(  # Submitted and didn't reach quorom
         id=5,
@@ -219,7 +219,7 @@ PROPOSALS: list[Proposal] = [
         submittedBy=3,
         submittedAt=1,
         status=1,  # SUBMITTED
-        description=1,
+        link=1,
     ),
     Proposal(  # Submitted and reached qurom and majority
         id=6,
@@ -228,7 +228,7 @@ PROPOSALS: list[Proposal] = [
         submittedBy=3,
         submittedAt=1,
         status=1,  # SUBMITTED
-        description=1,
+        link=1,
     ),
     Proposal(  # Submitted and reached qurom and majority
         id=7,
@@ -237,7 +237,7 @@ PROPOSALS: list[Proposal] = [
         submittedBy=3,
         submittedAt=1,
         status=1,  # SUBMITTED
-        description=1,
+        link=1,
     ),
 ]
 

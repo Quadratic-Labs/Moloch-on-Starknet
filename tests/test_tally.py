@@ -21,7 +21,7 @@ async def create_votes(
         3,  # submittedBy
         -20,  # submittedAt
         1,  # status # 1 = SUBMITTED
-        1,  # description
+        1,  # link
     )
     await empty_contract.Proposal_add_proposal_proxy(proposal).execute()
     # create members that votes and votes for the tests
@@ -113,7 +113,7 @@ async def test_voting_period_not_ended(empty_contract):
         3,  # submittedBy
         50,  # submittedAt
         1,  # status # 1 = SUBMITTED
-        1,  # description
+        1,  # link
     )
     await empty_contract.Proposal_add_proposal_proxy(proposal).execute()
 

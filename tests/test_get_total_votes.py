@@ -21,7 +21,7 @@ async def test_get_total_votes(contract):
         3,  # submittedBy
         50,  # submittedAt
         1,  # status # 1 = SUBMITTED
-        1,  # description
+        1,  # link
     )
     await contract.Proposal_add_proposal_proxy(proposal).execute()
 

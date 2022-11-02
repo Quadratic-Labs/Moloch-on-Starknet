@@ -9,7 +9,7 @@ from proposals.library import Proposal, ProposalInfo
 
 @external
 func submitSignaling{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    title: felt, description: felt
+    title: felt, link: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -32,7 +32,7 @@ func submitSignaling{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
         submittedBy=submittedBy,
         submittedAt=submittedAt,
         status=status,
-        description=description,
+        link=link,
     );
 
     Proposal.add_proposal(proposal);

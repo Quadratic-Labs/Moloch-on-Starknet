@@ -37,7 +37,7 @@ namespace Guildkick {
 
 @external
 func submitGuildKick{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    memberAddress: felt, title: felt, description: felt
+    memberAddress: felt, title: felt, link: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -63,7 +63,7 @@ func submitGuildKick{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
         submittedBy=submittedBy,
         submittedAt=submittedAt,
         status=status,
-        description=description,
+        link=link,
     );
 
     Proposal.add_proposal(proposal);

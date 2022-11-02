@@ -56,7 +56,7 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     tributeOffered: Uint256,
     tributeAddress: felt,
     title: felt,
-    description: felt,
+    link: felt,
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -81,7 +81,7 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
         submittedBy=submittedBy,
         submittedAt=submittedAt,
         status=status,
-        description=description,
+        link=link,
     );
 
     Proposal.add_proposal(proposal);

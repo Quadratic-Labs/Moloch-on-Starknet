@@ -55,7 +55,7 @@ async def test_vote_for_yourself(contract):
         3,  # submittedBy
         50,  # submittedAt
         1,  # status # 1 = SUBMITTED
-        1,  # description
+        1,  # link
     )
     await contract.Proposal_add_proposal_proxy(proposal).execute()
 
@@ -92,7 +92,7 @@ async def test_vote_for_yourself_when_delegated(contract):
         3,  # submittedBy
         50,  # submittedAt
         1,  # status # 1 = SUBMITTED
-        1,  # description
+        1,  # link
     )
     await contract.Proposal_add_proposal_proxy(proposal).execute()
 
@@ -120,7 +120,7 @@ async def test_vote_on_behalf(contract):
         3,  # submittedBy
         50,  # submittedAt
         1,  # status # 1 = SUBMITTED
-        1,  # description
+        1,  # link
     )
     await contract.Proposal_add_proposal_proxy(proposal).execute()
 
@@ -161,7 +161,7 @@ async def test_vote_on_behalf_when_not_delegated(contract):
         3,  # submittedBy
         50,  # submittedAt
         1,  # status # 1 = SUBMITTED
-        1,  # description
+        1,  # link
     )
     await contract.Proposal_add_proposal_proxy(proposal).execute()
 

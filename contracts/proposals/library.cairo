@@ -8,7 +8,7 @@ from roles import Roles
 
 @event
 func ProposalAdded(
-    id: felt, title: felt, description: felt, type: felt, submittedBy: felt, submittedAt: felt
+    id: felt, title: felt, link: felt, type: felt, submittedBy: felt, submittedAt: felt
 ) {
 }
 
@@ -29,7 +29,7 @@ struct ProposalInfo {
     submittedBy: felt,
     submittedAt: felt,
     status: felt,
-    description: felt,
+    link: felt,
 }
 
 // params apply to all proposals of the same kind
@@ -128,7 +128,7 @@ namespace Proposal {
         ProposalAdded.emit(
             id=info.id,
             title=info.title,
-            description=info.description,
+            link=info.link,
             type=info.type,
             submittedBy=info.submittedBy,
             submittedAt=info.submittedAt,
@@ -147,7 +147,7 @@ namespace Proposal {
             submittedBy=info.submittedBy,
             submittedAt=info.submittedAt,
             status=status,
-            description=info.description,
+            link=info.link,
         );
         Proposal.update_proposal(info.id, proposal);
         ProposalStatusUpdated.emit(id=id, status=status);

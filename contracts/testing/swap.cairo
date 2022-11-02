@@ -17,7 +17,7 @@ func Swap_submitSwap_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range
     paymentRequested: Uint256,
     paymentAddress: felt,
     title: felt,
-    description: felt,
+    link: felt,
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -38,7 +38,7 @@ func Swap_submitSwap_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range
         submittedBy=submittedBy,
         submittedAt=submittedAt,
         status=status,
-        description=description,
+        link=link,
     );
 
     Proposal.add_proposal(proposal);

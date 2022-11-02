@@ -23,7 +23,7 @@ async def create_votes(
         3,  # submittedBy
         -200,  # submittedAt
         1,  # status # 1 = SUBMITTED
-        1,  # description
+        1,  # link
     )
     await empty_contract.Proposal_add_proposal_proxy(proposal).execute()
     # create members that votes and votes for the tests

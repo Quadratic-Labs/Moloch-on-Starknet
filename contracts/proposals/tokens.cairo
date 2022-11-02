@@ -41,7 +41,7 @@ namespace Tokens {
 
 @external
 func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt, tokenName: felt, title: felt, description: felt
+    tokenAddress: felt, tokenName: felt, title: felt, link: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -67,7 +67,7 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
         submittedBy=submittedBy,
         submittedAt=submittedAt,
         status=status,
-        description=description,
+        link=link,
     );
 
     Proposal.add_proposal(proposal);
@@ -97,7 +97,7 @@ func adminApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 
 @external
 func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt, tokenName: felt, title: felt, description: felt
+    tokenAddress: felt, tokenName: felt, title: felt, link: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -123,7 +123,7 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
         submittedBy=submittedBy,
         submittedAt=submittedAt,
         status=status,
-        description=description,
+        link=link,
     );
 
     Proposal.add_proposal(proposal);

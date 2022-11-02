@@ -18,7 +18,7 @@ async def test_caller_not_member(contract):
             paymentRequested=paymentRequested,
             paymentAddress=paymentAddress,
             title=title,
-            description=123456789,
+            link=123456789,
         ).execute(caller_address=caller_address)
 
 
@@ -38,7 +38,7 @@ async def test_caller_not_govern(contract):
             paymentRequested=paymentRequested,
             paymentAddress=paymentAddress,
             title=title,
-            description=123456789,
+            link=123456789,
         ).execute(caller_address=caller_address)
 
 
@@ -63,7 +63,7 @@ async def test_Swap_submitSwap_proxy(contract):
         paymentRequested=paymentRequested,
         paymentAddress=paymentAddress,
         title=title,
-        description=123456789,
+        link=123456789,
     ).execute(caller_address=caller_address)
     assert return_value.result.success == 1
 

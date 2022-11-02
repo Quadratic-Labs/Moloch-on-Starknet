@@ -8,7 +8,7 @@ async def test_caller_not_member(contract):
     title = utils.str_to_felt("Signaling")
 
     with pytest.raises(Exception):
-        await contract.submitSignaling(title=title, description=123456789).execute(
+        await contract.submitSignaling(title=title, link=123456789).execute(
             caller_address=caller_address
         )
 
@@ -19,7 +19,7 @@ async def test_caller_not_govern(contract):
     title = utils.str_to_felt("Signaling")
 
     with pytest.raises(Exception):
-        await contract.submitSignaling(title=title, description=123456789).execute(
+        await contract.submitSignaling(title=title, link=123456789).execute(
             caller_address=caller_address
         )
 
@@ -35,9 +35,9 @@ async def test_submitSignaling(contract):
         )
     ).result.length
 
-    return_value = await contract.submitSignaling(
-        title=title, description=123456789
-    ).execute(caller_address=caller_address)
+    return_value = await contract.submitSignaling(title=title, link=123456789).execute(
+        caller_address=caller_address
+    )
     assert return_value.result.success == 1
 
     number_after_submit = (
