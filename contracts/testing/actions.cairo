@@ -9,7 +9,7 @@ from starkware.cairo.common.uint256 import Uint256
 from proposals.swap import Swap, SwapParams
 from proposals.library import Proposal, ProposalInfo
 from bank import Bank
-from tally import Tally
+from tally import Tally, tally
 
 // same as execute swap without the actual bank payment
 func Actions_execute_swap_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -51,13 +51,13 @@ func Actions_executeProposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     // Modify Proposal status which is used by the front
     alloc_locals;
     // launch the tally
-    Tally._tally(proposalId);
+    let (local status) = tally(proposalId);
     let (local proposal: ProposalInfo) = Proposal.get_info(proposalId);
     let (local params) = Proposal.get_params(proposal.type);
 
     // if the proposal status is REJECTED refund the submitter and change status to EXECUTED
-    if (proposal.status == Proposal.REJECTED) {
-        Proposal.update_status(proposalId, Proposal.EXECUTED);
+    if (status == Proposal.REJECTED) {
+        Proposal.update_status(proposalId, Proposal.REJECTED);
         if (proposal.type == 'Swap') {
             let (local swap_params: SwapParams) = Swap.get_swapParams(proposalId);
             // refund the submitter
@@ -81,16 +81,11 @@ func Actions_executeProposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
         }
         return (TRUE,);
     }
-    // if the proposal status is ACCEPTED or FORCED, the below expression is equal to zero
-    let should_pass = (proposal.status - Proposal.ACCEPTED) * (proposal.status - Proposal.FORCED);
-    with_attr error_message("The proposal status should be ACCEPTED or FORCED.") {
-        assert should_pass = 0;
-    }
 
     // assert the grace period ended
     let (local today_timestamp) = get_block_number();
     with_attr error_message("The proposal has not ended grace period.") {
-        if (proposal.status == Proposal.ACCEPTED) {
+        if (status == Proposal.ACCEPTED) {
             assert_lt(
                 proposal.submittedAt + params.votingDuration + params.graceDuration, today_timestamp
             );
@@ -102,7 +97,7 @@ func Actions_executeProposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     // execute action
     if (proposal.type == 'Swap') {
         Actions_execute_swap_proxy(proposalId);
-        Proposal.update_status(proposalId, Proposal.EXECUTED);
+        Proposal.update_status(proposalId, Proposal.ACCEPTED);
         return (TRUE,);
     }
 

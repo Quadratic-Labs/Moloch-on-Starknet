@@ -71,51 +71,49 @@ namespace Tally{
         return (TRUE,);
     }
 
-    // apply will check if the proposal's grace period has ended, and move the
-    // proposal to the next state, ACCEPTED/REJECTED.
-    func _tally{
-            syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    }(proposalId: felt) -> (accepted: felt) {
-        // Apply voting rules to determine if proposal is accepted or rejected
-        // Requires voting and grace period have ended
-        // Modify Proposal status which is used by the front
-        alloc_locals;
-        let (local info: ProposalInfo) = Proposal.get_info(proposalId);
-        let (local params) = Proposal.get_params(info.type);
-        let (local caller) = get_caller_address();
-        // if the proposal status is FORCED, ignore the tally
-        if (info.status == Proposal.FORCED){
-            return (TRUE,);
-        }
+}
 
-        // assert proposal status is submitted
-        with_attr error_message("Tally needs a proposal with SUBMITTED as status") {
-            assert info.status = Proposal.SUBMITTED;
-        }
+@view
+func tally{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(proposalId: felt) -> (accepted: felt) {
+    // Apply voting rules to determine if proposal is accepted or rejected
+    // Requires voting period has ended
+    alloc_locals;
+    let (local caller) = get_caller_address();
 
+    // assert the caller is member
+    Member.assert_is_member(caller);
 
-        // assert the caller is member
-        with_attr error_message("AccessControl: user {caller} is not a member.") {
-            Member.assert_is_member(caller);
-        }
+    // assert the caller is not jailed
+    Member.assert_not_jailed(caller);
 
-        let (local today_timestamp) = get_block_number();
-
-        // assert the voting period ended
-        with_attr error_message("The proposal has not ended voting period.") {
-            assert_lt(
-                info.submittedAt + params.votingDuration, today_timestamp
-            );
-        }
-
-        let (accepted: felt) = did_pass(proposalId);
-        if (accepted == FALSE) {
-            Proposal.update_status(info.id, Proposal.REJECTED);
-            return (FALSE,);
-        }
-
-        Proposal.update_status(info.id, Proposal.ACCEPTED);
-
-        return (TRUE,);
+    // get proposal's info
+    let (local info: ProposalInfo) = Proposal.get_info(proposalId);
+    let (local params) = Proposal.get_params(info.type);
+    
+    // if the proposal status is FORCED, ignore the tally
+    if (info.status == Proposal.FORCED){
+        return (Proposal.ACCEPTED,);
     }
+
+
+    let (local today_timestamp) = get_block_number();
+
+    // assert the voting period ended
+    with_attr error_message("The proposal has not ended voting period.") {
+        assert_lt(
+            info.submittedAt + params.votingDuration, today_timestamp
+        );
+    }
+
+    let (accepted: felt) = Tally.did_pass(proposalId);
+    if (accepted == FALSE) {
+        return (Proposal.REJECTED,);
+    }else{
+        return (Proposal.ACCEPTED,);
+    }
+
+
+    
 }

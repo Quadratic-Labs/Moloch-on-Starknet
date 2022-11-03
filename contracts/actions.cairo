@@ -12,7 +12,7 @@ from proposals.swap import Swap, SwapParams
 from proposals.tokens import Tokens, TokenParams
 from proposals.library import Proposal, ProposalInfo
 from bank import Bank
-from tally import Tally
+from tally import Tally, tally
 
 namespace Actions {
 
@@ -95,22 +95,7 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     // Executes the proposal's actions if preconditions are satisfied
     // Modify Proposal status which is used by the front
     alloc_locals;
-    // launch the tally if the proposal status is SUBMITTED
-    let (local proposal_before_tally: ProposalInfo) = Proposal.get_info(proposalId);
-    if (proposal_before_tally.status == Proposal.SUBMITTED){
-        Tally._tally(proposalId);
-        // tempvar to avoid revoked references
-        tempvar syscall_ptr = syscall_ptr;
-        tempvar pedersen_ptr = pedersen_ptr;
-        tempvar range_check_ptr = range_check_ptr;
-    }else{
-        tempvar syscall_ptr = syscall_ptr;
-        tempvar pedersen_ptr = pedersen_ptr;
-        tempvar range_check_ptr = range_check_ptr;
-    }
-    let (local proposal: ProposalInfo) = Proposal.get_info(proposalId);
-    let (local params) = Proposal.get_params(proposal.type);
-    
+
     // assert the caller is member
     let (local caller) = get_caller_address();
     Member.assert_is_member(caller);
@@ -118,16 +103,22 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     // assert the caller is not jailed
     Member.assert_not_jailed(caller);
 
-    // if the proposal status is REJECTED refund the submitter and change status to EXECUTED
-    if (proposal.status == Proposal.REJECTED){
-        Proposal.update_status(proposalId,Proposal.EXECUTED);
+    // launch the tally if the proposal status is SUBMITTED
+    let (local status) = tally(proposalId);
+    let (local proposal: ProposalInfo) = Proposal.get_info(proposalId);
+    let (local params) = Proposal.get_params(proposal.type);
+    
+
+    // if the status is REJECTED refund the submitter and change proposal status to REJECTED
+    if (status == Proposal.REJECTED){
+        Proposal.update_status(proposalId,Proposal.REJECTED);
         if (proposal.type == 'Onboard'){
             let (local onboard_params: OnboardParams) = Onboard.get_onBoardParams(proposalId);
             // refund the submitter 
             Bank.bank_payment(recipient = proposal.submittedBy, tokenAddress = onboard_params.tributeAddress, amount = onboard_params.tributeOffered);
             // update bank accounting 
-            Bank.decrease_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=onboard_params.tributeAddress, amount=onboard_params.tributeOffered);
-            Bank.decrease_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=onboard_params.tributeAddress, amount=onboard_params.tributeOffered);
+            Bank.decrease_userTokenBalances(userAddress=Bank.ESCROW, tokenAddress=onboard_params.tributeAddress, amount=onboard_params.tributeOffered);
+            Bank.decrease_userTokenBalances(userAddress=Bank.TOTAL, tokenAddress=onboard_params.tributeAddress, amount=onboard_params.tributeOffered);
             return (TRUE,);
         }
         if (proposal.type == 'Swap'){
@@ -135,23 +126,16 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
             // refund the submitter 
             Bank.bank_payment(recipient = proposal.submittedBy, tokenAddress = swap_params.tributeAddress, amount = swap_params.tributeOffered);
             // update bank accounting 
-            Bank.decrease_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=swap_params.tributeAddress, amount=swap_params.tributeOffered);
-            Bank.decrease_userTokenBalances(userAddress= Bank.TOTAL, tokenAddress=swap_params.tributeAddress, amount=swap_params.tributeOffered);
+            Bank.decrease_userTokenBalances(userAddress=Bank.ESCROW, tokenAddress=swap_params.tributeAddress, amount=swap_params.tributeOffered);
+            Bank.decrease_userTokenBalances(userAddress=Bank.TOTAL, tokenAddress=swap_params.tributeAddress, amount=swap_params.tributeOffered);
             return (TRUE,);
         }
         return (TRUE,);
     }
-    // if the proposal status is ACCEPTED or FORCED, the below expression is equal to zero
-    let should_pass = (proposal.status - Proposal.ACCEPTED) * (proposal.status - Proposal.FORCED);
-    with_attr error_message("The proposal status should be ACCEPTED or FORCED.") {
-        assert should_pass = 0;
-    }
-    
-    // TODO monter cette partie plus haut
     // assert the grace period ended
     let (local today_timestamp) = get_block_number();
     with_attr error_message("The proposal has not ended grace period.") {
-        if (proposal.status == Proposal.ACCEPTED){
+        if (status == Proposal.ACCEPTED){
         assert_lt(
             proposal.submittedAt + params.votingDuration + params.graceDuration, today_timestamp
         );
@@ -165,32 +149,32 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     // execute action
     if (proposal.type == 'Onboard'){
         Actions.execute_onboard(proposalId);
-        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        Proposal.update_status(proposalId,Proposal.ACCEPTED);
         return (TRUE,);
     }
     if (proposal.type == 'GuildKick'){
         Actions.execute_guildkick(proposalId);
-        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        Proposal.update_status(proposalId,Proposal.ACCEPTED);
         return (TRUE,);
     }
     if (proposal.type == 'ApproveToken'){
         Actions.execute_approve_token(proposalId);
-        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        Proposal.update_status(proposalId,Proposal.ACCEPTED);
         return (TRUE,);
     }
     if (proposal.type == 'RemoveToken'){
         Actions.execute_remove_token(proposalId);
-        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        Proposal.update_status(proposalId,Proposal.ACCEPTED);
         return (TRUE,);
     }
     if (proposal.type == 'Swap'){
         Actions.execute_swap(proposalId);
-        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        Proposal.update_status(proposalId,Proposal.ACCEPTED);
         return (TRUE,);
     }
     if (proposal.type == 'Signaling'){
         Actions.execute_signaling(proposalId);
-        Proposal.update_status(proposalId,Proposal.EXECUTED);
+        Proposal.update_status(proposalId,Proposal.ACCEPTED);
         return (TRUE,);
     }
 

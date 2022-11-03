@@ -41,13 +41,9 @@ struct ProposalParams {
 }
 namespace Proposal {
     const SUBMITTED = 1;
-    const ACCEPTED = 2;  // Can proceed to execution if any actions
+    const ACCEPTED = 2;  
     const REJECTED = 3;
     const FORCED = 7;  // Sent directly to grace period by admin
-    // The remaining states are final
-    const ABORTED = 4;  // Did not go completely through voting
-    const EXECUTED = 5;  // Execution is finalised and successful
-    const FAILED = 6;  // Execution failed
     const NOTFOUND = -1;
 
     const YESVOTE = 'yes';

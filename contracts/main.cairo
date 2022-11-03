@@ -19,7 +19,7 @@ from roles import Roles, grant_role, revoke_role, delegate_admin_role, adminRole
 from voting import submitVote
 from bank import Bank, adminDeposit, withdraw
 from actions import executeProposal
-
+from tally import tally
 @constructor
 func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     majority: felt, quorum: felt, votingDuration: felt, graceDuration: felt

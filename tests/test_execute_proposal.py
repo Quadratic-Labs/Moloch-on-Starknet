@@ -105,11 +105,11 @@ async def test_execute_signaling_proposal(empty_contract):
     )
     assert return_value.result.success == 1
 
-    # check if the status of the proposal changed to EXECUTED (=5)
+    # check if the status of the proposal changed to ACCEPTED 2
     return_value = await empty_contract.Proposal_get_proposal_status_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.status == 5
+    assert return_value.result.status == 2
 
 
 @pytest.mark.asyncio
@@ -142,11 +142,11 @@ async def test_execute_ApproveToken_proposal(empty_contract):
     )
     assert return_value.result.success == 1
 
-    # check if the status of the proposal changed to EXECUTED (=5)
+    # check if the status of the proposal changed to ACCEPTED 2
     return_value = await empty_contract.Proposal_get_proposal_status_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.status == 5
+    assert return_value.result.status == 2
 
 
 @pytest.mark.asyncio
@@ -179,11 +179,11 @@ async def test_execute_RemoveToken_proposal(empty_contract):
     )
     assert return_value.result.success == 1
 
-    # check if the status of the proposal changed to EXECUTED (=5)
+    # check if the status of the proposal changed to ACCEPTED 2
     return_value = await empty_contract.Proposal_get_proposal_status_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.status == 5
+    assert return_value.result.status == 2
 
 
 @pytest.mark.asyncio
@@ -220,11 +220,11 @@ async def test_execute_GuildKick_proposal(empty_contract):
     )
     assert return_value.result.success == 1
 
-    # check if the status of the proposal changed to EXECUTED (=5)
+    # check if the status of the proposal changed to ACCEPTED 2
     return_value = await empty_contract.Proposal_get_proposal_status_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.status == 5
+    assert return_value.result.status == 2
 
     # verifie that the member is jailed after the execute
     return_value = await empty_contract.Member_is_jailed_proxy(
@@ -271,11 +271,11 @@ async def test_execute_onboard_proposal(empty_contract):
     )
     assert return_value.result.success == 1
 
-    # check if the status of the proposal changed to EXECUTED (=5)
+    # check if the status of the proposal changed to ACCEPTED 2
     return_value = await empty_contract.Proposal_get_proposal_status_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.status == 5
+    assert return_value.result.status == 2
 
     # store the number of member in the dao before the execute
     ret_val = await empty_contract.Member_total_count_proxy().execute()
@@ -328,8 +328,8 @@ async def test_execute_swap_proposal(empty_contract):
     ).execute(caller_address=caller_address)
     assert return_value.result.success == 1
 
-    # check if the status of the proposal changed to EXECUTED (=5)
+    # check if the status of the proposal changed to ACCEPTED 2
     return_value = await empty_contract.Proposal_get_proposal_status_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.status == 5
+    assert return_value.result.status == 2
