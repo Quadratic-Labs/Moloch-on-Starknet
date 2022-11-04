@@ -10,7 +10,9 @@ async def test_get_total_shares_and_loot(empty_contract):
     loot = 423
 
     # check if total is 1 at init, 1 due to the admin 1 share given in the main
-    return_value = await empty_contract.Member_get_total_shares_proxy().execute()
+    return_value = await empty_contract.Member_get_total_shares_proxy(
+        until_this_block_number=10
+    ).execute()
     assert return_value.result.count == 1
 
     # check if total is 50 at init, 50 due to the admin 50 share given in the main
@@ -35,7 +37,9 @@ async def test_get_total_shares_and_loot(empty_contract):
         ).execute()
 
     # check if the new totals are correct
-    return_value = await empty_contract.Member_get_total_shares_proxy().execute()
+    return_value = await empty_contract.Member_get_total_shares_proxy(
+        until_this_block_number=10
+    ).execute()
     assert return_value.result.count == (total_members * shares) + 1
 
     return_value = await empty_contract.Member_get_total_loot_proxy().execute()

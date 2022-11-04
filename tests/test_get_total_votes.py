@@ -50,7 +50,7 @@ async def test_get_total_votes(contract):
                 1,  # loot
                 0,  # jailed
                 1,  # lastProposalYesVote
-                0,  # onBoarddedAt
+                -300,  # onBoarddedAt
             )
         ).execute()
         # vote yes for the proposal

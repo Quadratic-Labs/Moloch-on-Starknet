@@ -4,6 +4,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.math import assert_nn, assert_lt
 from starkware.starknet.common.syscalls import get_caller_address
+from starkware.cairo.common.math_cmp import is_le
 
 @event
 func MemberAdded(memberAddress: felt, shares: felt, loot : felt) {
@@ -192,21 +193,28 @@ namespace Member {
 
     func _get_total_shares{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    }(currentIndex: felt, currentTotal: felt) -> (count: felt) {
+    }(until_this_block_number : felt, currentIndex: felt, currentTotal: felt) -> (count: felt) {
+        // TODO add argument timeblock to retrieve only eligible share before a certain timeblock
         let (member_list_length: felt) = membersLength.read();
         if (currentIndex == member_list_length){
             return (currentTotal,);
         }
         let (current_address: felt) = membersAddresses.read(currentIndex);
         let (member_info) = Member.get_info(current_address);
-        let new_total: felt = currentTotal + member_info.shares;
-        return _get_total_shares(currentIndex+1, new_total);
+        let is_eligible = is_le(member_info.onBoarddedAt, until_this_block_number);
+        if (is_eligible == 1){
+            let new_total: felt = currentTotal + member_info.shares;
+            return _get_total_shares(until_this_block_number, currentIndex+1, new_total);
+        }else{
+            return _get_total_shares(until_this_block_number, currentIndex+1, currentTotal);
+        }
+        
     }
 
     func get_total_shares{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    }() -> (count: felt) {
-        return _get_total_shares(0, 0);
+    }(until_this_block_number: felt) -> (count: felt) {
+        return _get_total_shares(until_this_block_number, 0, 0);
     }
 
 

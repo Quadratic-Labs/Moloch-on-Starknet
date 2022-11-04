@@ -36,7 +36,7 @@ async def create_votes(
                 1,  # loot
                 1,  # jailed
                 1,  # lastProposalYesVote
-                0,  # onBoarddedAt
+                -300,  # onBoarddedAt
             )
         ).execute()
         # vote yes for the proposal
@@ -55,7 +55,7 @@ async def create_votes(
                 1,  # loot
                 1,  # jailed
                 1,  # lastProposalYesVote
-                0,  # onBoarddedAt
+                -300,  # onBoarddedAt
             )
         ).execute()
         # vote no for the proposal

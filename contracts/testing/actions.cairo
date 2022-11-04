@@ -10,6 +10,8 @@ from proposals.swap import Swap, SwapParams
 from proposals.library import Proposal, ProposalInfo
 from bank import Bank
 from tally import Tally, tally
+from actions import Actions
+from proposals.onboard import Onboard, OnboardParams
 
 // same as execute swap without the actual bank payment
 func Actions_execute_swap_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -52,6 +54,9 @@ func Actions_executeProposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     alloc_locals;
     // launch the tally
     let (local status) = tally(proposalId);
+    %{
+        print("status",ids.status)
+    %}
     let (local proposal: ProposalInfo) = Proposal.get_info(proposalId);
     let (local params) = Proposal.get_params(proposal.type);
 
@@ -60,12 +65,6 @@ func Actions_executeProposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
         Proposal.update_status(proposalId, Proposal.REJECTED);
         if (proposal.type == 'Swap') {
             let (local swap_params: SwapParams) = Swap.get_swapParams(proposalId);
-            // refund the submitter
-            Bank.bank_payment(
-                recipient=proposal.submittedBy,
-                tokenAddress=swap_params.tributeAddress,
-                amount=swap_params.tributeOffered,
-            );
             // update bank accounting
             Bank.decrease_userTokenBalances(
                 userAddress=Bank.ESCROW,
@@ -79,9 +78,18 @@ func Actions_executeProposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
             );
             return (TRUE,);
         }
+
+        if (proposal.type == 'Onboard'){
+            let (local onboard_params: OnboardParams) = Onboard.get_onBoardParams(proposalId);
+            // update bank accounting 
+            Bank.decrease_userTokenBalances(userAddress=Bank.ESCROW, tokenAddress=onboard_params.tributeAddress, amount=onboard_params.tributeOffered);
+            Bank.decrease_userTokenBalances(userAddress=Bank.TOTAL, tokenAddress=onboard_params.tributeAddress, amount=onboard_params.tributeOffered);
+            return (TRUE,);
+        }
         return (TRUE,);
     }
 
+    
     // assert the grace period ended
     let (local today_timestamp) = get_block_number();
     with_attr error_message("The proposal has not ended grace period.") {
@@ -97,6 +105,13 @@ func Actions_executeProposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     // execute action
     if (proposal.type == 'Swap') {
         Actions_execute_swap_proxy(proposalId);
+        Proposal.update_status(proposalId, Proposal.ACCEPTED);
+        return (TRUE,);
+    }
+
+    // execute action
+    if (proposal.type == 'Onboard') {
+        Actions.execute_onboard(proposalId);
         Proposal.update_status(proposalId, Proposal.ACCEPTED);
         return (TRUE,);
     }

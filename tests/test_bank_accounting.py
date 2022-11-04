@@ -38,7 +38,7 @@ async def create_votes(
                 1,  # loot
                 1,  # jailed
                 1,  # lastProposalYesVote
-                0,  # onBoarddedAt
+                -300,  # onBoarddedAt
             )
         ).execute()
         # vote yes for the proposal
@@ -130,9 +130,9 @@ async def test_accounting_when_onboard(empty_contract):
         0xBBB, tributeAddress, tributeOffered
     ).execute()
 
-    return_value = await empty_contract.executeProposal(proposalId=proposalId).execute(
-        caller_address=caller_address
-    )
+    return_value = await empty_contract.Actions_executeProposal_proxy(
+        proposalId=proposalId
+    ).execute(caller_address=caller_address)
     assert return_value.result.success == 1
 
     # check the new balance

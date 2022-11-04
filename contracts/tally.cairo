@@ -15,14 +15,20 @@ namespace Tally{
     func _get_total_votes{
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(currentIndex: felt, proposalId: felt, voteType: felt, currentTotal: felt) -> (count: felt) {
+        alloc_locals;
         let (member_list_length: felt) = membersLength.read();
         if (currentIndex == member_list_length){
             return (currentTotal,);
         }
+        let (local proposal: ProposalInfo) = Proposal.get_info(proposalId);
+        let (params) = Proposal.get_params(proposal.type);
+        let end_voting_period = proposal.submittedAt + params.votingDuration;
         let (current_address: felt) = membersAddresses.read(currentIndex);
+        let (member_info) = Member.get_info(current_address);
         let (vote: felt) = proposalsVotes.read(proposalId, current_address);
-        if (vote == voteType){
-            let (member_info) = Member.get_info(current_address);
+        let was_allowed_to_vote = is_le(member_info.onBoarddedAt, end_voting_period);
+        let the_vote_should_count = (1-was_allowed_to_vote) + (vote - voteType);
+        if (the_vote_should_count == 0){
             let new_total: felt = currentTotal + member_info.shares;
             return _get_total_votes(currentIndex+1, proposalId, voteType, new_total);
         }else{
@@ -55,16 +61,17 @@ namespace Tally{
         let (local noVotes) = Tally.get_total_votes(proposalId, Proposal.NOVOTE);
         local numVotes = noVotes + yesVotes;
         // mapping
-        let (eligible) = Member.get_total_shares();
+        let (local today_timestamp) = get_block_number();
+        let (eligible) = Member.get_total_shares(today_timestamp);
 
         let quorum = is_le(params.quorum * eligible, numVotes * 100);
+
         if (quorum == 0) {
             return (FALSE,);
         }
 
         // check majority
         let majority = is_le(params.majority * numVotes, yesVotes * 100);
-
         if (majority == 0) {
             return (FALSE,);
         }

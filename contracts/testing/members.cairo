@@ -74,9 +74,9 @@ func Member_update_member_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, 
 }
 
 @external
-func Member_get_total_shares_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func Member_get_total_shares_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(until_this_block_number : felt
     ) -> (count: felt) {
-    return Member.get_total_shares();
+    return Member.get_total_shares(until_this_block_number);
 }
 
 @external
