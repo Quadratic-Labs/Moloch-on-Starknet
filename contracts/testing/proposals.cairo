@@ -18,13 +18,6 @@ func Proposal_set_params_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, r
     return Proposal.set_params(kind, params);
 }
 
-@view
-func Proposal_search_position_by_id_proxy{
-    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(id: felt, current_position: felt, length: felt) -> (position: felt) {
-    return Proposal.search_position_by_id(id, current_position, length);
-}
-
 @external
 func Proposal_add_proposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     info: ProposalInfo

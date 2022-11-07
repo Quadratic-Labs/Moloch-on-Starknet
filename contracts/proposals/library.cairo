@@ -73,10 +73,9 @@ namespace Proposal {
     func assert_proposal_exists{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt
     ) -> () {
-        let (length: felt) = proposalsLength.read();
-        let (position) = search_position_by_id(id=id, current_position=0, length=length);
+        let (proposal: ProposalInfo) = proposals.read(id);
         with_attr error_message("Proposal {id} does not exist") {
-            assert_nn(position);
+            assert proposal.id = id;
         }
         return ();
     }
@@ -93,25 +92,6 @@ namespace Proposal {
     ) -> (status: felt) {
         let (proposal: ProposalInfo) = proposals.read(id);
         return (proposal.status,);
-    }
-
-    func search_position_by_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        id: felt, current_position: felt, length: felt
-    ) -> (position: felt) {
-        alloc_locals;
-        if (length == 0) {
-            return (NOTFOUND,);
-        }
-
-        if (length == current_position) {
-            return (NOTFOUND,);
-        }
-        let (info) = get_info(current_position);
-        if (info.id == id) {
-            return (current_position,);
-        }
-        let (local res) = search_position_by_id(id, current_position + 1, length);
-        return (res,);
     }
 
     func add_proposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(

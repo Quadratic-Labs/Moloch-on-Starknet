@@ -62,7 +62,7 @@ def event_loop():
 def test_contract_file():
     rootdir = Path(__file__).parent.parent
     source_file = rootdir / "contracts" / "main.cairo"
-    import_file = rootdir / "contracts" / "testing" / "main.cairo"
+    import_file = rootdir / "contracts" / "testing" / "main_test.cairo"
     output_file = rootdir / "tests" / "main.cairo"
 
     # Decorate internal functions with @external to be able to test them
