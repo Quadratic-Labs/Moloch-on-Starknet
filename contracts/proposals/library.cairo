@@ -179,6 +179,7 @@ namespace Proposal {
     func set_vote{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         id: felt, address: felt, vote: felt
     ) -> () {
+        assert_proposal_exists(id);
         proposalsVotes.write(id, address, vote);
         return ();
     }
