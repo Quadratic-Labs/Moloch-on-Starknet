@@ -17,14 +17,14 @@ func Roles__revoke_role_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ra
     return Roles._revoke_role(user, role);
 }
 
-@external
+@view
 func Roles_has_role_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     user: felt, role: felt
 ) -> (has_role: felt) {
     return Roles.has_role(user, role);
 }
 
-@external
+@view
 func Roles_require_role_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     role: felt
 ) {

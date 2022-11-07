@@ -5,7 +5,7 @@ from starkware.cairo.common.uint256 import Uint256
 
 from bank import Bank
 
-@external
+@view
 func Bank_get_userTokenBalances_proxy{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(userAddress: felt, tokenAddress: felt) -> (amount: Uint256) {
@@ -19,14 +19,14 @@ func Bank_set_userTokenBalances_proxy{
     return Bank.set_userTokenBalances(userAddress, tokenAddress, amount);
 }
 
-@external
+@view
 func Bank_assert_token_whitelisted_proxy{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(tokenAddress: felt) {
     return Bank.assert_token_whitelisted(tokenAddress);
 }
 
-@external
+@view
 func Bank_assert_token_not_whitelisted_proxy{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(tokenAddress: felt) {
@@ -40,7 +40,7 @@ func Bank_bank_deposit_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
     return Bank.bank_deposit(tokenAddress, amount);
 }
 
-@external
+@view
 func Bank_is_token_whitelisted_proxy{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(tokenAddress: felt) -> (res: felt) {

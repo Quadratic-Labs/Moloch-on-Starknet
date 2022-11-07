@@ -54,9 +54,6 @@ func Actions_executeProposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     alloc_locals;
     // launch the tally
     let (local status) = tally(proposalId);
-    %{
-        print("status",ids.status)
-    %}
     let (local proposal: ProposalInfo) = Proposal.get_info(proposalId);
     let (local params) = Proposal.get_params(proposal.type);
 
