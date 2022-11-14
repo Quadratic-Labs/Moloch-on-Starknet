@@ -45,12 +45,12 @@ async def test_get_total_votes(contract):
         await contract.Member_add_member_proxy(
             (
                 caller_address,  # address
-                caller_address,  # delegatedKey
+                caller_address,  # delegateAddress
                 shares_for_yes_voters,  # shares
                 1,  # loot
                 0,  # jailed
                 1,  # lastProposalYesVote
-                -300,  # onBoarddedAt
+                -300,  # onboardedAt
             )
         ).execute()
         # vote yes for the proposal
@@ -66,12 +66,12 @@ async def test_get_total_votes(contract):
         await contract.Member_add_member_proxy(
             (
                 caller_address,  # address
-                caller_address,  # delegatedKey
+                caller_address,  # delegateAddress
                 shares_for_no_voters,  # shares
                 1,  # loot
                 0,  # jailed
                 1,  # lastProposalYesVote
-                0,  # onBoarddedAt
+                0,  # onboardedAt
             )
         ).execute()
         # vote no for the proposal

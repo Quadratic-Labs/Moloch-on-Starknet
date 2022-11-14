@@ -7,23 +7,23 @@ from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.math_cmp import is_le
 
 @event
-func MemberAdded(memberAddress: felt, shares: felt, loot : felt) {
+func MemberAdded(memberAddress: felt, shares: felt, loot : felt, onboardedAt: felt) {
 }
 
 @event
-func MemberUpdated(memberAddress: felt, delegatedKey: felt, shares: felt, loot : felt, jailed: felt, lastProposalYesVote: felt) {
+func MemberUpdated(memberAddress: felt, delegateAddress: felt, shares: felt, loot : felt, jailed: felt, lastProposalYesVote: felt, onboardedAt: felt) {
 }
 
 
 // member's Info must be felt-like (no pointer) as it is put in storage
 struct MemberInfo {
     address: felt,
-    delegatedKey: felt,
+    delegateAddress: felt,
     shares: felt,
     loot: felt,
     jailed: felt,
     lastProposalYesVote: felt,
-    onBoarddedAt: felt,
+    onboardedAt: felt,
 }
 
 namespace Member {
@@ -131,7 +131,7 @@ namespace Member {
         membersAddresses.write(len, info.address);
         membersInfo.write(info.address, info);
         //emit event
-        MemberAdded.emit(memberAddress=info.address, shares=info.shares, loot=info.loot);
+        MemberAdded.emit(memberAddress=info.address, shares=info.shares, loot=info.loot, onboardedAt=info.onboardedAt);
         return ();
     }
     func jail_member{
@@ -140,7 +140,7 @@ namespace Member {
 
         let (member_: MemberInfo) = membersInfo.read(address);
         let updated_member: MemberInfo = MemberInfo(address=member_.address,
-                                                    delegatedKey=member_.delegatedKey,
+                                                    delegateAddress=member_.delegateAddress,
                                                     shares=member_.shares,
                                                     loot=member_.loot,
                                                     jailed=TRUE,
@@ -157,7 +157,7 @@ namespace Member {
             assert is_in = TRUE;
         }
         membersInfo.write(info.address, info);
-        MemberUpdated.emit(memberAddress=info.address, delegatedKey=info.delegatedKey, shares=info.shares, loot=info.loot, jailed=info.jailed, lastProposalYesVote=info.lastProposalYesVote);
+        MemberUpdated.emit(memberAddress=info.address, delegateAddress=info.delegateAddress, shares=info.shares, loot=info.loot, jailed=info.jailed, lastProposalYesVote=info.lastProposalYesVote, onboardedAt=info.onboardedAt);
         return ();
     }
 
@@ -167,12 +167,12 @@ namespace Member {
         let (member_) = get_info(memberAddress);
         let updated_member: MemberInfo = MemberInfo(
         address = memberAddress,
-        delegatedKey = member_.delegatedKey,
+        delegateAddress = member_.delegateAddress,
         shares = member_.shares,
         loot = member_.loot,
         jailed = member_.jailed,
         lastProposalYesVote = proposal_id,
-        onBoarddedAt = member_.onBoarddedAt
+        onboardedAt = member_.onboardedAt
             );
 
         update_member(updated_member); 
@@ -184,10 +184,10 @@ namespace Member {
         alloc_locals;
         let (local caller) = get_caller_address();
         let (local member_) = Member.get_info(memberAddress);
-        with_attr error_message("Access: user {caller} is not delagate of {member_.delegatedKey}.") {
-            assert caller = member_.delegatedKey;
+        with_attr error_message("Access: user {caller} is not delagate of {member_.delegateAddress}.") {
+            assert caller = member_.delegateAddress;
         }
-        return (member_.delegatedKey,);
+        return (member_.delegateAddress,);
     }
 
 
@@ -201,7 +201,7 @@ namespace Member {
         }
         let (current_address: felt) = membersAddresses.read(currentIndex);
         let (member_info) = Member.get_info(current_address);
-        let is_eligible = is_le(member_info.onBoarddedAt, until_this_block_number);
+        let is_eligible = is_le(member_info.onboardedAt, until_this_block_number);
         if (is_eligible == 1){
             let new_total: felt = currentTotal + member_info.shares;
             return _get_total_shares(until_this_block_number, currentIndex+1, new_total);
@@ -244,24 +244,24 @@ namespace Member {
 @external
 func delegateVote{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-    }(delegatedKey: felt) -> (success: felt) {
+    }(delegateAddress: felt) -> (success: felt) {
     alloc_locals;
     // assert the caller is member
     let (local caller) = get_caller_address();
     Member.assert_is_member(caller);
-    // assert the delegatedKey belong to a member
-    Member.assert_is_member(delegatedKey);
+    // assert the delegateAddress belong to a member
+    Member.assert_is_member(delegateAddress);
     // get member's info
     let (local member_) = Member.get_info(caller);
     // create updated member
     let updated_member: MemberInfo = MemberInfo(
         address = caller,
-        delegatedKey = delegatedKey,
+        delegateAddress = delegateAddress,
         shares = member_.shares,
         loot = member_.loot,
         jailed = member_.jailed,
         lastProposalYesVote = member_.lastProposalYesVote,
-        onBoarddedAt = member_.onBoarddedAt
+        onboardedAt = member_.onboardedAt
     );
     // update member's info
     Member.update_member(updated_member);
@@ -281,12 +281,12 @@ func revokeDelegate{
     // create updated member
     let updated_member : MemberInfo = MemberInfo(
         address = caller,
-        delegatedKey = caller,
+        delegateAddress = caller,
         shares = member_.shares,
         loot = member_.loot,
         jailed = member_.jailed,
         lastProposalYesVote = member_.lastProposalYesVote,
-        onBoarddedAt = member_.onBoarddedAt
+        onboardedAt = member_.onboardedAt
 
     );
     // update member's info

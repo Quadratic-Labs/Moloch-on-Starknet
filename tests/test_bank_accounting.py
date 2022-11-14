@@ -33,12 +33,12 @@ async def create_votes(
         await empty_contract.Member_add_member_proxy(
             (
                 caller_address,  # address
-                caller_address,  # delegatedKey
+                caller_address,  # delegateAddress
                 1,  # shares
                 1,  # loot
                 1,  # jailed
                 1,  # lastProposalYesVote
-                -300,  # onBoarddedAt
+                -300,  # onboardedAt
             )
         ).execute()
         # vote yes for the proposal
@@ -202,12 +202,12 @@ async def test_accounting_when_ragequit(empty_contract):
     await empty_contract.Member_add_member_proxy(
         (
             caller_address,  # address
-            caller_address,  # delegatedKey
+            caller_address,  # delegateAddress
             2,  # shares (1 share already in the total due to the admin from main)
             100,  # loot (50 loot already in the total due to the admin from main)
             0,  # jailed
             1,  # lastProposalYesVote
-            0,  # onBoarddedAt
+            0,  # onboardedAt
         )
     ).execute()
     return_value = await empty_contract.ragequit().execute(

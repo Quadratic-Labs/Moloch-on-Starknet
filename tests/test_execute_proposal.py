@@ -30,12 +30,12 @@ async def create_votes(
         await empty_contract.Member_add_member_proxy(
             (
                 caller_address,  # address
-                caller_address,  # delegatedKey
+                caller_address,  # delegateAddress
                 1,  # shares
                 1,  # loot
                 1,  # jailed
                 1,  # lastProposalYesVote
-                -300,  # onBoarddedAt
+                -300,  # onboardedAt
             )
         ).execute()
         # vote yes for the proposal
@@ -66,12 +66,12 @@ async def test_grace_period_not_ended(empty_contract):
         await empty_contract.Member_add_member_proxy(
             (
                 caller_address,  # address
-                caller_address,  # delegatedKey
+                caller_address,  # delegateAddress
                 1,  # shares
                 1,  # loot
                 1,  # jailed
                 1,  # lastProposalYesVote
-                -300,  # onBoarddedAt
+                -300,  # onboardedAt
             )
         ).execute()
         # vote yes for the proposal

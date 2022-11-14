@@ -20,14 +20,14 @@ namespace Actions {
         alloc_locals;
         let (local params: OnboardParams) = Onboard.get_onBoardParams(proposalId);
 
-        let (onBoarddedAt) = get_block_number();
+        let (onboardedAt) = get_block_number();
         let member_: MemberInfo = MemberInfo(address=params.address,
-                                            delegatedKey=params.address,
+                                            delegateAddress=params.address,
                                             shares=params.shares,
                                             loot=params.loot,
                                             jailed=0,
                                             lastProposalYesVote=0,
-                                            onBoarddedAt=onBoarddedAt);
+                                            onboardedAt=onboardedAt);
         Member.add_member(member_);
         // update the accounting for the tribute
         Bank.decrease_userTokenBalances(userAddress= Bank.ESCROW, tokenAddress=params.tributeAddress, amount=params.tributeOffered);
@@ -41,12 +41,12 @@ namespace Actions {
         let (local member_: MemberInfo) = Member.get_info(params.memberAddress);
         // move member's shares to loot and jail the member 
         let updated_member: MemberInfo = MemberInfo(address=member_.address,
-                                                    delegatedKey=member_.delegatedKey,
+                                                    delegateAddress=member_.delegateAddress,
                                                     shares=0,
                                                     loot=member_.loot+member_.shares,
                                                     jailed=TRUE,
                                                     lastProposalYesVote=member_.lastProposalYesVote,
-                                                    onBoarddedAt=member_.onBoarddedAt);
+                                                    onboardedAt=member_.onboardedAt);
         Member.update_member(updated_member);
         return (TRUE,);
     }

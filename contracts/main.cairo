@@ -40,7 +40,7 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     adminRoles.write('govern', 'admin');
 
     // Add deployer as a member
-    local deployer: MemberInfo = MemberInfo(address=42, delegatedKey=42, shares=1, loot=50, jailed=0, lastProposalYesVote=0, onBoarddedAt=0);
+    local deployer: MemberInfo = MemberInfo(address=42, delegateAddress=42, shares=1, loot=50, jailed=0, lastProposalYesVote=0, onboardedAt=0);
     Member.add_member(deployer);
     // Grant deployer admin privileges
     membersRoles.write(deployer.address, 'admin', TRUE);

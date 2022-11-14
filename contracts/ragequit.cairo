@@ -25,12 +25,12 @@ func ragequit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}()
     let (member_: MemberInfo) = Member.get_info(caller);
     let member_updated: MemberInfo = MemberInfo(
         address=caller,
-        delegatedKey=member_.delegatedKey,
+        delegateAddress=member_.delegateAddress,
         shares=0,
         loot=0,
         jailed=member_.jailed,
         lastProposalYesVote=member_.lastProposalYesVote,
-        onBoarddedAt = member_.onBoarddedAt
+        onboardedAt = member_.onboardedAt
 
     );
     // execute the transaction

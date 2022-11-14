@@ -27,12 +27,12 @@ async def test_get_total_shares_and_loot(empty_contract):
         await empty_contract.Member_add_member_proxy(
             (
                 caller_address,  # address
-                caller_address,  # delegatedKey
+                caller_address,  # delegateAddress
                 shares,  # shares
                 loot,  # loot
                 0,  # jailed
                 1,  # lastProposalYesVote
-                0,  # onBoarddedAt
+                0,  # onboardedAt
             )
         ).execute()
 

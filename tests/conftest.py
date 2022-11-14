@@ -98,12 +98,12 @@ async def starknet():
 @dataclass
 class Member:
     address: int
-    delegatedKey: int
+    delegateAddress: int
     shares: int
     loot: int
     jailed: int
     lastProposalYesVote: int
-    onBoarddedAt: int
+    onboardedAt: int
 
 
 @dataclass
@@ -120,48 +120,48 @@ class Proposal:
 MEMBERS: list[Member] = [
     Member(
         address=1,
-        delegatedKey=1,
+        delegateAddress=1,
         shares=5,
         loot=5,
         jailed=0,
         lastProposalYesVote=1,
-        onBoarddedAt=0,
+        onboardedAt=0,
     ),
     Member(
         address=2,
-        delegatedKey=5,
+        delegateAddress=5,
         shares=5,
         loot=5,
         jailed=0,
         lastProposalYesVote=1,
-        onBoarddedAt=0,
+        onboardedAt=0,
     ),
     Member(
         address=3,
-        delegatedKey=3,
+        delegateAddress=3,
         shares=10,
         loot=5,
         jailed=0,
         lastProposalYesVote=1,
-        onBoarddedAt=0,
+        onboardedAt=0,
     ),
     Member(
         address=4,
-        delegatedKey=4,
+        delegateAddress=4,
         shares=50,
         loot=0,
         jailed=1,
         lastProposalYesVote=1,
-        onBoarddedAt=0,
+        onboardedAt=0,
     ),
     Member(
         address=5,
-        delegatedKey=5,
+        delegateAddress=5,
         shares=5,
         loot=5,
         jailed=0,
         lastProposalYesVote=1,
-        onBoarddedAt=0,
+        onboardedAt=0,
     ),
 ]
 
