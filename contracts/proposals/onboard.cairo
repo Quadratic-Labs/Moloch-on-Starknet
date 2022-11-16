@@ -105,7 +105,7 @@ func submitOnboard{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
 
     // veto the proposal,
     // TODO in future version make sure to execute the below line only if the caller is admin
-    Proposal.force_proposal(id);
+    // Proposal.force_proposal(id);
 
     // collect tribute from proposer and store it in the Escrow until the proposal is processed
     Bank.bank_deposit(tokenAddress=tributeAddress, amount=tributeOffered);

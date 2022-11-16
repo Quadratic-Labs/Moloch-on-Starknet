@@ -60,7 +60,7 @@ func Onboard_submitOnboard_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
 
     // veto the proposal,
     // TODO in future version make sure to execute the below line only if the caller is admin
-    Proposal.force_proposal(id);
+    // Proposal.force_proposal(id);
 
     // collect tribute from proposer and store it in the Escrow until the proposal is processed
     // update bank accounting
