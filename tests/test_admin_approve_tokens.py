@@ -3,40 +3,40 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_not_member(contract):
-    # given the caller is not a member, when invoking adminApproveToken for any token address, should fail
+    # given the caller is not a member, when invoking adminWhitelist for any token address, should fail
     caller_address = 404  # not a member
     token_address = 1
     with pytest.raises(Exception):
-        await contract.adminApproveToken(tokenAddress=token_address).execute(
+        await contract.adminWhitelist(tokenAddress=token_address).execute(
             caller_address=caller_address
         )
 
 
 @pytest.mark.asyncio
 async def test_not_admin(contract):
-    # given the caller is not admin, when invoking adminApproveToken for any token address, should fail
+    # given the caller is not admin, when invoking adminWhitelist for any token address, should fail
     caller_address = 3  # not admin
     token_address = 1
     with pytest.raises(Exception):
-        await contract.adminApproveToken(tokenAddress=token_address).execute(
+        await contract.adminWhitelist(tokenAddress=token_address).execute(
             caller_address=caller_address
         )
 
 
 @pytest.mark.asyncio
 async def test_already_whitelisted(contract):
-    # given token is already whitelisted, when invoking adminApproveToken for that token, should fail
+    # given token is already whitelisted, when invoking adminWhitelist for that token, should fail
     caller_address = 42  # admin
     token_address = 123  # a whitelisted token
     with pytest.raises(Exception):
-        await contract.adminApproveToken(tokenAddress=token_address).execute(
+        await contract.adminWhitelist(tokenAddress=token_address).execute(
             caller_address=caller_address
         )
 
 
 @pytest.mark.asyncio
 async def test_submit_token(contract):
-    # given the above passed, when invoking adminApproveToken, should succeed
+    # given the above passed, when invoking adminWhitelist, should succeed
     caller_address = 42  # admin
     token_address = 1  # a non whitelisted token
     # assert the token is not whitelisted, if not the test fails
@@ -44,7 +44,7 @@ async def test_submit_token(contract):
         caller_address=caller_address
     )
 
-    return_value = await contract.adminApproveToken(tokenAddress=token_address).execute(
+    return_value = await contract.adminWhitelist(tokenAddress=token_address).execute(
         caller_address=caller_address
     )
     assert return_value.result.success == 1

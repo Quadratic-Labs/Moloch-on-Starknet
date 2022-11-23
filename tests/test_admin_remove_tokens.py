@@ -3,40 +3,40 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_not_member(contract):
-    # given the caller is not a member, when invoking adminRemoveToken for any token address, should fail
+    # given the caller is not a member, when invoking adminUnwhitelist for any token address, should fail
     caller_address = 404  # not a member
     token_address = 123
     with pytest.raises(Exception):
-        await contract.adminRemoveToken(tokenAddress=token_address).execute(
+        await contract.adminUnwhitelist(tokenAddress=token_address).execute(
             caller_address=caller_address
         )
 
 
 @pytest.mark.asyncio
 async def test_not_admin(contract):
-    # given the caller is not admin, when invoking adminRemoveToken for any token address, should fail
+    # given the caller is not admin, when invoking adminUnwhitelist for any token address, should fail
     caller_address = 3  # not admin
     token_address = 123
     with pytest.raises(Exception):
-        await contract.adminRemoveToken(tokenAddress=token_address).execute(
+        await contract.adminUnwhitelist(tokenAddress=token_address).execute(
             caller_address=caller_address
         )
 
 
 @pytest.mark.asyncio
 async def test_not_whitelisted(contract):
-    # given token is not whitelisted, when invoking adminRemoveToken for that token, should fail
+    # given token is not whitelisted, when invoking adminUnwhitelist for that token, should fail
     caller_address = 42  # admin
     token_address = 404  # a non whitelisted token
     with pytest.raises(Exception):
-        await contract.adminRemoveToken(tokenAddress=token_address).execute(
+        await contract.adminUnwhitelist(tokenAddress=token_address).execute(
             caller_address=caller_address
         )
 
 
 @pytest.mark.asyncio
 async def test_submit_token(contract):
-    # given the above passed, when invoking adminRemoveToken, should succeed
+    # given the above passed, when invoking adminUnwhitelist, should succeed
     caller_address = 42  # admin
     token_address = 123  # a whitelisted token
     # assert the token is whitelisted, if not the test fails
@@ -44,7 +44,7 @@ async def test_submit_token(contract):
         caller_address=caller_address
     )
 
-    return_value = await contract.adminRemoveToken(tokenAddress=token_address).execute(
+    return_value = await contract.adminUnwhitelist(tokenAddress=token_address).execute(
         caller_address=caller_address
     )
     assert return_value.result.success == 1

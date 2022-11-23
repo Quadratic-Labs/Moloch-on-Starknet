@@ -51,13 +51,13 @@ namespace Actions {
         return (TRUE,);
     }
     
-    func execute_approve_token{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
+    func execute_whitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
         let (params: TokenParams) = Tokens.get_tokenParams(proposalId);
         Bank.add_token(params.tokenAddress);
         return (TRUE,);
     }
 
-    func execute_remove_token{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
+    func execute_unwhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
         let (params: TokenParams) = Tokens.get_tokenParams(proposalId);
         Bank.remove_token(params.tokenAddress);
         return (TRUE,);
@@ -157,13 +157,13 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
         Proposal.update_status(proposalId,Proposal.ACCEPTED);
         return (TRUE,);
     }
-    if (proposal.type == 'ApproveToken'){
-        Actions.execute_approve_token(proposalId);
+    if (proposal.type == 'Whitelist'){
+        Actions.execute_whitelist(proposalId);
         Proposal.update_status(proposalId,Proposal.ACCEPTED);
         return (TRUE,);
     }
-    if (proposal.type == 'RemoveToken'){
-        Actions.execute_remove_token(proposalId);
+    if (proposal.type == 'Unwhitelist'){
+        Actions.execute_unwhitelist(proposalId);
         Proposal.update_status(proposalId,Proposal.ACCEPTED);
         return (TRUE,);
     }

@@ -40,7 +40,7 @@ namespace Tokens {
 }
 
 @external
-func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func submitWhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     tokenAddress: felt, tokenName: felt, title: felt, link: felt
 ) -> (success: felt) {
     alloc_locals;
@@ -56,7 +56,7 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
 
     // record the proposal
     let (id) = Proposal.get_proposals_length();
-    let type = 'approveToken';
+    let type = 'Whitelist';
     let submittedBy = caller;
     let (submittedAt) = get_block_number();
     let status = 1;
@@ -79,7 +79,7 @@ func submitApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
 }
 
 @external
-func adminApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func adminWhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     tokenAddress: felt
 ) -> (success: felt) {
     alloc_locals;
@@ -96,7 +96,7 @@ func adminApproveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 }
 
 @external
-func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func submitUnwhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     tokenAddress: felt, tokenName: felt, title: felt, link: felt
 ) -> (success: felt) {
     alloc_locals;
@@ -112,7 +112,7 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 
     // record the proposal
     let (id) = Proposal.get_proposals_length();
-    let type = 'removeToken';
+    let type = 'Unwhitelist';
     let submittedBy = caller;
     let (submittedAt) = get_block_number();
     let status = 1;
@@ -135,7 +135,7 @@ func submitRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 }
 
 @external
-func adminRemoveToken{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func adminUnwhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     tokenAddress: felt
 ) -> (success: felt) {
     alloc_locals;

@@ -113,7 +113,7 @@ async def test_execute_signaling_proposal(empty_contract):
 
 
 @pytest.mark.asyncio
-async def test_execute_ApproveToken_proposal(empty_contract):
+async def test_execute_Whitelist_proposal(empty_contract):
 
     caller_address = 42
     proposalId = 565
@@ -121,7 +121,7 @@ async def test_execute_ApproveToken_proposal(empty_contract):
     await create_votes(
         empty_contract,
         proposalId,
-        "ApproveToken",
+        "Whitelist",
         caller_address,
         total_yes_votes,
     )
@@ -150,7 +150,7 @@ async def test_execute_ApproveToken_proposal(empty_contract):
 
 
 @pytest.mark.asyncio
-async def test_execute_RemoveToken_proposal(empty_contract):
+async def test_execute_Unwhitelist_proposal(empty_contract):
 
     caller_address = 42
     proposalId = 565
@@ -158,7 +158,7 @@ async def test_execute_RemoveToken_proposal(empty_contract):
     await create_votes(
         empty_contract,
         proposalId,
-        "RemoveToken",
+        "Unwhitelist",
         caller_address,
         total_yes_votes,
     )
