@@ -96,7 +96,7 @@ func adminWhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_
 }
 
 @external
-func submitUnwhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func submitUnWhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     tokenAddress: felt, tokenName: felt, title: felt, link: felt
 ) -> (success: felt) {
     alloc_locals;
@@ -112,7 +112,7 @@ func submitUnwhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 
     // record the proposal
     let (id) = Proposal.get_proposals_length();
-    let type = 'Unwhitelist';
+    let type = 'UnWhitelist';
     let submittedBy = caller;
     let (submittedAt) = get_block_number();
     let status = 1;
@@ -135,7 +135,7 @@ func submitUnwhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 }
 
 @external
-func adminUnwhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func adminUnWhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     tokenAddress: felt
 ) -> (success: felt) {
     alloc_locals;

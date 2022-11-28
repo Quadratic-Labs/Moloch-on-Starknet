@@ -4,13 +4,13 @@ from . import utils
 
 @pytest.mark.asyncio
 async def test_not_member(contract):
-    # given the caller is not a member, when invoking submitUnwhitelist for any token address, should fail
+    # given the caller is not a member, when invoking submitUnWhitelist for any token address, should fail
     caller_address = 404  # not a member
     token_address = 123
     title = utils.str_to_felt("Token to approve")
     tokenName = utils.str_to_felt("Quadratic-Token")
     with pytest.raises(Exception):
-        await contract.submitUnwhitelist(
+        await contract.submitUnWhitelist(
             tokenAddress=token_address,
             title=title,
             tokenName=tokenName,
@@ -20,13 +20,13 @@ async def test_not_member(contract):
 
 @pytest.mark.asyncio
 async def test_not_admin(contract):
-    # given the caller is not admin, when invoking submitUnwhitelist for any token address, should fail
+    # given the caller is not admin, when invoking submitUnWhitelist for any token address, should fail
     caller_address = 3  # not admin
     token_address = 123
     title = utils.str_to_felt("Token to approve")
     tokenName = utils.str_to_felt("Quadratic-Token")
     with pytest.raises(Exception):
-        await contract.submitUnwhitelist(
+        await contract.submitUnWhitelist(
             tokenAddress=token_address,
             title=title,
             tokenName=tokenName,
@@ -36,13 +36,13 @@ async def test_not_admin(contract):
 
 @pytest.mark.asyncio
 async def test_not_whitelisted(contract):
-    # given token is not whitelisted, when invoking submitUnwhitelist for that token, should fail
+    # given token is not whitelisted, when invoking submitUnWhitelist for that token, should fail
     caller_address = 42  # admin
     token_address = 404  # a non whitelisted token
     title = utils.str_to_felt("Token to approve")
     tokenName = utils.str_to_felt("Quadratic-Token")
     with pytest.raises(Exception):
-        await contract.submitUnwhitelist(
+        await contract.submitUnWhitelist(
             tokenAddress=token_address,
             title=title,
             tokenName=tokenName,
@@ -52,7 +52,7 @@ async def test_not_whitelisted(contract):
 
 @pytest.mark.asyncio
 async def test_submit_token(contract):
-    # given the above passed, when invoking submitUnwhitelist, should add proposal and succeed
+    # given the above passed, when invoking submitUnWhitelist, should add proposal and succeed
     caller_address = 42  # admin
     token_address = 123  # a whitelisted token
     title = utils.str_to_felt("Token to approve")
@@ -62,7 +62,7 @@ async def test_submit_token(contract):
             caller_address=caller_address
         )
     ).result.length
-    return_value = await contract.submitUnwhitelist(
+    return_value = await contract.submitUnWhitelist(
         tokenAddress=token_address,
         title=title,
         tokenName=tokenName,

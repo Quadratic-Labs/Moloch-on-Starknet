@@ -162,7 +162,7 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
         Proposal.update_status(proposalId,Proposal.ACCEPTED);
         return (TRUE,);
     }
-    if (proposal.type == 'Unwhitelist'){
+    if (proposal.type == 'UnWhitelist'){
         Actions.execute_unwhitelist(proposalId);
         Proposal.update_status(proposalId,Proposal.ACCEPTED);
         return (TRUE,);
