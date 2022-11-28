@@ -1,6 +1,6 @@
 import pytest
 from dataclasses import dataclass, astuple
-from . import utils
+import utils
 
 
 @pytest.mark.asyncio

@@ -1,6 +1,6 @@
 import pytest
 from dataclasses import dataclass, astuple
-from . import utils
+import utils
 
 YESVOTE = utils.str_to_felt("yes")
 NOVOTE = utils.str_to_felt("no")
@@ -109,7 +109,7 @@ async def test_execute_signaling_proposal(empty_contract):
     return_value = await empty_contract.Proposal_get_proposal_status_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.status == 2
+    assert return_value.result.status == utils.str_to_felt("approved")
 
 
 @pytest.mark.asyncio
@@ -146,7 +146,7 @@ async def test_execute_Whitelist_proposal(empty_contract):
     return_value = await empty_contract.Proposal_get_proposal_status_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.status == 2
+    assert return_value.result.status == utils.str_to_felt("approved")
 
 
 @pytest.mark.asyncio
@@ -183,7 +183,7 @@ async def test_execute_UnWhitelist_proposal(empty_contract):
     return_value = await empty_contract.Proposal_get_proposal_status_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.status == 2
+    assert return_value.result.status == utils.str_to_felt("approved")
 
 
 @pytest.mark.asyncio
@@ -224,7 +224,7 @@ async def test_execute_GuildKick_proposal(empty_contract):
     return_value = await empty_contract.Proposal_get_proposal_status_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.status == 2
+    assert return_value.result.status == utils.str_to_felt("approved")
 
     # verifie that the member is jailed after the execute
     return_value = await empty_contract.Member_is_jailed_proxy(
@@ -275,7 +275,7 @@ async def test_execute_onboard_proposal(empty_contract):
     return_value = await empty_contract.Proposal_get_proposal_status_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.status == 2
+    assert return_value.result.status == utils.str_to_felt("approved")
 
     # store the number of member in the dao before the execute
     ret_val = await empty_contract.Member_total_count_proxy().execute()
@@ -332,4 +332,4 @@ async def test_execute_swap_proposal(empty_contract):
     return_value = await empty_contract.Proposal_get_proposal_status_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.status == 2
+    assert return_value.result.status == utils.str_to_felt("approved")

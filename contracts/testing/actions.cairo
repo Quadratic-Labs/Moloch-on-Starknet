@@ -90,7 +90,7 @@ func Actions_executeProposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     // assert the grace period ended
     let (local today_timestamp) = get_block_number();
     with_attr error_message("The proposal has not ended grace period.") {
-        if (status == Proposal.ACCEPTED) {
+        if (status == Proposal.APPROVED) {
             assert_lt(
                 proposal.submittedAt + params.votingDuration + params.graceDuration, today_timestamp
             );
@@ -102,14 +102,14 @@ func Actions_executeProposal_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     // execute action
     if (proposal.type == 'Swap') {
         Actions_execute_swap_proxy(proposalId);
-        Proposal.update_status(proposalId, Proposal.ACCEPTED);
+        Proposal.update_status(proposalId, Proposal.APPROVED);
         return (TRUE,);
     }
 
     // execute action
     if (proposal.type == 'Onboard') {
         Actions.execute_onboard(proposalId);
-        Proposal.update_status(proposalId, Proposal.ACCEPTED);
+        Proposal.update_status(proposalId, Proposal.APPROVED);
         return (TRUE,);
     }
 
