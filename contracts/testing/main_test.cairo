@@ -45,6 +45,7 @@ from testing.bank import (
     Bank_get_userTokenBalances_proxy,
     Bank_set_userTokenBalances_proxy,
     Bank_add_token_proxy,
+    Bank_remove_token_proxy,
 )
 from testing.onboard import Onboard_submitOnboard_proxy, Onboard_set_onBoardParams_proxy
 from testing.swap import Swap_submitSwap_proxy, Swap_set_swapParams_proxy

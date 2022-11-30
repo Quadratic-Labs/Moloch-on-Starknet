@@ -67,3 +67,10 @@ func Bank_add_token_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
 ) {
     return Bank.add_token(tokenAddress);
 }
+
+@external
+func Bank_remove_token_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    tokenAddress: felt
+) {
+    return Bank.remove_token(tokenAddress);
+}
