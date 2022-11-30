@@ -135,7 +135,7 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     // assert the grace period ended
     let (local today_timestamp) = get_block_number();
     with_attr error_message("The proposal has not ended grace period.") {
-        if (status == Proposal.ACCEPTED){
+        if (status == Proposal.APPROVED){
         assert_lt(
             proposal.submittedAt + params.votingDuration + params.graceDuration, today_timestamp
         );
@@ -149,32 +149,32 @@ func executeProposal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     // execute action
     if (proposal.type == 'Onboard'){
         Actions.execute_onboard(proposalId);
-        Proposal.update_status(proposalId,Proposal.ACCEPTED);
+        Proposal.update_status(proposalId,Proposal.APPROVED);
         return (TRUE,);
     }
     if (proposal.type == 'GuildKick'){
         Actions.execute_guildkick(proposalId);
-        Proposal.update_status(proposalId,Proposal.ACCEPTED);
+        Proposal.update_status(proposalId,Proposal.APPROVED);
         return (TRUE,);
     }
     if (proposal.type == 'Whitelist'){
         Actions.execute_whitelist(proposalId);
-        Proposal.update_status(proposalId,Proposal.ACCEPTED);
+        Proposal.update_status(proposalId,Proposal.APPROVED);
         return (TRUE,);
     }
     if (proposal.type == 'UnWhitelist'){
         Actions.execute_unwhitelist(proposalId);
-        Proposal.update_status(proposalId,Proposal.ACCEPTED);
+        Proposal.update_status(proposalId,Proposal.APPROVED);
         return (TRUE,);
     }
     if (proposal.type == 'Swap'){
         Actions.execute_swap(proposalId);
-        Proposal.update_status(proposalId,Proposal.ACCEPTED);
+        Proposal.update_status(proposalId,Proposal.APPROVED);
         return (TRUE,);
     }
     if (proposal.type == 'Signaling'){
         Actions.execute_signaling(proposalId);
-        Proposal.update_status(proposalId,Proposal.ACCEPTED);
+        Proposal.update_status(proposalId,Proposal.APPROVED);
         return (TRUE,);
     }
 

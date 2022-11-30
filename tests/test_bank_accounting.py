@@ -1,6 +1,6 @@
 import pytest
 from dataclasses import dataclass, astuple
-from . import utils
+import utils
 
 YESVOTE = utils.str_to_felt("yes")
 NOVOTE = utils.str_to_felt("no")

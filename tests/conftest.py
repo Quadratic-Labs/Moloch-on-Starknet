@@ -14,7 +14,7 @@ from starknet_devnet.devnet_config import DevnetConfig
 from starknet_py.compile.compiler import Compiler
 from starkware.starknet.testing.starknet import get_contract_class
 
-from . import utils
+import utils
 
 
 # L'init fait l'équivalent de run la commande

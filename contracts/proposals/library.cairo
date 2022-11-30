@@ -40,10 +40,10 @@ struct ProposalParams {
     graceDuration: felt,
 }
 namespace Proposal {
-    const SUBMITTED = 1;
-    const ACCEPTED = 2;  
-    const REJECTED = 3;
-    const FORCED = 7;  // Sent directly to grace period by admin
+    const SUBMITTED = 'submitted';
+    const APPROVED = 'approved';  
+    const REJECTED = 'rejected';
+    const FORCED = 'forced';  // Sent directly to grace period by admin
     const NOTFOUND = -1;
 
     const YESVOTE = 'yes';

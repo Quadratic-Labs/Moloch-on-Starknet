@@ -1,5 +1,5 @@
 import pytest
-from . import utils
+import utils
 
 
 @pytest.mark.asyncio

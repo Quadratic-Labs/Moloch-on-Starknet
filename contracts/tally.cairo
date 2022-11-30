@@ -101,7 +101,7 @@ func tally{
     
     // if the proposal status is FORCED, ignore the tally
     if (info.status == Proposal.FORCED){
-        return (Proposal.ACCEPTED,);
+        return (Proposal.APPROVED,);
     }
 
 
@@ -118,7 +118,7 @@ func tally{
     if (accepted == FALSE) {
         return (Proposal.REJECTED,);
     }else{
-        return (Proposal.ACCEPTED,);
+        return (Proposal.APPROVED,);
     }
 
 

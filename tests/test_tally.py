@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime
-from . import utils
+import utils
 
 YESVOTE = utils.str_to_felt("yes")
 NOVOTE = utils.str_to_felt("no")
@@ -145,7 +145,7 @@ async def test_did_not_reach_majority(empty_contract):
     return_value = await empty_contract.Tally__tally_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.accepted == 3
+    assert return_value.result.accepted == utils.str_to_felt("rejected")
 
 
 @pytest.mark.asyncio
@@ -165,7 +165,7 @@ async def test_did_not_reach_quorum(empty_contract):
     return_value = await empty_contract.Tally__tally_proxy(
         proposalId=proposalId
     ).execute(caller_address=caller_address)
-    assert return_value.result.accepted == 3
+    assert return_value.result.accepted == utils.str_to_felt("rejected")
 
 
 @pytest.mark.asyncio
@@ -192,7 +192,7 @@ async def test_accepted(empty_contract):
         proposalId=proposalId
     ).execute(caller_address=caller_address)
     # check if the proposal was accepted
-    assert return_value.result.accepted == 2
+    assert return_value.result.accepted == utils.str_to_felt("approved")
 
 
 @pytest.mark.asyncio
@@ -220,4 +220,4 @@ async def test_rejected(empty_contract):
         proposalId=proposalId
     ).execute(caller_address=caller_address)
     # check if the proposal was accepted
-    assert return_value.result.accepted == 3
+    assert return_value.result.accepted == utils.str_to_felt("rejected")
