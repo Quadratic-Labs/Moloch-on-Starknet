@@ -80,7 +80,7 @@ func submitWhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
 
 @external
 func adminWhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt
+    tokenName: felt, tokenAddress: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -91,7 +91,7 @@ func adminWhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_
     // assert the token is not already whitelisted
     Bank.assert_token_not_whitelisted(tokenAddress);
     // add token
-    Bank.add_token(tokenAddress);
+    Bank.add_token(tokenName, tokenAddress);
     return (TRUE,);
 }
 
@@ -136,7 +136,7 @@ func submitUnWhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 
 @external
 func adminUnWhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt
+    tokenName: felt, tokenAddress: felt
 ) -> (success: felt) {
     alloc_locals;
     let (local caller) = get_caller_address();
@@ -148,6 +148,6 @@ func adminUnWhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_chec
     Bank.assert_token_whitelisted(tokenAddress);
 
     // remove token
-    Bank.remove_token(tokenAddress);
+    Bank.remove_token(tokenName, tokenAddress);
     return (TRUE,);
 }

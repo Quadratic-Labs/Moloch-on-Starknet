@@ -19,11 +19,11 @@ func UserTokenBalanceDecreased(memberAddress: felt, tokenAddress: felt, amount :
 }
 
 @event
-func TokenWhitelisted(tokenAddress: felt) {
+func TokenWhitelisted(tokenName: felt, tokenAddress: felt) {
 }
 
 @event
-func TokenUnWhitelisted(tokenAddress: felt) {
+func TokenUnWhitelisted(tokenName: felt, tokenAddress: felt) {
 }
 
 
@@ -48,14 +48,14 @@ func whitelistedTokensLength() -> (lenght: felt) {
 
 @external
 func adminDeposit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt, amount: Uint256
+    tokenName: felt, tokenAddress: felt, amount: Uint256
 )->(success: felt) {
     //assert the caller has admin role
     Roles.require_role('admin');
     //whitelist token if not already whitelisted
     let (whitelisted: felt) = Bank.is_token_whitelisted(tokenAddress);
     if (whitelisted == FALSE){
-        Bank.add_token(tokenAddress);
+        Bank.add_token(tokenName, tokenAddress);
         // tempvar to avoid revoked references
         tempvar syscall_ptr = syscall_ptr;
         tempvar pedersen_ptr = pedersen_ptr;
@@ -200,7 +200,7 @@ namespace Bank{
     }
 
     func add_token{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        tokenAddress: felt
+        tokenName: felt, tokenAddress: felt
     ) {
         alloc_locals;
         assert_token_not_whitelisted(tokenAddress);
@@ -208,16 +208,16 @@ namespace Bank{
         whitelistedTokensIndexes.write(length,tokenAddress); 
         whitelistedTokens.write(tokenAddress, TRUE);
         whitelistedTokensLength.write(length+1); 
-        TokenWhitelisted.emit(tokenAddress=tokenAddress);
+        TokenWhitelisted.emit(tokenName=tokenName, tokenAddress=tokenAddress);
         return ();
     }
 
     func remove_token{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        tokenAddress: felt
+        tokenName: felt, tokenAddress: felt
     ) {
         assert_token_whitelisted(tokenAddress);
         whitelistedTokens.write(tokenAddress, FALSE);
-        TokenUnWhitelisted.emit(tokenAddress=tokenAddress);
+        TokenUnWhitelisted.emit(tokenName=tokenName, tokenAddress=tokenAddress);
 
         return ();
     }

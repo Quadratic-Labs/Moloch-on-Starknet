@@ -53,13 +53,13 @@ namespace Actions {
     
     func execute_whitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
         let (params: TokenParams) = Tokens.get_tokenParams(proposalId);
-        Bank.add_token(params.tokenAddress);
+        Bank.add_token(params.tokenName, params.tokenAddress);
         return (TRUE,);
     }
 
     func execute_unwhitelist{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
         let (params: TokenParams) = Tokens.get_tokenParams(proposalId);
-        Bank.remove_token(params.tokenAddress);
+        Bank.remove_token(params.tokenName, params.tokenAddress);
         return (TRUE,);
     }
 

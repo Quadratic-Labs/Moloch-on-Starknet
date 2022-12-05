@@ -63,14 +63,14 @@ func Bank_decrease_userTokenBalances_proxy{
 
 @external
 func Bank_add_token_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt
+    tokenName: felt, tokenAddress: felt
 ) {
-    return Bank.add_token(tokenAddress);
+    return Bank.add_token(tokenName, tokenAddress);
 }
 
 @external
 func Bank_remove_token_proxy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    tokenAddress: felt
+    tokenName: felt, tokenAddress: felt
 ) {
-    return Bank.remove_token(tokenAddress);
+    return Bank.remove_token(tokenName, tokenAddress);
 }

@@ -46,6 +46,6 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     membersRoles.write(deployer.address, 'admin', TRUE);
 
     // add a whitelisted token
-    Bank.add_token(123);
+    Bank.add_token(123,123);
     return ();
 }

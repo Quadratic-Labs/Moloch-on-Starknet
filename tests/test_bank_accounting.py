@@ -48,10 +48,10 @@ async def create_votes(
 
 
 async def increase_guild_balance(empty_contract):
-    await empty_contract.Bank_add_token_proxy(tokenAddress=100).execute()
-    await empty_contract.Bank_add_token_proxy(tokenAddress=200).execute()
-    await empty_contract.Bank_add_token_proxy(tokenAddress=300).execute()
-    await empty_contract.Bank_add_token_proxy(tokenAddress=400).execute()
+    await empty_contract.Bank_add_token_proxy(tokenName=123, tokenAddress=100).execute()
+    await empty_contract.Bank_add_token_proxy(tokenName=123, tokenAddress=200).execute()
+    await empty_contract.Bank_add_token_proxy(tokenName=123, tokenAddress=300).execute()
+    await empty_contract.Bank_add_token_proxy(tokenName=123, tokenAddress=400).execute()
     await empty_contract.Bank_set_userTokenBalances_proxy(
         userAddress=GUILD, tokenAddress=100, amount=utils.to_uint(21)
     ).execute()
