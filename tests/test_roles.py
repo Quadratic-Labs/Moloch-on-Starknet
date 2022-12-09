@@ -20,3 +20,14 @@ async def test_role(contract):
     )
     return_value = await contract.Roles_has_role_proxy(user=1, role=admin).execute()
     assert return_value.result.has_role == 0
+
+async def test_revoke_admin(contract):
+    """Test submitVote method."""
+    admin = utils.str_to_felt("admin")  # admin in felt
+
+    return_value = await contract.revoke_role(role=admin, user=42).execute(
+        caller_address=1
+    )
+    return_value = await contract.Roles_has_role_proxy(user=42, role=admin).execute()
+    assert return_value.result.has_role == 1
+    
