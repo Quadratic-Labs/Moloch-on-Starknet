@@ -93,7 +93,7 @@ func revoke_role{
     let (user_has_role: felt) = Roles.has_role(user, role);
     if (user_has_role == TRUE) {
         let (caller: felt) = get_caller_address();
-        Roles._revoke_role(role, user);
+        Roles._revoke_role(user, role);
         RoleRevoked.emit(user, role, caller);
         return ();
     }
