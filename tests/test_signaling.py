@@ -26,7 +26,7 @@ async def test_caller_not_govern(contract):
 
 @pytest.mark.asyncio
 async def test_submitSignaling(contract):
-    caller_address = 3  # existing and govern member
+    caller_address = 6  # existing and govern member
     title = utils.str_to_felt("Signaling")
 
     number_before_submit = (

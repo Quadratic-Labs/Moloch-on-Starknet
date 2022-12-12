@@ -163,6 +163,15 @@ MEMBERS: list[Member] = [
         lastProposalYesVote=1,
         onboardedAt=0,
     ),
+    Member(
+        address=6,
+        delegateAddress=6,
+        shares=5,
+        loot=5,
+        jailed=1,
+        lastProposalYesVote=1,
+        onboardedAt=0,
+    ),
 ]
 
 
@@ -282,6 +291,7 @@ async def contract(starknet, test_contract_class):
         3: [govern],
         4: [govern],
         5: [],
+        6: [govern],
     }
     for member in MEMBERS:
         await contract.Member_add_member_proxy(astuple(member)).execute()
