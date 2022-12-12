@@ -150,6 +150,77 @@ async def test_vote_on_behalf(contract):
             proposalId=proposalId, vote=NOVOTE, onBehalf=onBehalf
         ).execute(caller_address=caller_address)
 
+@pytest.mark.asyncio
+async def test_member_vote_on_behalf_of_jailed(contract):
+    # create a proposal for the purpose of the tests
+    proposal = (
+        8,  # id
+        utils.str_to_felt("titre"),  # type # 22357892214649444 = Onboard
+        utils.str_to_felt("Signaling"),  # type
+        3,  # submittedBy
+        50,  # submittedAt
+        1,  # status # 1 = SUBMITTED
+        1,  # link
+    )
+    await contract.Proposal_add_proposal_proxy(proposal).execute()
+
+    # voting 1 on an existing proposal should succeed
+    caller_address = 1
+    proposalId = 8
+    onBehalf = 6
+
+    # adding delegate key
+    # add delegate key
+    delegated_key = caller_address
+    await contract.delegateVote(delegated_key).execute(caller_address=onBehalf)
+
+    with pytest.raises(Exception):
+        await contract.submitVote(
+            proposalId=proposalId, vote=YESVOTE, onBehalf=onBehalf
+        ).execute(caller_address=caller_address)
+    
+    # checking the vote is 0
+    check_vote = await contract.Proposal_get_vote_proxy(
+        id=proposalId, address=onBehalf
+    ).execute(caller_address=caller_address)
+    assert check_vote.result.vote == 0
+    
+@pytest.mark.asyncio
+async def test_jailed_vote_on_behalf_of_member(contract):
+    # create a proposal for the purpose of the tests
+    proposal = (
+        8,  # id
+        utils.str_to_felt("titre"),  # type # 22357892214649444 = Onboard
+        utils.str_to_felt("Signaling"),  # type
+        3,  # submittedBy
+        50,  # submittedAt
+        1,  # status # 1 = SUBMITTED
+        1,  # link
+    )
+    await contract.Proposal_add_proposal_proxy(proposal).execute()
+
+    # voting 1 on an existing proposal should succeed
+    caller_address = 6
+    proposalId = 8
+    onBehalf = 1
+
+    # adding delegate key
+    # add delegate key
+    delegated_key = caller_address
+    await contract.delegateVote(delegated_key).execute(caller_address=onBehalf)
+
+    with pytest.raises(Exception):
+        await contract.submitVote(
+            proposalId=proposalId, vote=YESVOTE, onBehalf=onBehalf
+        ).execute(caller_address=caller_address)
+    
+    # checking the vote is 0
+    check_vote = await contract.Proposal_get_vote_proxy(
+        id=proposalId, address=onBehalf
+    ).execute(caller_address=caller_address)
+    assert check_vote.result.vote == 0
+
+
 
 @pytest.mark.asyncio
 async def test_vote_on_behalf_when_not_delegated(contract):

@@ -19,7 +19,7 @@ async def create_votes(
         utils.str_to_felt(proposalType),  # type
         3,  # submittedBy
         -200,  # submittedAt
-        1,  # status # 1 = SUBMITTED
+        utils.str_to_felt('submitted'),  # status # 1 = SUBMITTED
         1,  # link
     )
     await empty_contract.Proposal_add_proposal_proxy(proposal).execute()
@@ -111,6 +111,42 @@ async def test_execute_signaling_proposal(empty_contract):
     ).execute(caller_address=caller_address)
     assert return_value.result.status == utils.str_to_felt("approved")
 
+@pytest.mark.asyncio
+async def test_execute_signaling_when_jailed(empty_contract):
+
+    caller_address = 42
+    proposalId = 2446
+    total_yes_votes = 10
+    await create_votes(
+        empty_contract,
+        proposalId,
+        "Signaling",
+        caller_address,
+        total_yes_votes,
+    )
+    jailed_member_address = (6576585875)
+    await empty_contract.Member_add_member_proxy(
+                (
+                    jailed_member_address,  # address
+                    jailed_member_address,  # delegateAddress
+                    1,  # shares
+                    1,  # loot
+                    1,  # jailed
+                    1,  # lastProposalYesVote
+                    -300,  # onboardedAt
+                )
+            ).execute()
+    
+    with pytest.raises(Exception):
+        return_value = await empty_contract.executeProposal(proposalId=proposalId).execute(
+            caller_address=jailed_member_address
+        )
+
+    # check if the status of the proposal changed to ACCEPTED 2
+    return_value = await empty_contract.Proposal_get_proposal_status_proxy(
+        proposalId=proposalId
+    ).execute(caller_address=jailed_member_address)
+    assert return_value.result.status == utils.str_to_felt("submitted")
 
 @pytest.mark.asyncio
 async def test_execute_Whitelist_proposal(empty_contract):
@@ -184,6 +220,56 @@ async def test_execute_UnWhitelist_proposal(empty_contract):
         proposalId=proposalId
     ).execute(caller_address=caller_address)
     assert return_value.result.status == utils.str_to_felt("approved")
+    
+@pytest.mark.asyncio
+async def test_execute_unwhitelisted_UnWhitelist_proposal(empty_contract):
+
+    caller_address = 42
+    proposalId = 566
+    proposalId2 = 223
+    total_yes_votes = 10
+    await create_votes(
+        empty_contract,
+        proposalId,
+        "UnWhitelist",
+        caller_address,
+        total_yes_votes,
+    )
+    
+    await create_votes(
+        empty_contract,
+        proposalId2,
+        "UnWhitelist",
+        caller_address,
+        total_yes_votes,
+    )
+    # add additional params depending on the proposal type
+    @dataclass
+    class Params:
+        tokenAddress: int
+        tokenName: int
+
+    params = Params(tokenAddress=123, tokenName=123)
+
+    await empty_contract.Tokens_set_tokenParams_proxy(
+        proposalId, astuple(params)
+    ).execute()
+    
+    await empty_contract.Tokens_set_tokenParams_proxy(
+        proposalId2, astuple(params)
+    ).execute()
+
+    return_value = await empty_contract.executeProposal(proposalId=proposalId).execute(
+        caller_address=caller_address
+    )
+    assert return_value.result.success == 1
+
+    return_value = await empty_contract.executeProposal(proposalId=proposalId2).execute(
+        caller_address=caller_address
+    )
+    
+    
+    
 
 
 @pytest.mark.asyncio
