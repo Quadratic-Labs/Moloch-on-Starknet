@@ -12,6 +12,7 @@ async def create_votes(
     proposalType,
     caller_address,
     total_yes_votes,
+    seed=5555,
 ):
     proposal = (
         proposalId,  # id
@@ -25,7 +26,7 @@ async def create_votes(
     await empty_contract.Proposal_add_proposal_proxy(proposal).execute()
     # create members that votes and votes for the tests
     for i in range(total_yes_votes):
-        caller_address = i + 5555  # add 5555 to avoid already used adress for members
+        caller_address = i + seed  # add 5555 to avoid already used adress for members
         # create the member
         await empty_contract.Member_add_member_proxy(
             (
@@ -234,15 +235,9 @@ async def test_execute_unwhitelisted_UnWhitelist_proposal(empty_contract):
         "UnWhitelist",
         caller_address,
         total_yes_votes,
-    )
+        seed=5555
+        )
     
-    await create_votes(
-        empty_contract,
-        proposalId2,
-        "UnWhitelist",
-        caller_address,
-        total_yes_votes,
-    )
     # add additional params depending on the proposal type
     @dataclass
     class Params:
@@ -255,19 +250,33 @@ async def test_execute_unwhitelisted_UnWhitelist_proposal(empty_contract):
         proposalId, astuple(params)
     ).execute()
     
-    await empty_contract.Tokens_set_tokenParams_proxy(
-        proposalId2, astuple(params)
-    ).execute()
-
-    return_value = await empty_contract.executeProposal(proposalId=proposalId).execute(
-        caller_address=caller_address
-    )
-    assert return_value.result.success == 1
-
-    return_value = await empty_contract.executeProposal(proposalId=proposalId2).execute(
+    
+    await empty_contract.executeProposal(proposalId=proposalId).execute(
         caller_address=caller_address
     )
     
+    
+    await create_votes(
+        empty_contract,
+        proposalId2,
+        "UnWhitelist",
+        caller_address,
+        total_yes_votes + 10,
+        seed=6666
+    )
+    
+    await empty_contract.Tokens_set_tokenParams_proxy(
+        proposalId2, astuple(params)
+    ).execute()
+    
+
+    with pytest.raises(Exception):
+    
+        await empty_contract.executeProposal(proposalId=proposalId2).execute(
+            caller_address=caller_address
+            )
+
+
     
     
 
