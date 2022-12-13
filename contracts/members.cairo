@@ -94,7 +94,7 @@ namespace Member {
     func assert_not_jailed{
             syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(address: felt) -> () {
-        with_attr error_message("Member {address} has been jailed") {
+        with_attr error_message("Member {address} is already jailed") {
             let (res) = is_jailed(address);
             assert res = FALSE;
         }

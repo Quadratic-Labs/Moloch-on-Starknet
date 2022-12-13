@@ -38,6 +38,7 @@ namespace Actions {
     func execute_guildkick{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(proposalId: felt) -> (success: felt){
         alloc_locals;
         let (params: GuildKickParams) = Guildkick.get_guildKickParams(proposalId);
+        Member.assert_not_jailed(params.memberAddress);
         let (local member_: MemberInfo) = Member.get_info(params.memberAddress);
         // move member's shares to loot and jail the member 
         let updated_member: MemberInfo = MemberInfo(address=member_.address,
