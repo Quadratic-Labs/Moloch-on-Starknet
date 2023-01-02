@@ -1,32 +1,11 @@
-# README #
+# Moloch on Starknet
 
-# Requirements
-- Python <= 3.9
+**Moloch on Starknet** is a MVP, implementing most of **Moloch V2** features, adding new functionalities and running on **Starknet**.
 
-This README would normally document whatever steps are necessary to get your application up and running.
+## Cairo Contracts 
+The Cairo contracts are currently written in Cairo 0.1 
+All the contracts will be updated in Cairo 1.0 following the official release.
 
-### What is this repository for? ###
+## Documentation 
+You can read the documentation [here](https://dao-docs.quadratic-labs.com/moloch-on-starknet-0-1/).
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
