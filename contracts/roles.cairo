@@ -38,14 +38,19 @@ namespace Roles {
     func _grant_role{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         user: felt, role: felt
     ) {
+        let (caller: felt) = get_caller_address();
         membersRoles.write(user, role, TRUE);
+        RoleGranted.emit(user, role, caller);
         return ();
     }
 
     func _revoke_role{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         user: felt, role: felt
     ) {
+
+        let (caller: felt) = get_caller_address();
         membersRoles.write(user, role, FALSE);
+        RoleRevoked.emit(user, role, caller);
         return ();
     }
 
@@ -76,9 +81,7 @@ func grant_role{
     Roles.require_role(admin);
     let (user_has_role: felt) = Roles.has_role(user, role);
     if (user_has_role == FALSE) {
-        let (caller: felt) = get_caller_address();
         Roles._grant_role(user, role);
-        RoleGranted.emit(user, role, caller);
         return ();
     }
     return ();
@@ -92,9 +95,7 @@ func revoke_role{
     Roles.require_role(admin);
     let (user_has_role: felt) = Roles.has_role(user, role);
     if (user_has_role == TRUE) {
-        let (caller: felt) = get_caller_address();
         Roles._revoke_role(role, user);
-        RoleRevoked.emit(user, role, caller);
         return ();
     }
     return ();
